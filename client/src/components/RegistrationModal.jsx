@@ -4,7 +4,7 @@ import { toggleModal } from "src/store/slices/appSlice"
 import { registration, loginAction } from "src/store/slices/authSlice"
 
 import { FaTimes } from "react-icons/fa"
-import { api } from '../api'
+import { api, getApi } from '../api'
 
 function RegistrationModal() {
 
@@ -341,7 +341,7 @@ function RegistrationModal() {
     async function handleGetOTPCode() {
         if (userData.email) {
             try {
-                let response = await api().post("/api/auth/get-otp-code", { email: userData.email })
+                let response = await api.post("/api/auth/get-otp-code", { email: userData.email })
                 let { data, status } = response
                 if (status === 201) {
                     dispatch(toggleModal("otp_verify_modal"))
@@ -364,7 +364,7 @@ function RegistrationModal() {
 
         if (userData.email && otpCode) {
             try {
-                let response = await api().post("/api/auth/validate-otp-code", { 
+                let response = await api.post("/api/auth/validate-otp-code", { 
                     email: userData.email,
                     otp: otpCode,
                 })
@@ -403,7 +403,7 @@ function RegistrationModal() {
         }
 
         try {
-            let response = await api().post("/api/auth/reset-password", { 
+            let response = await api.post("/api/auth/reset-password", { 
                 email: userData.email,
                 password: state.password
             })

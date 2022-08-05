@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { api } from '../../api';
+import { api, getApi } from '../../api';
 
 import appSlice, {toggleModal} from "../slices/appSlice"
 
@@ -14,10 +14,9 @@ export const registration = createAsyncThunk(
     'auth/registration',
     async function(userData, thunkAPI){
       try{
-        let res = await api().post( "/api/registration", userData)
+        let res = await api.post( "/api/registration", userData)
 
         thunkAPI.dispatch(toggleModal("verify_modal"))
-
         return {status: res.status, data: res.data}
       } catch(ex){
         thunkAPI.rejectWithValue("somethig were wrong")
@@ -30,7 +29,7 @@ export const loginAction = createAsyncThunk(
     'auth/login',
     async function(userData, thunkAPI){
       try{
-        let res = await api().post( "/api/login", userData)
+        let res = await api.post("/api/login", userData)
         if(res.status === 201){
           thunkAPI.dispatch(toggleModal(""))
         }
@@ -39,33 +38,20 @@ export const loginAction = createAsyncThunk(
         thunkAPI.rejectWithValue("somethig were wrong")
       }
     }
-    
-    // api().post( "/api/registration", action.payload)
-    // .then((response=>{
-    //     if(response.status === 206){
-    //         alert("ASD")
-    //         state.verify = true;
-    //         state.auth = action.payload
-    //     }
-    // }))
   )
   
 
   export const loginWithTokenAction = createAsyncThunk(
-    'auth/login',
-    async function(userData, thunkAPI){
+    'auth/loginWithToken',
+    async function(_, thunkAPI){
       try{
-        let res = await api().post("/api/login-token", {
-          headers: {
-            authorization: token
-          }
-        })
-        console.log(res);
+        let res = await getApi().post("/api/auth/login-token")
         if(res.status === 201){
-          // thunkAPI.dispatch(toggleModal(""))
+          return { status: res.status, data: res.data}
         }
-        return {status: res.status, data: res.data}
+
       } catch(ex){
+        console.log(ex);
         thunkAPI.rejectWithValue("somethig were wrong")
       }
     }
@@ -86,7 +72,10 @@ export const counterSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    
+    logOutAction(state, payload){
+      localStorage.removeItem("token")
+      state.auth = null;
+    }
   },
   
   extraReducers: function(builder){  
@@ -100,6 +89,13 @@ export const counterSlice = createSlice({
           auth: data.auth
         }
       }
+    });
+    builder.addCase(loginWithTokenAction.fulfilled, (state, action) => {
+      const {data, status} = action.payload
+      return {
+          ...state,
+          auth: data.auth
+        }
     });
 
 
@@ -135,6 +131,6 @@ export const counterSlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-// export const {  } = counterSlice.actions
+export const { logOutAction } = counterSlice.actions
 
 export default counterSlice.reducer

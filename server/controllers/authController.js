@@ -6,7 +6,7 @@ const sendMail = require("../utilities/sendMail")
 const getOTP = require("../utilities/getOTP")
 
 const {createHash, hashCompare} = require("../hash")
-const {createToken, getToken} = require("../jwt")
+const {createToken, getToken, parseToken} = require("../jwt")
 
 
 
@@ -149,10 +149,35 @@ exports.login = async (context) => {
 exports.loginWithToken = async (context) => {
     const { email, password } = context.request.body
 
+    let token = getToken(context.request)
+    if(!token){
+        context.response.status = 409
+        context.body = {
+            message: "Token Missing",
+        }
+    }
 
-    let user = await User.findOne({email: email})
 
-    
+    try{
+
+        let data = await parseToken(token)
+        if(data){
+            let user = await User.findOne({_id: data.id}).select("-password")
+            context.response.status = 201
+            return context.body =  {
+                message: "",
+                auth: user
+            }
+        }
+
+
+    } catch(err){
+        context.response.status = 500
+        return context.body =  {
+            message: "Please login first"
+        }
+    }
+
 }
 
 

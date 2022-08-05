@@ -16,7 +16,7 @@ module.exports = (router)=>{
 
     router.post('', '/api/login', authController.login)
 
-    router.post('', '/api/login-token', authController.loginWithToken)
+    router.post('', '/api/auth/login-token', authController.loginWithToken)
 
     router.post('', '/api/auth/get-otp-code', authController.getOtpCode)
 

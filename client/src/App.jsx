@@ -14,6 +14,7 @@ import {loginWithTokenAction} from "src/store/slices/authSlice"
 import { useDispatch, useSelector } from 'react-redux'
 import RegistrationModal from './components/RegistrationModal'
 import { useEffect } from 'react'
+import { Route, Routes } from 'react-router-dom'
 
 
 
@@ -37,13 +38,20 @@ function App() {
       <Navigation />
       <HeroCarousel />
       <button onClick={() => dispatch(setMovies([{name: "rasrd"}]))}>Set Movie</button>
-
       <RegistrationModal />
+
+      <Routes>
+        <Route exact={true} path="/" element={HomePage} />
+        <Route path="/movies" element={Movies} />
+      </Routes>
 
 
     </div>
 
   )
 }
+
+const HomePage = ()=> <h1>Homepage</h1>
+const Movies = ()=> <h1>Movies</h1>
 
 export default App
