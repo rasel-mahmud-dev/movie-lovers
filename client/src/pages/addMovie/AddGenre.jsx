@@ -59,7 +59,7 @@ function AddGenre(props) {
       <form onSubmit={handleSubmit}>
         <div className="div">
           <InputGroup 
-            className="flex-col gap-y-2"
+            className="!flex-col gap-y-2"
             name="genre" 
             type="text" 
             label="Genre" 

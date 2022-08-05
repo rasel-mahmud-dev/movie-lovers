@@ -5,6 +5,7 @@ import AddLanguage from './AddLanguage'
 import AddQuality from './AddQuality'
 
 import InputGroup from "src/components/inputs/InputGroup"
+import MultiInput from "src/components/inputs/MultiInput"
 import FileUpload from "src/components/inputs/FileUpload"
 
 import { setLanguages, setQualities } from "src/store/slices/appSlice"
@@ -22,15 +23,7 @@ function AddMovie() {
     const dispatch = useDispatch()
     const { app } = useSelector(state => state)
 
-    React.useState(() => {
-        fetchLanguages((data) => {
-            dispatch(setLanguages(data.languages))
-        })
-        fetchQualities((data) => {
-            dispatch(setQualities(data.qualities))
-        })
-    }, [])
-
+    
 
     const [state, setState] = React.useState({
         movieData: {
@@ -41,8 +34,8 @@ function AddMovie() {
             // isPublic: {value: "", errorMessage: "", tauch: false},
             cover: { value: null, blob: null, errorMessage: "", tauch: false },
             quality: { value: "", errorMessage: "", tauch: false }, // id
-            path: { value: "", errorMessage: "", tauch: false },
-            tags: { value: "", errorMessage: "", tauch: false },
+            videoUrl: { value: "", errorMessage: "", tauch: false },
+            tags: { value: [], errorMessage: "", tauch: false },
             // rating: {value: "", errorMessage: "", tauch: false},
             price: { value: "", errorMessage: "", tauch: false },
             releaseYear: { value: "", errorMessage: "", tauch: false },
@@ -54,14 +47,54 @@ function AddMovie() {
     })
 
 
+    React.useState(() => {
+        fetchLanguages((data) => {
+            dispatch(setLanguages(data.languages))
+        })
+        fetchQualities((data) => {
+            dispatch(setQualities(data.qualities))
+        })
+
+
+        try{
+            let d = JSON.parse(localStorage.getItem("userData"))
+            if(d){
+                setState({
+                    ...state,
+                    movieData: d
+                })
+            }
+
+        } catch(_){}
+
+    }, [])
+
+
+
     const { movieData, addMovieModal } = state
 
     function handleChange(e) {
-        const { name, value } = e.target;
-        setState({
-            ...state,
-            movieData: {
-                ...state.movieData,
+
+        const { name, value, values } = e.target;
+
+        let updateMovieData = {
+            ...state.movieData,
+        }
+
+        if (name === "tags") {
+            updateMovieData = {
+                ...updateMovieData,
+                [name]: {
+                    ...state.movieData[name],
+                    value: values,
+                    tauch: true,
+                    errorMessage: state.movieData[name] ? "" : state.movieData[name].errorMessage
+                }
+            }
+        } else {
+
+            updateMovieData = {
+                ...updateMovieData,
                 [name]: {
                     ...state.movieData[name],
                     value: value,
@@ -69,6 +102,12 @@ function AddMovie() {
                     errorMessage: state.movieData[name] ? "" : state.movieData[name].errorMessage
                 }
             }
+        }
+
+
+        setState({
+            ...state,
+            movieData: updateMovieData
         })
     }
 
@@ -116,7 +155,26 @@ function AddMovie() {
         )
     }
 
-    function handleAddMovie(e){
+    function resetForm(){
+        localStorage.removeItem("userData")
+
+        let updateMovieData = {}
+        for (let key in movieData) {
+            updateMovieData[key] = {
+                ...movieData[key],
+                value: "",
+                tauch: false,
+                errorMessage: ""
+            }
+        }
+
+        setState({
+            ...state,
+            movieData: updateMovieData
+        })
+    }
+
+    function handleAddMovie(e) {
         e.preventDefault();
         let isCompleted = true;
 
@@ -124,30 +182,54 @@ function AddMovie() {
             ...movieData
         }
 
-        for(let key in movieData){
-            if(!movieData[key].tauch || !movieData[key].value){
-                updatedState[key].errorMessage = `${key} is required`
-                isCompleted = false;
+        for (let key in movieData) {
+            if (key === "tags") {
+
+                if (!movieData[key].tauch || !movieData[key].value || movieData[key].value.length === 0 ) {
+                    updatedState[key].errorMessage = `${key} is required`
+                    isCompleted = false;
+                }
+            } else if(key === "cover"){
+                if (!movieData[key].tauch || !movieData[key].value) {
+                    updatedState[key].errorMessage = `${key} is required`
+                    isCompleted = false;
+                } else {
+                    if(movieData[key].value.size > "102400"){ // 100kb
+                        updatedState[key].errorMessage = `${key} size should be under 100kb`
+                        isCompleted = false;
+                    }
+                }
+
+            } else {
+                if (!movieData[key].tauch || !movieData[key].value) {
+                    updatedState[key].errorMessage = `${key} is required`
+                    isCompleted = false;
+                }
             }
         }
 
-        if(!isCompleted){
+        if (!isCompleted) {
             setState({
                 ...state,
                 movieData: updatedState
             })
-            // return;
+            return;
         }
 
-    
+        localStorage.setItem("userData", JSON.stringify(movieData))
+
         let formData = new FormData()
-        for(let key in movieData){
-            formData.append(key, movieData[key].value)
+        for (let key in movieData) {
+            if (key === "tags") {
+                formData.append(key, JSON.stringify(movieData[key].value))
+            } else {
+                formData.append(key, movieData[key].value)
+            }
         }
 
-        getApi().post("/api/add-movie", formData).then(response=>{
+        getApi().post("/api/add-movie", formData).then(response => {
             console.log(response);
-        }).catch(ex=>{
+        }).catch(ex => {
             console.log(ex);
         })
     }
@@ -182,6 +264,7 @@ function AddMovie() {
                     />
 
 
+
                     {/*********** Cover **************/}
                     <FileUpload
                         name="cover"
@@ -193,6 +276,17 @@ function AddMovie() {
                         errorMessage={movieData.cover.errorMessage}
                     />
 
+
+                    {/*********** videoUrl **************/}
+                    <InputGroup
+                        name="videoUrl"
+                        type="text"
+                        label="videoUrl"
+                        placeholder="movie url"
+                        onChange={handleChange}
+                        value={movieData.videoUrl.value}
+                        errorMessage={movieData.videoUrl.errorMessage}
+                    />
 
 
                     {/*********** Genre **************/}
@@ -302,7 +396,6 @@ function AddMovie() {
                     />
 
 
-
                     {/*********** Summary **************/}
                     <TextArea
                         name="summary"
@@ -312,10 +405,21 @@ function AddMovie() {
                         value={movieData.summary.value}
                         errorMessage={movieData.summary.errorMessage}
                     />
-                    
+
+                    <MultiInput
+                        name="tags"
+                        label="Tags"
+                        // value={movieData.tags.value}
+                        onChange={handleChange}
+                        placeholder="Select Tag"
+                        errorMessage={movieData.tags.errorMessage}
+                        defaultValues={movieData.tags.value}
+                    />
+
 
                     <div className="flex justify-center mt-10">
                         <button type="submit" className="btn btn-primary px-20">Save</button>
+                        <button type="button" onClick={resetForm} className="btn px-5 ml-4">clear</button>
                     </div>
 
                 </form>

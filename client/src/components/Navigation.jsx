@@ -74,11 +74,10 @@ function Navigation() {
                 <div class="w-full hidden lg:flex">
                     <ul class="menu menu-horizontal p-0">
                         <li><NavLink to="/">Home</NavLink></li>
-                        <li><a>Series</a></li>
-                        <li><a>Movies</a></li>
-                        <li><a>Pages</a></li>
-                        <li><a>Pricing</a></li>
-                        <li><a>Contact</a></li>
+                        <li><NavLink to="/series">Series</NavLink></li>
+                        <li><NavLink to="/movies">Movies</NavLink></li>
+                        <li><NavLink to="/price_and_planling">Pricing</NavLink></li>
+                        <li><NavLink to="/contact">Contact</NavLink></li>
                     </ul>
                 </div>
                 <div class="navbar-end">

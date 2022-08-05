@@ -1,42 +1,60 @@
-const { parseToken}  = require("../jwt")
+const { parseToken, getToken}  = require("../jwt")
 
-import response  from "../response"
-
-export function isAuth(req, res, next){
-  let token = req.headers["authorization"]
+exports.auth = (ctx, next)=> {
+  let token = getToken(ctx.request)
   if(!token){
-    req.userId = null
-    return response(res, 404, "please login first")
+    ctx.request.userId = null
+    ctx.response.status = 409
+    return ctx.body = {
+        message: "please login first"
+    }
   }
+
   parseToken(token).then(u=>{
-    req.userId = u.id
-    req.userEmail = u.email
+    ctx.request.userId = u.id
+    ctx.request.role = u.role,
+    ctx.request.userEmail = u.email
     next()
+    
   }).catch(err=>{
-    req.userId = null
-    response(res, 404, "please login first")
+    ctx.request.userId = null
+    ctx.response.status = 409
+    return ctx.body = {
+        message: "please login first"
+    }
   })
 }
 
 
-export function isAdmin(req, res, next){
-  let token = req.headers["authorization"]
-  if(!token){
-    req.userId = null
-    return response(res, 404, "please login first")
-  }
-  parseToken(token).then(u=>{
 
+exports.admin = (ctx, next)=> {
+  let token = getToken(ctx.request)
+  if(!token){
+    ctx.request.userId = null
+    ctx.response.status = 409
+    return ctx.body = {
+        message: "please login first"
+    }
+  }
+
+  parseToken(token).then(u=>{
     if(u.role === "admin") {
-      req.userId = u.id
-      req.userEmail = u.email
+      ctx.request.userId = u.id
+      ctx.request.role = "admin"
+      ctx.request.userEmail = u.email
       next()
     } else {
-      return response(res, 401, "Unauthorized")
+      ctx.response.status = 409
+      return ctx.body = {
+          message: "you are not permit on this action",
+      }
     }
   }).catch(err=>{
-    req.userId = null
-    response(res, 404, "please login first")
+    ctx.request.userId = null
+    ctx.response.status = 409
+    return ctx.body = {
+        message: "please login first"
+    }
   })
 }
 

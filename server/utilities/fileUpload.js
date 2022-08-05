@@ -1,25 +1,30 @@
-import formidable from "formidable"
-import {Request} from "express"
+const formidable = require("formidable");
+const { rename } = require("fs/promises");
+const path = require("path")
+
 
 const fileUpload = (req)=> {
-  const form = formidable({ multiples: true });
+  const form = formidable({ multiples: false });
   
-  return new Promise<{fields: {}, files: {}}>(((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
+  return new Promise(((resolve, reject) => {
+    form.parse(req, async (err, fields, files) => {
       if (err) {
-        console.log(err)
-        // res.writeHead(err.httpCode || 400, { 'Content-Type': 'text/plain' });
-        // res.end(String(err));
         reject(err)
       } else {
-        console.log(files)
-        resolve({fields, files})
+        if(files && files.cover){
+          const {filepath, originalFilename, newFilename } = files.cover
+          let newName = filepath.replace(newFilename, "/"  +originalFilename )
+          await rename(filepath, newName)
+          resolve({fields, file: path.resolve(newName)})
+        } else {
+        
+          resolve({fields, file: null})
+        }
       }
-      // res.writeHead(200, { 'Content-Type': 'application/json' });
-      // res.end(JSON.stringify({ fields, files }, null, 2));
     });
   }))
 }
 
 
-export default fileUpload
+
+module.exports = fileUpload

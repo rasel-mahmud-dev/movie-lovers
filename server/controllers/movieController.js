@@ -1,7 +1,7 @@
 
-const Genre = require("../models/Genre")
-
-const formidable = require('formidable');
+const Movie = require("../models/Movie")
+const fileUpload = require("../utilities/fileUpload")
+const uploadImage = require("../utilities/imageCloudinary")
 
 exports.getMovies = async (context) => {  
     try {
@@ -21,46 +21,83 @@ exports.getMovies = async (context) => {
 
 exports.addMovie = async (context) => {
 
-    const { name } = context.request.body
-    try {
 
-        const form = formidable({});
-        form.parse(req, (err, fields, files) => {
-            if (err) {
-                console.log(err);
-            //   res.writeHead(err.httpCode || 400, { 'Content-Type': 'text/plain' });
-            //   res.end(String(err));
-              return;
-            }
-            console.log(files);
-            // res.writeHead(200, { 'Content-Type': 'application/json' });
-            // res.end(JSON.stringify({ fields, files }, null, 2));
-          });
-  
-        let doc = await Movie.findOne({name: name})
-        if(doc){
-            context.response.status = 404
-            return context.body = {
-                message: "genre already exists",
-            }
+    try {
+      
+        let {file, fields}= await fileUpload(context.req)
+     
+        const {
+            title,
+            author,
+            genres,
+            runtime,
+            isPublic,
+            quality,
+            videoUrl,
+            tags,
+            rating,
+            price,
+            releaseYear,
+            director,
+            summary,
+            language,
+          
+        } = fields
+
+        let newMovie = {
+            title,
+            author,
+            genres,
+            runtime,
+            isPublic,
+            quality,
+            videoUrl,
+            rating,
+            price,
+            releaseYear,
+            director,
+            summary,
+            language,
         }
         
-        let newGenre = new Genre({
-            name: name
 
-        })
+        // try{
+        //     let t = JSON.parse(tags)
+        //     newMovie.tags = t
+        // } catch(ex){}
 
-        newGenre = await newGenre.save()
-        if(newGenre){
-            context.response.status = 201
-            return context.body = {
-                message: "Genre added",
-                genre: newGenre
-            }
-        }
+       
+
     
+        // let meta = await uploadImage(file, "netflix/images")
+        // if(meta){
+        //     newMovie.cover = meta.secure_url
+        // }
+
+     
+        // newMovie.author = context.request.userId
+        
+        // let doc = new Movie(newMovie)      
+
+        context.res.write("ASDDDDDDDD")
+        context.res.end()
+        
+
+    //    doc.save().then(res=>{
+    //         context.response.status = 201
+
+    //         return context.body = {
+    //             message: "Movie added",
+    //             movie: doc
+    //         } 
+    //     }).catch(ex=>{
+    //         console.log(ex);
+    //     })
+        
+        
 
     } catch(ex){
+        console.log(ex);
         context.response.status = 500
         return context.body = {
             message: "Internal error. Please try again",

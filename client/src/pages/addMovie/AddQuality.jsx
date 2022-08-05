@@ -59,7 +59,7 @@ function AddQuality(props) {
       <form onSubmit={handleSubmit}>
         <div className="div">
           <InputGroup 
-            className="flex-col gap-y-2"
+            className="!flex-col gap-y-2"
             name="quality" 
             type="text" 
             label="Quality" 

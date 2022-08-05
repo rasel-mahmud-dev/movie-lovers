@@ -15,7 +15,6 @@ const schema = {
     required: true,
     enum: ["customer", "admin"]
   }
-
 }
 
 module.exports = mongoose.model("User", new mongoose.Schema(schema, { timestamps: true }))

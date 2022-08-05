@@ -7,6 +7,7 @@
     "@koa/cors": "^3.3.0",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.30.1",
     "dotenv": "^16.0.1",
     "formidable": "^2.0.1",
     "jsonwebtoken": "^8.5.1",

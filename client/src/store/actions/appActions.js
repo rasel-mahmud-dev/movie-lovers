@@ -1,5 +1,15 @@
 import { api } from "../../api"
 
+export function fetchMovies(cb){
+    
+    /******* Fetch all genres ********/
+    api.get("/api/movies").then(response=>{
+        if(response.status === 200){
+            cb(response.data)
+        }
+      })    
+}
+
 export function fetchGenres(cb){
     
     /******* Fetch all genres ********/
