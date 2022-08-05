@@ -6,7 +6,13 @@ module.exports = {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        dark: {
+          700: "#141414"
+        }
+      }
+    },
   },
   plugins: [
     require("@tailwindcss/typography"),
@@ -21,6 +27,7 @@ module.exports = {
           primary: "#4d3cdf",
           // secondary: "#f6d860",
           accent: "#37cdbe",
+          
           // neutral: "#3d4451",
           // "base-100": "#ffffff",
         },
