@@ -1,12 +1,12 @@
 
-const Language = require("../models/Language")
+const Quality = require("../models/Quality")
 
-exports.getLanguages = async (context) => {  
+exports.getQualities = async (context) => {  
     try {
-        let doc = await Language.find({})
+        let doc = await Quality.find({})
         context.response.status = 200
         return context.body = {
-            languages: doc
+            qualities: doc
         }
 
     } catch(ex){
@@ -17,29 +17,29 @@ exports.getLanguages = async (context) => {
     }
 }
 
-exports.addAddLanguage = async (context) => {
+exports.addAddQuality = async (context) => {
 
     const { name } = context.request.body
     try {
   
-        let doc = await Language.findOne({name: name})
+        let doc = await Quality.findOne({name: name})
         if(doc){
             context.response.status = 404
             return context.body = {
-                message: "language already exists",
+                message: "quality already exists",
             }
         }
         
-        let newLanguage = new Language({
+        let newQuality = new Quality({
             name: name
         })
 
-        newLanguage = await newLanguage.save()
-        if(newLanguage){
+        newQuality = await newQuality.save()
+        if(newQuality){
             context.response.status = 201
             return context.body = {
-                message: "language added",
-                language: newLanguage
+                message: "quality added",
+                quality: newQuality
             }
         }
     

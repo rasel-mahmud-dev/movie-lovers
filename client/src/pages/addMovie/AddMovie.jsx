@@ -5,25 +5,29 @@ import AddLanguage from './AddLanguage'
 import AddQuality from './AddQuality'
 
 import InputGroup from "src/components/inputs/InputGroup"
+import FileUpload from "src/components/inputs/FileUpload"
 
-import { setLanguages } from "src/store/slices/appSlice"
-import { fetchLanguages } from "src/store/actions/appActions"
+import { setLanguages, setQualities } from "src/store/slices/appSlice"
+import { fetchLanguages, fetchQualities } from "src/store/actions/appActions"
 
 
 
 import { FaTimes } from "react-icons/fa"
 import SelectGroup from 'src/components/inputs/SelectGroup'
+import TextArea from '../../components/inputs/TextArea'
+import { getApi } from '../../api'
+
 
 function AddMovie() {
-
     const dispatch = useDispatch()
     const { app } = useSelector(state => state)
-
-
 
     React.useState(() => {
         fetchLanguages((data) => {
             dispatch(setLanguages(data.languages))
+        })
+        fetchQualities((data) => {
+            dispatch(setQualities(data.qualities))
         })
     }, [])
 
@@ -35,7 +39,7 @@ function AddMovie() {
             genres: { value: "", errorMessage: "", tauch: false }, // id
             runtime: { value: "", errorMessage: "", tauch: false },
             // isPublic: {value: "", errorMessage: "", tauch: false},
-            cover: { value: "", errorMessage: "", tauch: false },
+            cover: { value: null, blob: null, errorMessage: "", tauch: false },
             quality: { value: "", errorMessage: "", tauch: false }, // id
             path: { value: "", errorMessage: "", tauch: false },
             tags: { value: "", errorMessage: "", tauch: false },
@@ -60,7 +64,9 @@ function AddMovie() {
                 ...state.movieData,
                 [name]: {
                     ...state.movieData[name],
-                    value: value
+                    value: value,
+                    tauch: true,
+                    errorMessage: state.movieData[name] ? "" : state.movieData[name].errorMessage
                 }
             }
         })
@@ -110,14 +116,50 @@ function AddMovie() {
         )
     }
 
+    function handleAddMovie(e){
+        e.preventDefault();
+        let isCompleted = true;
+
+        let updatedState = {
+            ...movieData
+        }
+
+        for(let key in movieData){
+            if(!movieData[key].tauch || !movieData[key].value){
+                updatedState[key].errorMessage = `${key} is required`
+                isCompleted = false;
+            }
+        }
+
+        if(!isCompleted){
+            setState({
+                ...state,
+                movieData: updatedState
+            })
+            // return;
+        }
+
+    
+        let formData = new FormData()
+        for(let key in movieData){
+            formData.append(key, movieData[key].value)
+        }
+
+        getApi().post("/api/add-movie", formData).then(response=>{
+            console.log(response);
+        }).catch(ex=>{
+            console.log(ex);
+        })
+    }
+
     return (
         <div className="my_container">
 
             {renderModal()}
 
-            <h1 className="text-center font-bold text-6xl text-gray-50 mt-8 mb-4">Add new Movie</h1>
+            <h1 className="text-center font-bold text-4xl text-gray-50 mt-4 mb-3">Add new Movie</h1>
 
-            <div>
+            <div className="max-w-3xl w-full mx-auto">
                 <div className="flex justify-end mt-10">
                     <button onClick={() => handleToggleModal("addGenre")} className="btn btn-primary ml-5">Add Genre</button>
                     <button onClick={() => handleToggleModal("addQuality")} className="btn btn-primary ml-5">Add Quality</button>
@@ -126,9 +168,9 @@ function AddMovie() {
                 </div>
 
 
-                <div className="mt-8">
+                <form className="mt-8" onSubmit={handleAddMovie}>
 
-                    {/*********** Release year **************/}
+                    {/*********** Title **************/}
                     <InputGroup
                         name="title"
                         type="text"
@@ -136,6 +178,19 @@ function AddMovie() {
                         placeholder="Enter movie title"
                         onChange={handleChange}
                         value={movieData.title.value}
+                        errorMessage={movieData.title.errorMessage}
+                    />
+
+
+                    {/*********** Cover **************/}
+                    <FileUpload
+                        name="cover"
+                        type="text"
+                        label="Cover"
+                        placeholder="Choose Cover Photo"
+                        onChange={handleChange}
+                        value={movieData.cover.value}
+                        errorMessage={movieData.cover.errorMessage}
                     />
 
 
@@ -147,6 +202,7 @@ function AddMovie() {
                         value={movieData.genres.value}
                         placeholder="Select Genre"
                         onChange={handleChange}
+                        errorMessage={movieData.genres.errorMessage}
                         options={() => {
                             return (
                                 <>
@@ -168,6 +224,7 @@ function AddMovie() {
                         placeholder="Release Year"
                         onChange={handleChange}
                         value={movieData.releaseYear.value}
+                        errorMessage={movieData.releaseYear.errorMessage}
                     />
 
                     {/*********** runtime **************/}
@@ -177,6 +234,7 @@ function AddMovie() {
                         label="Runtime"
                         placeholder="Movie duration"
                         onChange={handleChange}
+                        errorMessage={movieData.runtime.errorMessage}
                         value={movieData.runtime.value}
                     />
 
@@ -187,6 +245,7 @@ function AddMovie() {
                         label="Director"
                         placeholder="Director name"
                         onChange={handleChange}
+                        errorMessage={movieData.director.errorMessage}
                         value={movieData.director.value}
                     />
 
@@ -198,16 +257,38 @@ function AddMovie() {
                         placeholder="Enter movie price"
                         onChange={handleChange}
                         value={movieData.price.value}
+                        errorMessage={movieData.price.errorMessage}
                     />
 
 
-                    {/*********** Genre **************/}
+                    {/*********** Qualities **************/}
+                    <SelectGroup
+                        name="quality"
+                        label="quality"
+                        value={movieData.quality.value}
+                        placeholder="Select quality"
+                        onChange={handleChange}
+                        errorMessage={movieData.quality.errorMessage}
+                        options={() => {
+                            return (
+                                <>
+                                    <option selected>Select quality</option>
+                                    {app.qualities && app.qualities.map(quality => (
+                                        <option value={quality._id} >{quality.name}</option>
+                                    ))}
+                                </>
+                            )
+                        }}
+                    />
+
+                    {/*********** Languages **************/}
                     <SelectGroup
                         name="language"
                         label="Language"
                         value={movieData.language.value}
                         placeholder="Select Language"
                         onChange={handleChange}
+                        errorMessage={movieData.language.errorMessage}
                         options={() => {
                             return (
                                 <>
@@ -223,14 +304,21 @@ function AddMovie() {
 
 
                     {/*********** Summary **************/}
-                    <div className="mt-4 flex items-start">
-                        <label htmlFor="" className="block w-40 font-medium text-gray-200" >Summary</label>
-                        <textarea class="textarea textarea-primary w-full h-32 text-gray-300 " placeholder="Bio"></textarea>
+                    <TextArea
+                        name="summary"
+                        label="summary"
+                        placeholder="Movie summary"
+                        onChange={handleChange}
+                        value={movieData.summary.value}
+                        errorMessage={movieData.summary.errorMessage}
+                    />
+                    
+
+                    <div className="flex justify-center mt-10">
+                        <button type="submit" className="btn btn-primary px-20">Save</button>
                     </div>
 
-
-
-                </div>
+                </form>
 
 
 

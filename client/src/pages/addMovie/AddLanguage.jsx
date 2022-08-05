@@ -7,7 +7,7 @@ function AddLanguage(props) {
   const { setModal, onSave } = props
 
   const [state, setState] = React.useState({
-    language: { value: "", errorMessage: "" },
+    name: { value: "", errorMessage: "" },
     errorMessage: "",
     loading: false
   })
@@ -20,10 +20,10 @@ function AddLanguage(props) {
       loading: true
     })
 
-    if(!state.language.value){
+    if(!state.name.value){
       setState({
         ...state,
-        language: {
+        name: {
           value:  "", 
           errorMessage: "language Name Required"
         },
@@ -32,7 +32,7 @@ function AddLanguage(props) {
       return;
     }
 
-    getApi().post("/api/add-language", {language: state.language.value})
+    getApi().post("/api/add-language", {name: state.name.value})
     .then(response=>{
       if(response.status === 201){
         onSave && onSave(response.data)
@@ -64,9 +64,9 @@ function AddLanguage(props) {
             type="text" 
             label="Language" 
             placeholder="Enter language" 
-            onChange={(e)=>setState({...state, language: {value: e.target.value}})}
-            value={state.language.value}
-            errorMessage={state.language.errorMessage}
+            onChange={(e)=>setState({...state, name: {value: e.target.value}})}
+            value={state.name.value}
+            errorMessage={state.name.errorMessage}
           />
         </div>
       

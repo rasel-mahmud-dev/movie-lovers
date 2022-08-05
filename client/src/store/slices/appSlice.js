@@ -16,7 +16,8 @@ const initialState = {
   categories: [],
   modal: "", // login, registration, "",
   genres: [], // {name: string, _id: string }[]
-  languages: [] // {name: string, _id: string }[]
+  languages: [], // {name: string, _id: string }[]
+  qualities: [] // {name: string, _id: string }[]
 }
 
 export const counterSlice = createSlice({
@@ -34,6 +35,9 @@ export const counterSlice = createSlice({
     setLanguages(state, action){
         state.languages = action.payload;
     },
+    setQualities(state, action){
+        state.qualities = action.payload;
+    },
     
     toggleModal(state, action){
         state.modal = action.payload; 
@@ -43,6 +47,6 @@ export const counterSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setMovies, setGenres, setLanguages, toggleModal } = counterSlice.actions
+export const { setMovies, setGenres, setLanguages, setQualities, toggleModal } = counterSlice.actions
 
 export default counterSlice.reducer

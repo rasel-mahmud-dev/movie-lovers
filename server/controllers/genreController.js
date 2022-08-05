@@ -19,10 +19,10 @@ exports.getGenres = async (context) => {
 
 exports.addGenre = async (context) => {
 
-    const { genre } = context.request.body
+    const { name } = context.request.body
     try {
   
-        let doc = await Genre.findOne({name: genre})
+        let doc = await Genre.findOne({name: name})
         if(doc){
             context.response.status = 404
             return context.body = {
@@ -31,7 +31,7 @@ exports.addGenre = async (context) => {
         }
         
         let newGenre = new Genre({
-            name: genre
+            name: name
         })
 
         newGenre = await newGenre.save()
@@ -46,7 +46,6 @@ exports.addGenre = async (context) => {
 
     } catch(ex){
         context.response.status = 500
-        console.log(ex);
         return context.body = {
             message: "Internal error. Please try again",
         }

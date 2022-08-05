@@ -20,3 +20,14 @@ export function fetchLanguages(cb){
         }
       })    
 }
+
+
+export function fetchQualities(cb){
+
+    /******* Fetch all qualities ********/
+    api.get("/api/qualities").then(response=>{
+        if(response.status === 200){
+            cb(response.data)
+        }
+      })    
+}

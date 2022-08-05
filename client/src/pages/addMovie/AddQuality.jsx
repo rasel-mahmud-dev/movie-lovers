@@ -2,12 +2,12 @@ import React from 'react'
 import { api, getApi } from 'src/api';
 import InputGroup from 'src/components/inputs/InputGroup';
 
-function AddGenre(props) {
+function AddQuality(props) {
 
-  const { setModal, onSaveGenre } = props
+  const { setModal, onSave } = props
 
   const [state, setState] = React.useState({
-    genre: { value: "", errorMessage: "" },
+    name: { value: "", errorMessage: "" },
     errorMessage: "",
     loading: false
   })
@@ -20,22 +20,22 @@ function AddGenre(props) {
       loading: true
     })
 
-    if(!state.genre.value){
+    if(!state.name.value){
       setState({
         ...state,
-        genre: {
+        name: {
           value:  "", 
-          errorMessage: "Genre Name Required"
+          errorMessage: "quality Name Required"
         },
-        errorMessage: "Genre Name Required"
+        errorMessage: "quality Name Required"
       })
       return;
     }
 
-    getApi().post("/api/add-genre", {genre: state.genre.value})
+    getApi().post("/api/add-quality", {name: state.name.value})
     .then(response=>{
       if(response.status === 201){
-        onSaveGenre && onSaveGenre(response.data)
+        onSave && onSave(response.data)
         setModal("")
       }
       setState({
@@ -52,21 +52,21 @@ function AddGenre(props) {
     })
 
   }
-
+ 
   return (
     <div>
-      <h1 class="font-bold text-3xl text-gray-200 text-center">Add New Genre</h1>
+      <h1 class="font-bold text-3xl text-gray-200 text-center">New Quality Label</h1>
       <form onSubmit={handleSubmit}>
         <div className="div">
           <InputGroup 
             className="flex-col gap-y-2"
-            name="genre" 
+            name="quality" 
             type="text" 
-            label="Genre" 
-            placeholder="Enter Genre Name" 
-            onChange={(e)=>setState({...state, genre: {value: e.target.value}})}
-            value={state.genre.value}
-            errorMessage={state.genre.errorMessage}
+            label="Quality" 
+            placeholder="Enter quality label" 
+            onChange={(e)=>setState({...state, name: {value: e.target.value}})}
+            value={state.name.value}
+            errorMessage={state.name.errorMessage}
           />
         </div>
       
@@ -82,4 +82,4 @@ function AddGenre(props) {
 }
 
 
-export default AddGenre;
+export default AddQuality;

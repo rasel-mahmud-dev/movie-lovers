@@ -7,7 +7,7 @@ function AddGenre(props) {
   const { setModal, onSave } = props
 
   const [state, setState] = React.useState({
-    genre: { value: "", errorMessage: "" },
+    name: { value: "", errorMessage: "" },
     errorMessage: "",
     loading: false
   })
@@ -20,10 +20,10 @@ function AddGenre(props) {
       loading: true
     })
 
-    if(!state.genre.value){
+    if(!state.name.value){
       setState({
         ...state,
-        genre: {
+        name: {
           value:  "", 
           errorMessage: "Genre Name Required"
         },
@@ -32,7 +32,7 @@ function AddGenre(props) {
       return;
     }
 
-    getApi().post("/api/add-genre", {genre: state.genre.value})
+    getApi().post("/api/add-genre", {name: state.name.value})
     .then(response=>{
       if(response.status === 201){
         onSave && onSave(response.data)
@@ -64,9 +64,9 @@ function AddGenre(props) {
             type="text" 
             label="Genre" 
             placeholder="Enter Genre Name" 
-            onChange={(e)=>setState({...state, genre: {value: e.target.value}})}
-            value={state.genre.value}
-            errorMessage={state.genre.errorMessage}
+            onChange={(e)=>setState({...state, name: {value: e.target.value}})}
+            value={state.name.value}
+            errorMessage={state.name.errorMessage}
           />
         </div>
       

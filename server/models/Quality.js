@@ -2,7 +2,7 @@ const mongoose =  require("mongoose");
 
 
 const schema = {
-  label: String
+  name: String
 }
 
  const Quality = mongoose.model(

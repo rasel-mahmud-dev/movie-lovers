@@ -1,25 +1,24 @@
 import React from 'react'
 
-function InputGroup({name, type, label, value, errorMessage, placeholder, onChange, className}) {
+function TextArea({name, label, value, errorMessage, placeholder, onChange, className}) {
   return (
         <div className={["mt-4 flex items-start flex-col md:flex-row", className].join(" ")} >
             <label htmlFor={name}  className="block w-40 font-medium text-gray-200 mb-2 md:mb-0" >{label}</label>
             <div className="w-full">
-                <input 
+                <textarea 
                     name={name}
                     value={value} 
-                    type={type} 
                     id={name}
                     placeholder={placeholder} 
                     onChange={onChange}
-                    class="input input-bordered input-primary w-full text-gray-300"
-                />
+                    class="textarea textarea-primary w-full h-32 text-gray-300 " 
+                ></textarea>
                 <div className="mt-1">
-                    {errorMessage && <span className="rounded-md text-error">{errorMessage}</span> }
+                    {errorMessage && <span className="rounded-md text-error ">{errorMessage}</span> }
                 </div>
             </div>
         </div>
     )
 }
 
-export default InputGroup
+export default TextArea
