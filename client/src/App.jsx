@@ -16,9 +16,9 @@ import { Route, Routes } from 'react-router-dom'
 import AddMovie from './pages/addMovie/AddMovie'
 import Movies from './pages/movies/Movies'
 import MovieDetail from './pages/movieDetail/MovieDetail'
+import Series from './pages/series/Series'
 
 import { fetchGenres, fetchMovies } from './store/actions/appActions'
-
 
 
 function App() {
@@ -55,6 +55,7 @@ function App() {
       <Routes>
         <Route exact={true} path="/" element={<HomePage/>} />
         <Route exact={true} path="/movies" element={<Movies/>} />
+        <Route exact={true} path="/series" element={<Series/>} />
         <Route exact={true} path="/movie/:id" element={<MovieDetail/>} />
 
         <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />

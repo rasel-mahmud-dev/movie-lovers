@@ -256,8 +256,6 @@ function AddMovie() {
                 }
             }
         }
-     
-      
 
         if (!isCompleted) {
             setState({

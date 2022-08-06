@@ -25,6 +25,29 @@ exports.getMovies = async (req, res) => {
     }
 }
 
+
+exports.getSeriesMovies = async (req, res) => {  
+    try {
+
+        let s = homeMovieSection.find(s=>s.name === "Series")
+        if(!s){
+            return response(res, 404, {
+                message: "Series not found",
+            })
+        }
+        let doc = await Movie.find({genres: s._id})
+        response(res, 200, {
+            movies: doc
+        })
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
 exports.getMovie = async (req, res) => {  
     try {
 
@@ -42,10 +65,29 @@ exports.getMovie = async (req, res) => {
     }
 }
 
+exports.getMovieDetails = async (req, res) => {  
+    try {
+
+        let doc = await Movie.findOne({_id: req.params.id})
+        .populate("genres", "name")
+        .populate("quality", "name")
+        .populate("language", "name")
+        .populate("author", "firstName lastName avatar")
+
+        response(res, 200, {
+            movie: doc
+        })
+
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
 
 
 exports.getMoviesForHomeSection = async (req, res) => {  
-    
     try {
         let data = {}
         homeMovieSection.forEach(async (section, i)=>{
