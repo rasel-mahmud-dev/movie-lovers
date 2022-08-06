@@ -65,11 +65,11 @@ function Navigation() {
         <div className="my_container">
             <div class="navbar ">
                 <div class="navbar-start">
-                    <a class="btn btn-ghost normal-case text-xl">
+                    <Link to="/" class="btn btn-ghost normal-case text-xl">
                         <div className="w-40">
                             <img src={fullPath("images/logo.png")} alt="" />
                         </div>
-                    </a>
+                    </Link>
                 </div>
                 <div class="w-full hidden lg:flex">
                     <ul class="menu menu-horizontal p-0">

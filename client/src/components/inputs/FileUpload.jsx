@@ -1,6 +1,7 @@
 import React from 'react'
+import fullPath  from 'src/utils/fullPath';
 
-function FileUpload({name, label, value, errorMessage, placeholder, onChange, className}) {
+function FileUpload({name, label, value, defaultValue, errorMessage, placeholder, onChange, className}) {
 
     const [base64, setBase64] = React.useState("")
 
@@ -14,6 +15,7 @@ function FileUpload({name, label, value, errorMessage, placeholder, onChange, cl
         reader.readAsDataURL(file)
         onChange({target: { name, value: file }});
     }
+
 
   return (
         <div>
@@ -34,6 +36,9 @@ function FileUpload({name, label, value, errorMessage, placeholder, onChange, cl
 
                 { base64 && (
                     <img src={base64} className="" />
+                ) }
+                { defaultValue && typeof defaultValue === "string" && !base64 && (
+                    <img src={fullPath(defaultValue)} className="" />
                 ) }
 
             </div>

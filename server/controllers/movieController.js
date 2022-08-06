@@ -3,28 +3,75 @@ const Movie = require("../models/Movie")
 const fileUpload = require("../utilities/fileUpload")
 const uploadImage = require("../utilities/imageCloudinary")
 
-exports.getMovies = async (context) => {  
+const homeMovieSection = require("../models/homeMovieSection.json")
+
+const response = require("../utilities/response")
+
+
+exports.getMovies = async (req, res) => {  
     try {
+
         let doc = await Movie.find({})
-        context.response.status = 200
-        return context.body = {
+
+        response(res, 200, {
             movies: doc
-        }
+        })
+
 
     } catch(ex){
-        context.response.status = 500
-        return context.body = {
+        response(res, 500, {
             message: "Internal error. Please try again",
-        }
+        })
     }
 }
 
-exports.addMovie = async (context) => {
+exports.getMovie = async (req, res) => {  
+    try {
+
+        let doc = await Movie.findOne({_id: req.params.id})
+
+        response(res, 200, {
+            movie: doc
+        })
+
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
+
+exports.getMoviesForHomeSection = async (req, res) => {  
+    
+    try {
+        let data = {}
+        homeMovieSection.forEach(async (section, i)=>{
+            let doc = await Movie.find({genres: section._id}).limit(10)
+            data[section.name] = doc;
+
+            if((i + 1) === homeMovieSection.length){
+                response(res, 200, {
+                    data: data
+                })
+            }
+        })
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+exports.addMovie = async (req, res) => {
 
 
     try {
       
-        let {file, fields}= await fileUpload(context.req)
+        let {file, fields} = await fileUpload(req)
      
         const {
             title,
@@ -34,6 +81,7 @@ exports.addMovie = async (context) => {
             isPublic,
             quality,
             videoUrl,
+            trailerUrl,
             tags,
             rating,
             price,
@@ -52,6 +100,7 @@ exports.addMovie = async (context) => {
             isPublic,
             quality,
             videoUrl,
+            trailerUrl,
             rating,
             price,
             releaseYear,
@@ -60,47 +109,30 @@ exports.addMovie = async (context) => {
             language,
         }
         
+         try{
+            let t = JSON.parse(tags)
+            newMovie.tags = t
+        } catch(ex){}
 
-        // try{
-        //     let t = JSON.parse(tags)
-        //     newMovie.tags = t
-        // } catch(ex){}
 
-       
-
+        let meta = await uploadImage(file, "netflix/images")
+        if(meta){
+            newMovie.cover = meta.secure_url
+        }
     
-        // let meta = await uploadImage(file, "netflix/images")
-        // if(meta){
-        //     newMovie.cover = meta.secure_url
-        // }
-
-     
-        // newMovie.author = context.request.userId
+        newMovie.author = req.userId
         
-        // let doc = new Movie(newMovie)      
+        let doc = new Movie(newMovie)      
+        doc = await doc.save()
 
-        context.res.write("ASDDDDDDDD")
-        context.res.end()
-        
-
-    //    doc.save().then(res=>{
-    //         context.response.status = 201
-
-    //         return context.body = {
-    //             message: "Movie added",
-    //             movie: doc
-    //         } 
-    //     }).catch(ex=>{
-    //         console.log(ex);
-    //     })
-        
-        
+        return response(res, 201, {
+            movie: doc
+        })
 
     } catch(ex){
-        console.log(ex);
-        context.response.status = 500
-        return context.body = {
+     
+        response(res, 500, {
             message: "Internal error. Please try again",
-        }
+        })
     }
 }

@@ -17,13 +17,15 @@ import { FaTimes } from "react-icons/fa"
 import SelectGroup from 'src/components/inputs/SelectGroup'
 import TextArea from '../../components/inputs/TextArea'
 import { getApi } from '../../api'
+import { useParams } from 'react-router-dom';
+import { api } from 'src/api';
 
 
 function AddMovie() {
     const dispatch = useDispatch()
     const { app } = useSelector(state => state)
+    const params = useParams()
 
-    
 
     const [state, setState] = React.useState({
         movieData: {
@@ -34,6 +36,7 @@ function AddMovie() {
             // isPublic: {value: "", errorMessage: "", tauch: false},
             cover: { value: null, blob: null, errorMessage: "", tauch: false },
             quality: { value: "", errorMessage: "", tauch: false }, // id
+            trailerUrl: { value: "", errorMessage: "", tauch: false },
             videoUrl: { value: "", errorMessage: "", tauch: false },
             tags: { value: [], errorMessage: "", tauch: false },
             // rating: {value: "", errorMessage: "", tauch: false},
@@ -47,6 +50,13 @@ function AddMovie() {
     })
 
 
+    function fetchMovie(id, cb){
+        api.get("/api/movie/"+id).then(res=>{
+            cb(res.data.movie)
+        })
+    }
+
+
     React.useState(() => {
         fetchLanguages((data) => {
             dispatch(setLanguages(data.languages))
@@ -55,23 +65,80 @@ function AddMovie() {
             dispatch(setQualities(data.qualities))
         })
 
+        try {
+            if (params.id) {
+                fetchMovie(params.id, (movie)=>{
+                    let updateMovieData = {...state.movieData}
+                    for (let key in updateMovieData) {
+                        if(key === "releaseYear"){
+                            let i = movie[key].indexOf("T")
+                            updateMovieData[key] = {
+                                ...updateMovieData[key],
+                                value: movie[key].slice(0, i),
+                                tauch: movie[key] ? true: false,
+                                errorMessage: ""
+                            }
+                        } else if(key === "price"){
+                            let isZero = movie[key] == 0 
+                            updateMovieData[key] = {
+                                ...updateMovieData[key],
+                                value: isZero ? "0" : movie[key],
+                                tauch: true,
+                                errorMessage: ""
+                            }
+                            
+                        } else {
+                            updateMovieData[key] = {
+                                ...updateMovieData[key],
+                                value: movie[key],
+                                tauch: movie[key] ? true: false,
+                                errorMessage: ""
+                            }
+                        }
+                    }
+                    console.log(updateMovieData);
 
-        try{
-            let d = JSON.parse(localStorage.getItem("userData"))
-            if(d){
-                setState({
-                    ...state,
-                    movieData: d
+                    setState({
+                        ...state,
+                        movieData: updateMovieData
+                    })
                 })
+
+            } else {
+                let d = JSON.parse(localStorage.getItem("userData"))
+                if (d) {
+                    setState({
+                        ...state,
+                        movieData: d
+                    })
+                }
             }
 
-        } catch(_){}
+        } catch (_) { }
 
     }, [])
 
 
 
-    const { movieData, addMovieModal } = state
+    const { addMovieModal, movieData } = state
+    console.log(movieData);
+
+    // const movieData = {
+    //     title: state.movieData.title,
+    //     genres: state.movieData.genres,
+    //     runtime: state.movieData.runtime,
+    //     cover: state.movieData.cover,
+    //     quality: state.movieData.quality,
+    //     trailerUrl: state.movieData.trailerUrl,
+    //     videoUrl: state.movieData.videoUrl,
+    //     tags: state.movieData.tags,
+    //     price: state.movieData.price,
+    //     releaseYear: state.movieData.releaseYear,
+    //     director: state.movieData.director,
+    //     summary: state.movieData.summary,
+    //     language: state.movieData.language
+    // }
+
 
     function handleChange(e) {
 
@@ -155,7 +222,7 @@ function AddMovie() {
         )
     }
 
-    function resetForm(){
+    function resetForm() {
         localStorage.removeItem("userData")
 
         let updateMovieData = {}
@@ -177,26 +244,27 @@ function AddMovie() {
     function handleAddMovie(e) {
         e.preventDefault();
         let isCompleted = true;
+        let updatedState = {}
 
-        let updatedState = {
-            ...movieData
-        }
-
+        
         for (let key in movieData) {
             if (key === "tags") {
 
-                if (!movieData[key].tauch || !movieData[key].value || movieData[key].value.length === 0 ) {
+                if (!movieData[key].tauch || !movieData[key].value || movieData[key].value.length === 0) {
                     updatedState[key].errorMessage = `${key} is required`
                     isCompleted = false;
                 }
-            } else if(key === "cover"){
+            } else if (key === "cover") {
                 if (!movieData[key].tauch || !movieData[key].value) {
                     updatedState[key].errorMessage = `${key} is required`
                     isCompleted = false;
                 } else {
-                    if(movieData[key].value.size > "102400"){ // 100kb
-                        updatedState[key].errorMessage = `${key} size should be under 100kb`
-                        isCompleted = false;
+                    // only check when image is blob data;
+                    if(!params.id){
+                        if (movieData[key].value.size > "102400") { // 100kb
+                            updatedState[key].errorMessage = `${key} size should be under 100kb`
+                            isCompleted = false;
+                        }
                     }
                 }
 
@@ -207,6 +275,8 @@ function AddMovie() {
                 }
             }
         }
+     
+        console.log(updatedState);
 
         if (!isCompleted) {
             setState({
@@ -214,6 +284,8 @@ function AddMovie() {
                 movieData: updatedState
             })
             return;
+        } else {
+            console.log("SADDDDD");
         }
 
         localStorage.setItem("userData", JSON.stringify(movieData))
@@ -273,7 +345,20 @@ function AddMovie() {
                         placeholder="Choose Cover Photo"
                         onChange={handleChange}
                         value={movieData.cover.value}
+                        defaultValue={movieData.cover.value}
                         errorMessage={movieData.cover.errorMessage}
+                    />
+
+
+                    {/*********** videoUrl **************/}
+                    <InputGroup
+                        name="trailerUrl"
+                        type="text"
+                        label="Trailer Url"
+                        placeholder="trailer url"
+                        onChange={handleChange}
+                        value={movieData.trailerUrl.value}
+                        errorMessage={movieData.trailerUrl.errorMessage}
                     />
 
 

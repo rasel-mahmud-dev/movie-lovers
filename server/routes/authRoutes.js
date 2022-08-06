@@ -12,17 +12,17 @@ const authController = require("../controllers/authController")
 
 module.exports = (router)=>{
 
-    router.post('', '/api/registration', authController.registration)
+    router.post('/api/registration', authController.registration)
 
-    router.post('', '/api/login', authController.login)
+    router.post('/api/login', authController.login)
 
-    router.post('', '/api/auth/login-token', authController.loginWithToken)
+    router.post('/api/auth/login-token', authController.loginWithToken)
 
-    router.post('', '/api/auth/get-otp-code', authController.getOtpCode)
+    router.post('/api/auth/get-otp-code', authController.getOtpCode)
 
-    router.post('', '/api/auth/validate-otp-code', authController.otpValidation)
+    router.post('/api/auth/validate-otp-code', authController.otpValidation)
 
-    router.post('', '/api/auth/reset-password', authController.resetPassword)
+    router.post('/api/auth/reset-password', authController.resetPassword)
 
 
 }

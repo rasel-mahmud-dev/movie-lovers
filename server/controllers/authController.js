@@ -8,23 +8,25 @@ const getOTP = require("../utilities/getOTP")
 const {createHash, hashCompare} = require("../hash")
 const {createToken, getToken, parseToken} = require("../jwt")
 
+const response = require("../utilities/response")
 
-
-exports.registration = async (context) => {
-    const {firstName, lastName, email, gender } = context.request.body
+exports.registration = async (req, res) => {
+    const {firstName, lastName, email, gender } = req.body
 
     let user = await User.findOne({email})
     if(user){
-        return context.body = "User already registered"
+        return response(res, 500, {
+            auth: null,
+            message: "User already registered"
+        })
     }
 
     user = await TempUser.findOne({email})
     if(user){
-        context.response.status = 206
-        return context.body = {
-            auth: user,
+        return response(res, 206, {
+            auth: null,
             message: "Please verify your email",
-        }
+        })
     }
 
     let tempUser = new TempUser({
@@ -35,12 +37,14 @@ exports.registration = async (context) => {
         role: "customer"
     })
     user = await tempUser.save();
-    context.body = "Welcomasdsade to my Koa.js Server"
+    
+
+
 }
 
 
-exports.otpValidation = async (context) => {
-    const { email, otp } = context.request.body
+exports.otpValidation = async (req, res) => {
+    const { email, otp } = req.body
   
     try {
   
@@ -49,40 +53,40 @@ exports.otpValidation = async (context) => {
         if(!tempUser){
             let user = User.findOne({email}).select("-password")
             if(user){
-                return context.body = {
+                return response(res, 200, {
                     message: "This user already verified",
                     auth: user
-                } 
+                })
+                
             } else {
-                return context.body = {
-                    message: "user not found",     
-                }  
+                return response(res, 404, {
+                    message: "user not found",
+                })
             }
 
         }
 
         if(tempUser.expiredAt < new Date()){
-            context.response.status = 409
-            return context.body = {
+            return response(res, 409, {
                 message: "OTP Code expired",
-            }
+            })
         }
      
         if(tempUser.OTPCode != otp){
-            context.response.status = 409
-            return context.body = {
+            return response(res, 409, {
                 message: "OTP does't match",
-            }
+            })
         }
 
         if(tempUser){
             let user = await User.findOne({email}).select("-password")
+
             if(user){
-                return context.body = {
+                return response(res, 409, {
                     message: "This user already verified",
-                    auth: user
-                }  
+                })
             }
+        
 
             let varifiedUser = new User({
                 firstName: tempUser.firstName,
@@ -99,12 +103,10 @@ exports.otpValidation = async (context) => {
             } catch(ex){
 
             }
-
-            context.response.status = 201
-            return context.body = {
+            return response(res, 201, {
                 message: "verification successfully",
                 auth: varifiedUser
-            }
+            })
         }
 
     } catch(ex){
@@ -113,48 +115,45 @@ exports.otpValidation = async (context) => {
 }
 
 
-exports.login = async (context) => {
-    const { email, password } = context.request.body
-
-
+exports.login = async (req, res) => {
+   
+    const { email, password } = req.body
     let user = await User.findOne({email: email})
 
     if(!user){
-        context.response.status = 404
-        return context.body = {
+   
+        return response(res, 404, {
             message: "user not registered",
-        }
+        })
     }
 
     
     let isMatched = await hashCompare(password, user.password)
     if(!isMatched){
-        context.response.status = 500
-        return context.body = {
+        return response(res, 500, {
             message: "Wrong password",
-        }
+        })
     }
 
     let {password: as, ...other} = user._doc;
 
     let token = createToken(user._id, user.email, user.role)
-    context.response.status = 201
-    context.body = {
+  
+    response(res, 201, {
         message: "Login success",
         auth: other,
         token: token
-    }
+    })
+    
 }
 
-exports.loginWithToken = async (context) => {
-    const { email, password } = context.request.body
+exports.loginWithToken = async (req, res) => {
 
-    let token = getToken(context.request)
+    let token = getToken(req)
     if(!token){
-        context.response.status = 409
-        context.body = {
+        return response(res, 409, {
             message: "Token Missing",
-        }
+        })
     }
 
 
@@ -163,26 +162,23 @@ exports.loginWithToken = async (context) => {
         let data = await parseToken(token)
         if(data){
             let user = await User.findOne({_id: data.id}).select("-password")
-            context.response.status = 201
-            return context.body =  {
+            response(res, 201, {
                 message: "",
                 auth: user
-            }
+            })
         }
-
 
     } catch(err){
-        context.response.status = 500
-        return context.body =  {
-            message: "Please login first"
-        }
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
     }
 
 }
 
 
-exports.getOtpCode = async (context) => {
-    const { email } = context.request.body
+exports.getOtpCode = async (req, res) => {
+    const { email } = req.body
     let to = process.env.APP_EMAIL;
     try {
 
@@ -212,57 +208,56 @@ exports.getOtpCode = async (context) => {
                     expiredAt: exp
                 }}
             )
-            if(doc){          
-                context.response.status = 201  
-                context.body = {
+            if(doc){    
+                
+                response(res, 201, {
                     message: "OTP Code has been send",
                     expiredAt: exp
-                }
+                })
+               
             }
         }
 
         // context.body = info
 
     } catch(ex){
-        console.log(ex) 
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
     }
 }
 
 
-exports.resetPassword = async (context) => {
+exports.resetPassword = async (req, res) => {
 
-    const { email, password, otp } = context.request.body
+    const { email, password, otp } = req.body
   
     try {
   
         let user = await User.findOne({email: email})
         if(!user){
-            context.response.status = 404
-            return context.body = {
+            return response(res, 404, {
                 message: "user not registered",
-            }
+            })
         }
 
         if(user.expiredAt < new Date()){
-            context.response.status = 409
-            return context.body = {
-                message: "OTP Code expired",
-            }
+            return response(res, 409, {
+                    message: "OTP Code expired"
+            })
         }
      
         if(user.OTPCode != otp){
-            context.response.status = 409
-            return context.body = {
-                message: "OTP does't match",
-            }
+             return response(res, 409, {
+                message: "OTP does't match",  
+            })
         }
 
         let {err, hash} = await createHash(password)
         if(err){
-            context.response.status = 500
-            return context.body = {
+            return response(res, 500, {
                 message: "Internal error. Please try again",
-            }
+            })
         }
 
         user.password = hash
@@ -271,17 +266,16 @@ exports.resetPassword = async (context) => {
 
         let {password: removePass, ...other} = doc._doc
 
-        context.response.status = 201
-        return context.body = {
+    
+        response(res, 201, {
             message: "password changed",
             auth: other
-        }
+        })
     
 
     } catch(ex){
-        context.response.status = 500
-        return context.body = {
+        response(res, 500, {
             message: "Internal error. Please try again",
-        }
+        })
     }
 }

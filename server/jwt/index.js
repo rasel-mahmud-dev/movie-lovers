@@ -27,7 +27,7 @@ exports.parseToken = (token)=> {
 }
 
 exports.getToken = (req)=> {
-  return req.header["authorization"]
+  return req.headers["authorization"]
 }
 
 

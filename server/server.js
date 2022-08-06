@@ -1,59 +1,28 @@
-const Koa = require('koa');
-const koaRouter = require('koa-router')// importing Koa-Router
-const serve = require("koa-static");
-const cors = require('@koa/cors');
-const bodyParser = require('koa-bodyparser');
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const routes  = require('./routes');
 const { default: mongoose } = require('mongoose');
+const morgan = require('morgan');
 
 require("dotenv").config()
 
 
-const app = new Koa();
-const router = new koaRouter()
+const app = express();
 
-app.use(bodyParser());
 
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 app.use(cors());
+app.use(morgan("dev"));
 
 // serve public dir as static files
-app.use(serve(__dirname + "/public"));
-
-//  logger
-app.use(async (ctx, next) => {
-  await next();
-  const rt = ctx.response.get('X-Response-Time');
-  console.log(`${ctx.method} ${ctx.url} - ${rt}`);
-});
+app.use(express.static((__dirname + "/public")))
 
 
-// x-response-time
-app.use(async (ctx, next) => {
-  const start = Date.now();
-  await next();
-  const ms = Date.now() - start;
-  ctx.set('X-Response-Time', `${ms}ms`);
-});
-
-app.use(router.routes())
-    .use(router.allowedMethods())// registering routes to the application
-  
-
-// response
-router.get('home', '/', (context) => {
-    context.body = "Welcome to my Koa.js Server"
-})
-  
-// response
-router.get('', '/home', (context) => {
-
-    context.body = "Welcomasdsade to my Koa.js Server"
-})
-  
 
 // initialize all routes
-routes(router)
-
+routes(app)
 
 
 const PORT = process.env.PORT || 3000

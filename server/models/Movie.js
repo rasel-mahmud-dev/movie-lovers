@@ -8,6 +8,7 @@ const schema = {
   isPublic: Boolean,
   cover: String,
   quality: { type: mongoose.Schema.Types.ObjectId, ref: "Quality"},
+  trailerUrl: String,
   videoUrl: String,
   tags: [String],
   rating: Number,

@@ -1,33 +1,33 @@
 
 const Quality = require("../models/Quality")
+const response = require("../utilities/response")
 
-exports.getQualities = async (context) => {  
+
+exports.getQualities = async (req, res) => {  
     try {
         let doc = await Quality.find({})
-        context.response.status = 200
-        return context.body = {
+
+        response(res, 200, {
             qualities: doc
-        }
+        })
 
     } catch(ex){
-        context.response.status = 500
-        return context.body = {
+        response(res, 500, {
             message: "Internal error. Please try again",
-        }
+        })
     }
 }
 
-exports.addAddQuality = async (context) => {
+exports.addAddQuality = async (req, res) => {
 
-    const { name } = context.request.body
+    const { name } = req.body
     try {
   
         let doc = await Quality.findOne({name: name})
         if(doc){
-            context.response.status = 404
-            return context.body = {
+            response(res, 404, {
                 message: "quality already exists",
-            }
+            })
         }
         
         let newQuality = new Quality({
@@ -36,19 +36,16 @@ exports.addAddQuality = async (context) => {
 
         newQuality = await newQuality.save()
         if(newQuality){
-            context.response.status = 201
-            return context.body = {
+            response(res, 201, {
                 message: "quality added",
                 quality: newQuality
-            }
+            })
         }
     
 
     } catch(ex){
-        context.response.status = 500
-        console.log(ex);
-        return context.body = {
+        response(res, 500, {
             message: "Internal error. Please try again",
-        }
+        })
     }
 }

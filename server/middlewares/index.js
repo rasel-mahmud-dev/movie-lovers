@@ -1,60 +1,60 @@
 const { parseToken, getToken}  = require("../jwt")
+const sendResponse = require("../utilities/response")
 
-exports.auth = (ctx, next)=> {
-  let token = getToken(ctx.request)
+exports.auth = (request, response, next)=> {
+  let token = getToken(request)
   if(!token){
-    ctx.request.userId = null
-    ctx.response.status = 409
-    return ctx.body = {
+    request.userId = null
+   
+    return sendResponse(response, 409, {
         message: "please login first"
-    }
+    })
   }
 
   parseToken(token).then(u=>{
-    ctx.request.userId = u.id
-    ctx.request.role = u.role,
-    ctx.request.userEmail = u.email
+    request.userId = u.id
+    request.role = u.role,
+    request.userEmail = u.email
     next()
     
   }).catch(err=>{
-    ctx.request.userId = null
-    ctx.response.status = 409
-    return ctx.body = {
-        message: "please login first"
-    }
+    request.userId = null
+    
+    return sendResponse(response, 409, {
+      message: "please login first"
+    })
+    
   })
 }
 
 
 
-exports.admin = (ctx, next)=> {
-  let token = getToken(ctx.request)
+exports.admin = (request, response, next)=> {
+  let token = getToken(request)
   if(!token){
-    ctx.request.userId = null
-    ctx.response.status = 409
-    return ctx.body = {
-        message: "please login first"
-    }
+    request.userId = null
+    return sendResponse(response, 409, {
+      message: "please login first"
+    })
   }
 
   parseToken(token).then(u=>{
     if(u.role === "admin") {
-      ctx.request.userId = u.id
-      ctx.request.role = "admin"
-      ctx.request.userEmail = u.email
+      request.userId = u.id
+      request.role = "admin"
+      request.userEmail = u.email
       next()
     } else {
-      ctx.response.status = 409
-      return ctx.body = {
-          message: "you are not permit on this action",
-      }
+      return sendResponse(response, 409, {
+        message: "you are not permit on this action",
+      })
+      
     }
   }).catch(err=>{
-    ctx.request.userId = null
-    ctx.response.status = 409
-    return ctx.body = {
-        message: "please login first"
-    }
+    request.userId = null
+    return sendResponse(response, 409, {
+      message: "please login first"
+    })
   })
 }
 

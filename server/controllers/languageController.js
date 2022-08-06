@@ -1,33 +1,33 @@
 
 const Language = require("../models/Language")
+const response = require("../utilities/response")
 
-exports.getLanguages = async (context) => {  
+
+exports.getLanguages = async (req, res) => {  
     try {
         let doc = await Language.find({})
-        context.response.status = 200
-        return context.body = {
+        response(res, 200, {
+            message: "",
             languages: doc
-        }
+        })
 
     } catch(ex){
-        context.response.status = 500
-        return context.body = {
+        response(res, 500, {
             message: "Internal error. Please try again",
-        }
+        })
     }
 }
 
-exports.addAddLanguage = async (context) => {
+exports.addAddLanguage = async (req, res) => {
 
-    const { name } = context.request.body
+    const { name } = req.body
     try {
   
         let doc = await Language.findOne({name: name})
         if(doc){
-            context.response.status = 404
-            return context.body = {
+            return response(res, 409, {
                 message: "language already exists",
-            }
+            })
         }
         
         let newLanguage = new Language({
@@ -36,19 +36,16 @@ exports.addAddLanguage = async (context) => {
 
         newLanguage = await newLanguage.save()
         if(newLanguage){
-            context.response.status = 201
-            return context.body = {
+            response(res, 201, {
                 message: "language added",
                 language: newLanguage
-            }
+            })
         }
     
 
     } catch(ex){
-        context.response.status = 500
-        console.log(ex);
-        return context.body = {
+        response(res, 500, {
             message: "Internal error. Please try again",
-        }
+        })
     }
 }

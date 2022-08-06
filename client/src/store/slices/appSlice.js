@@ -13,6 +13,7 @@ const movies = [
 
 const initialState = {
   movies: [],
+  sectionMovies: {},
   categories: [],
   modal: "", // login, registration, "",
   genres: [], // {name: string, _id: string }[]
@@ -32,6 +33,10 @@ export const counterSlice = createSlice({
         state.genres = action.payload;
     },
     
+    setSectionMovies(state, action){
+        state.sectionMovies = action.payload;
+    },
+    
     setLanguages(state, action){
         state.languages = action.payload;
     },
@@ -47,6 +52,6 @@ export const counterSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setMovies, setGenres, setLanguages, setQualities, toggleModal } = counterSlice.actions
+export const { setMovies, setGenres, setSectionMovies, setLanguages, setQualities, toggleModal } = counterSlice.actions
 
 export default counterSlice.reducer
