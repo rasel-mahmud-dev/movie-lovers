@@ -1,39 +1,69 @@
 
 import React from "react"
-import {useSelector} from "react-redux"
+import {useSelector, useDispatch} from "react-redux"
 import fullPath from "../../utils/fullPath"
 import { useParams, Link } from "react-router-dom"
+import { fetchMovieDetails } from './../../store/actions/appActions';
+import { setMovie } from 'src/store/slices/appSlice';
+import {FaCloudDownloadAlt} from "react-icons/fa"
+
 
 
 const MovieDetail = ()=> {
 
     const {app, auth} = useSelector(state=>state)
 
-    const {movies} = app
+    const {movie} = app
 
     const params =  useParams()
-
+    const dispatch = useDispatch();
   
 
-    const movie = movies.find(movie=>movie._id === params.id)
+    React.useEffect(()=>{
+
+        fetchMovieDetails(params.id, (movie)=>{
+            dispatch(setMovie(movie))
+        })
+
+    }, [])
 
 
 
     function renderValue(key, value){
+        console.log(value);
         let item;
         switch (true) {
+            case key === "author":
+                item = <span>{value.firstName} {value.lastName}</span>
+                break;
+
             case key === "price":
-             
                 item = <span>{value ==  0 ? "Free" : "$" + value}</span>
+                break;
+
+            case key === "runtime":
+                item = <span>{value} min</span>
+                break;
+
+            case key === "tags":
+                let aa = []
+                value.forEach(a=>{
+                    let i = <span className="px-3 py-1 bg-primary text-sm text-gray-200 mr-2 rounded">{a}</span>
+                    aa.push(i)
+                })
+                item = aa;
                 break;
         
             case key === "releaseYear":
-             
                 item = <span>{new Date(value).toLocaleDateString()}</span>
                 break;
         
             default:
-                item = value
+                if(typeof value === "object"){
+                    item = value.name
+                } else {
+                    item = value
+                }
                 break;
         }
 
@@ -78,7 +108,7 @@ const MovieDetail = ()=> {
 
                     {/* video player  */}
                     <div className="mt-10"> 
-                        <video controls className="w-4/6" src={fullPath("images/v.mp4")}></video>
+                        <video controls className="w-full" src={fullPath("images/v.mp4")}></video>
                     </div>
 
 
@@ -97,13 +127,16 @@ const MovieDetail = ()=> {
                     </table>   
 
     
-                    <div className="mt-10 flex"> 
+                    <div className="mt-1 flex"> 
                         <span className="flex-shrink-0 py-2 w-[150px] capitalize  text-red-500 font-bold text-xl">Summary</span>
                         <p className="text-gray-200 mt-4">{movie.summary}</p>
                     </div>
 
 
-                    <button className="mt-10 btn btn-primary">Download </button>
+                    <button className="mt-10 btn btn-primary">
+                        <FaCloudDownloadAlt className="text-lg"/>
+                        <span className="ml-2">Download</span>
+                    </button>
 
 
                 </div>

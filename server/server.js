@@ -42,3 +42,10 @@ mongoose.connect("mongodb://127.0.0.1:27017/netflix")
 app.listen(PORT, ()=>{
     console.log("server is runnin on port " + PORT);
 });
+
+
+
+
+
+
+

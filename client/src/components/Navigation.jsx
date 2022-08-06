@@ -41,8 +41,10 @@ function Navigation() {
             <div onMouseLeave={()=>toggleExpandDropdown("auth")} className="border-slate-900 bg-neutral p-6 pt-4 absolute right-0 top-8 z-20 text-white w-[250px] text-start rounded-md">
                 <ul>
                     <li className="flex items-center link link-hover">
-                        <CgProfile />
-                        <span className="ml-2">Profile</span>
+                        <Link to={`/auth/profile/${auth.auth._id}`} className="flex items-center">
+                            <CgProfile /> 
+                            <span className="ml-2">Profile</span>
+                        </Link>
                     </li>
                     <li className="flex items-center link link-hover mt-2">
                         <CgProfile />
@@ -67,7 +69,7 @@ function Navigation() {
                 <div class="navbar-start">
                     <Link to="/" class="btn btn-ghost normal-case text-xl">
                         <div className="w-40">
-                            <img src={fullPath("images/logo.png")} alt="" />
+                            <img src={fullPath("images/logo-3.svg")} alt="" />
                         </div>
                     </Link>
                 </div>

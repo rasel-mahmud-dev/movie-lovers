@@ -41,3 +41,25 @@ export function fetchQualities(cb){
         }
       })    
 }
+
+
+
+export function fetchMovieDetails(movieId, cb){
+ /******* Fetch all qualities ********/
+ api.get("/api/movie-details/" + movieId).then(response=>{
+    if(response.status === 200){
+        cb(response.data.movie)
+    }
+  })    
+}
+
+
+
+export function fetchAuthProfile(profileId, cb){
+ /******* Fetch all qualities ********/
+ api.get("/api/user/" + profileId).then(response=>{
+    if(response.status === 200){
+        cb(response.data.user)
+    }
+  })    
+}

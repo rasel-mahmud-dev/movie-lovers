@@ -2,6 +2,8 @@ import './App.css'
 import Navigation from './components/Navigation'
 
 import HomePage from "src/pages/homepage/HomePage"
+import Profile from "src/pages/profile/Profile"
+import Footer from "src/components/Footer"
 
 import {setMovies, setGenres} from "src/store/slices/appSlice"
 
@@ -58,9 +60,12 @@ function App() {
         <Route exact={true} path="/series" element={<Series/>} />
         <Route exact={true} path="/movie/:id" element={<MovieDetail/>} />
 
+        <Route exact={true} path="/auth/profile/:id" element={<Profile/>} />
         <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />
         <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
       </Routes>
+
+      <Footer />
 
     </div>
 
