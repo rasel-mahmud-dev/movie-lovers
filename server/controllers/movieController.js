@@ -97,7 +97,7 @@ exports.addMovie = async (req, res) => {
             author,
             genres,
             runtime,
-            isPublic,
+            isPublic: true,
             quality,
             videoUrl,
             trailerUrl,
@@ -115,15 +115,90 @@ exports.addMovie = async (req, res) => {
         } catch(ex){}
 
 
-        let meta = await uploadImage(file, "netflix/images")
-        if(meta){
-            newMovie.cover = meta.secure_url
-        }
+        if(file){
+            let meta = await uploadImage(file, "netflix/images")
+            if(meta){
+                newMovie.cover = meta.secure_url
+            }
+        }   
     
         newMovie.author = req.userId
         
         let doc = new Movie(newMovie)      
         doc = await doc.save()
+
+        return response(res, 201, {
+            movie: doc
+        })
+
+    } catch(ex){
+     
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
+exports.updateMovie = async (req, res) => {
+
+
+    try {
+      
+        let {file, fields} = await fileUpload(req)
+     
+        const {
+            _id,
+            title,
+            genres,
+            runtime,
+            quality,
+            cover,
+            videoUrl,
+            trailerUrl,
+            tags,
+            rating,
+            price,
+            releaseYear,
+            director,
+            summary,
+            language,
+          
+        } = fields
+
+        let updateMovie = {
+            title,
+            genres,
+            runtime,
+            quality,
+            videoUrl,
+            trailerUrl,
+            rating,
+            price,
+            releaseYear,
+            director,
+            summary,
+            language,
+        }
+        
+         try{
+            let t = JSON.parse(tags)
+            updateMovie.tags = t
+        } catch(ex){}
+
+
+        if(file){
+            let meta = await uploadImage(file, "netflix/images")
+            if(meta){
+                updateMovie.cover = meta.secure_url
+            }
+        } else {
+            updateMovie.cover = cover
+        }
+    
+        updateMovie.author = req.userId
+        
+        let doc = await Movie.findByIdAndUpdate({_id}, { $set: updateMovie }, { new: true })      
 
         return response(res, 201, {
             movie: doc

@@ -119,26 +119,7 @@ function AddMovie() {
     }, [])
 
 
-
     const { addMovieModal, movieData } = state
-    console.log(movieData);
-
-    // const movieData = {
-    //     title: state.movieData.title,
-    //     genres: state.movieData.genres,
-    //     runtime: state.movieData.runtime,
-    //     cover: state.movieData.cover,
-    //     quality: state.movieData.quality,
-    //     trailerUrl: state.movieData.trailerUrl,
-    //     videoUrl: state.movieData.videoUrl,
-    //     tags: state.movieData.tags,
-    //     price: state.movieData.price,
-    //     releaseYear: state.movieData.releaseYear,
-    //     director: state.movieData.director,
-    //     summary: state.movieData.summary,
-    //     language: state.movieData.language
-    // }
-
 
     function handleChange(e) {
 
@@ -276,7 +257,7 @@ function AddMovie() {
             }
         }
      
-        console.log(updatedState);
+      
 
         if (!isCompleted) {
             setState({
@@ -290,6 +271,7 @@ function AddMovie() {
 
         localStorage.setItem("userData", JSON.stringify(movieData))
 
+
         let formData = new FormData()
         for (let key in movieData) {
             if (key === "tags") {
@@ -299,11 +281,25 @@ function AddMovie() {
             }
         }
 
-        getApi().post("/api/add-movie", formData).then(response => {
-            console.log(response);
-        }).catch(ex => {
-            console.log(ex);
-        })
+
+        // Update existing movie
+        if(params.id){
+            formData.append("_id", params.id)
+            getApi().post("/api/update-movie", formData).then(response => {
+                console.log(response);
+            }).catch(ex => {
+                console.log(ex);
+            })
+
+
+        } else {
+            getApi().post("/api/add-movie", formData).then(response => {
+                console.log(response);
+            }).catch(ex => {
+                console.log(ex);
+            })
+        }
+        
     }
 
     return (
