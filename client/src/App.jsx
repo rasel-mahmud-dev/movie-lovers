@@ -11,7 +11,6 @@ import {loginWithTokenAction} from "src/store/slices/authSlice"
 
 
 import { useDispatch, useSelector } from 'react-redux'
-import RegistrationModal from './components/RegistrationModal'
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
@@ -23,6 +22,8 @@ import Series from './pages/series/Series'
 import { fetchGenres, fetchMovies } from './store/actions/appActions'
 import Contact from './pages/Contact';
 import AboutUs from './pages/AboutUs';
+
+import JoinHome from 'src/pages/auth/JoinHome'
 
 
 function App() {
@@ -49,7 +50,7 @@ function App() {
     <div className="App">
       <Navigation />
      
-      <RegistrationModal />
+      <JoinHome />
 
       <Routes>
         <Route exact={true} path="/" element={<HomePage/>} />

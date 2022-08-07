@@ -8,6 +8,7 @@ import Avatar from 'src/components/Avatar';
 
 import Profile from 'src/pages/dashboard/Profile';
 import FavoriteMovies from 'src/pages/dashboard/FavoriteMovies';
+import EditProfile from './EditProfile';
 
 function Dashboard(props) {
 
@@ -15,7 +16,7 @@ function Dashboard(props) {
     const dispatch = useDispatch();
     const location = useLocation();
 
-    
+
 
     const { auth } = useSelector(state => state)
     const { authProfile } = auth
@@ -36,6 +37,7 @@ function Dashboard(props) {
 
 
     const [sideBarContent, setSideBarContent] = React.useState("Profile")
+    const [editProfile, setEditProfile] = React.useState(true)
 
     const sideBarData = [
         { name: "Profile" },
@@ -77,14 +79,22 @@ function Dashboard(props) {
                     </div>
 
                     <div className="col-span-3">
-                        {sideBarContent === "Profile" && <Profile />}
+                        {sideBarContent === "Profile" && editProfile 
+                        ? <EditProfile 
+                                auth={auth.auth}
+                                editProfile={editProfile} 
+                                setEditProfile={setEditProfile} 
+                            /> 
+
+                        :  <Profile 
+                                editProfile={editProfile} 
+                                setEditProfile={setEditProfile}
+                            />
+                        }
                         {sideBarContent === "Favorites" && <FavoriteMovies />}
                     </div>
-
-
                 </div>
             )}
-
         </div>
     )
 }

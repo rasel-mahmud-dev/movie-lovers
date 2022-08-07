@@ -5,10 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAuthProfile } from "src/store/slices/authSlice"
 import { fetchAuthProfile } from "src/store/actions/authActions"
 import Avatar from 'src/components/Avatar';
+import EditProfile from './EditProfile';
 
 
 
 function Profile(props) {
+
+    const {setEditProfile, editProfile} = props
+
 
     const params = useParams();
     const dispatch = useDispatch();
@@ -21,10 +25,13 @@ function Profile(props) {
 
     return (
         <div>
+            <div>
             <h1 className="text-3xl text-gray-100 font-medium mb-4">
                 Welcame 
                 <span> {authProfile.firstName}</span>
              </h1>
+             <button className='btn' onClick={()=>setEditProfile(true)} >Edit Profile</button>
+            </div>
 
             <table>
 
@@ -37,7 +44,7 @@ function Profile(props) {
                     ))}
                 </tbody>
 
-            </table>
+            </table> 
         </div>
     )
 
