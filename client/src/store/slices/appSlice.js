@@ -21,7 +21,7 @@ const initialState = {
   genres: [], // {name: string, _id: string }[]
   languages: [], // {name: string, _id: string }[]
   qualities: [], // {name: string, _id: string }[]
-
+  searchValue: "",
   pagination: {
     currentPage: 1,
     perPageView: 20,
@@ -49,9 +49,6 @@ export const counterSlice = createSlice({
         }
     },
 
-
-
-
     setMovie(state, action){
         state.movie = action.payload;
     },
@@ -73,7 +70,6 @@ export const counterSlice = createSlice({
             }
         }
     },
-
     
     setGenres(state, action){
         state.genres = action.payload;
@@ -96,6 +92,17 @@ export const counterSlice = createSlice({
     toggleModal(state, action){
         state.modal = action.payload; 
     },
+
+    setSearchValue(state, action){
+        state.searchValue = action.payload
+    },
+
+    setResetSearch(state, action){
+        state.searchValue = ""
+        state.movies = action.payload
+        state.pagination.currentPage = 1
+    },
+
   },
  
 })
@@ -112,7 +119,9 @@ export const {
         setQualities,
         setTotalMovie,
         toggleModal,
-        setPaginatedMovie
+        setPaginatedMovie,
+        setSearchValue,
+        setResetSearch
     } = counterSlice.actions
 
 export default counterSlice.reducer

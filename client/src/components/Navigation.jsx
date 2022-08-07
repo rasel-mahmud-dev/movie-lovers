@@ -1,5 +1,5 @@
 import React from 'react'
-import {toggleModal} from "src/store/slices/appSlice"
+import {toggleModal, setSearchValue, setPaginatedMovie } from "src/store/slices/appSlice"
 
 import {logOutAction} from "src/store/slices/authSlice"
 
@@ -14,14 +14,16 @@ import { BiSearchAlt } from "react-icons/bi"
 import fullPath from "src/utils/fullPath"
 import Avatar from 'src/components/Avatar';
 
+
+import { fetchMovies } from 'src/store/actions/appActions';
+
 function Navigation() {   
     const dispatch = useDispatch()
 
     const navigate = useNavigate()
 
-    const [searchValue, setSearchValue] = React.useState("")
+    const {auth, app} = useSelector(state=>state)
 
-    const auth = useSelector(state=>state.auth)
 
     const [state, setState] = React.useState({
         openDropdown: "" /// "auth"
@@ -72,8 +74,14 @@ function Navigation() {
 
 
     function handleSearchMovies(){
+        const {searchValue, pagination, movies} = app
         if(searchValue){
-            alert(searchValue)
+            fetchMovies(pagination.currentPage, pagination.perPageView, searchValue, (paginatedMovie)=>{
+                dispatch(setPaginatedMovie(paginatedMovie))
+                if(paginatedMovie){
+                    navigate("/movies")
+                }
+            }) 
         }
     }
 
@@ -106,7 +114,8 @@ function Navigation() {
                        <div className="flex px-2 justify-between items-center h-auto input input-bordered input-primary text-gray-200 w-full">
                         <input 
                                 type="text" 
-                                onChange={(e)=>setSearchValue(e.target.value)}
+                                value={app.searchValue}
+                                onChange={(e)=> dispatch(setSearchValue(e.target.value))}
                                 placeholder="Search movie" 
                                 className="py-1 pl-1.5 outline-none bg-transparent w-full placeholder:text-gray-200"
                             />
@@ -127,7 +136,6 @@ function Navigation() {
                             </div>
                         ) : (
                             <div>
-                                <button className="btn btn-primary">Get started</button>
                                 <button onClick={()=>dispatch(toggleModal("registration"))} className="btn btn-primary ml-4">Join Now</button>
                             </div>
                         ) }

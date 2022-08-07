@@ -10,12 +10,17 @@ const response = require("../utilities/response")
 
 exports.getMovies = async (req, res) => {  
 
-    const { pageNumber, perPageView } = req.body
-    console.log(pageNumber, perPageView);
+    const { text, pageNumber, perPageView } = req.body
 
     try {
 
-        let doc = await Movie.find({})
+        let query = {}
+
+        if(text){
+            query["title"] = { $regex: new RegExp(text, "i")}
+        }
+
+        let doc = await Movie.find(text ? query : {})
         .skip((pageNumber - 1) * perPageView )
         .limit(perPageView)
         
@@ -96,6 +101,27 @@ exports.getMovieDetails = async (req, res) => {
 
         response(res, 200, {
             movie: doc
+        })
+
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
+exports.searchMovie = async (req, res) => {  
+    const { text } = req.body;
+    try {
+
+        let doc = await Movie.findOne({
+            title: { $regex: new RegExp(text, "i")}
+        })
+
+        response(res, 200, {
+            movies: doc
         })
 
 

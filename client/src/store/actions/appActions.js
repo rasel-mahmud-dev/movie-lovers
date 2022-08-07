@@ -1,10 +1,10 @@
 import { api } from "../../api"
 
 
-export function fetchMovies(pageNumber, perPageView, cb){
+export function fetchMovies(pageNumber, perPageView, searchValue, cb){
     
     /******* Fetch all genres ********/
-    api.post("/api/movies", {pageNumber, perPageView}).then(response=>{
+    api.post("/api/movies", {pageNumber, perPageView, text: searchValue}).then(response=>{
         if(response.status === 200){
             cb({[pageNumber]: response.data.movies});
         }
