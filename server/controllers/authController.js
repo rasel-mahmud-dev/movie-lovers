@@ -304,15 +304,34 @@ exports.resetPassword = async (req, res) => {
 }
 
 
-exports.addFavoriteMovie = async(req, res)=>{
+exports.toggleFavoriteMovie = async(req, res)=>{
+
     try {
+        const {movieId} = req.body
+        const {userId} = req
 
-        let doc = await Favorites.findOne({_id: req.params.id})
-
-        response(res, 200, {
-            movie: doc
-        })
-
+        let favorite = await Favorite.findOne({movieId: movieId})
+        if(favorite){
+            let doc = await Favorite.findByIdAndDelete({_id: favorite._id})
+            if(doc){
+                response(res, 201, {
+                    isAdded: false,
+                    _id: favorite._id,
+                    message: "Movie sucessfully delete from favorite list"
+                })
+            }
+        } else {
+            let newItem = new Favorite({
+                movieId: movieId,
+                customerId: userId
+            })
+            newItem = await newItem.save()
+            response(res, 201, {
+                isAdded: true,
+                favorite: newItem,
+                message: "Movie sucessfully added to favorite list"
+            })
+        }
 
     } catch(ex){
         response(res, 500, {
@@ -324,29 +343,13 @@ exports.addFavoriteMovie = async(req, res)=>{
 
 exports.getFavoriteMovies = async(req, res)=>{
     try {
-        const {movieId} = req.body
-        const {userId} = req
 
-        let favorite = await Favorite.findOne({movieId: movieId})
-        if(favorite){
-            let doc = await Favorite.findByIdAndDelete({_id: favorite._id})
-            if(doc){
-                response(res, 200, {
-                    _id: favorite._id,
-                    message: "Movie sucessfully delete from favorite list"
-                })
-            }
-        } else {
-            let newItem = new Favorite({
-                movieId: movieId,
-                customerId: userId
-            })
-            newItem = await newItem.save()
-            response(res, 200, {
-                favorite: newItem,
-                message: "Movie sucessfully added to favorite list"
-            })
-        }
+        let doc = await Favorites.findOne({_id: req.params.id})
+
+        response(res, 200, {
+            movie: doc
+        })
+
 
     } catch(ex){
         response(res, 500, {

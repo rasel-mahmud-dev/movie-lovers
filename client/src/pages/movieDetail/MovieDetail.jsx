@@ -1,12 +1,14 @@
 
 import React from "react"
 import {useSelector, useDispatch} from "react-redux"
-import fullPath from "../../utils/fullPath"
+import fullPath from "src/utils/fullPath"
 import { useParams, Link } from "react-router-dom"
-import { fetchMovieDetails } from './../../store/actions/appActions';
+import { fetchMovieDetails } from 'src/store/actions/appActions';
+import { toggleFavoriteMovie } from 'src/store/actions/authActions';
 import { setMovie } from 'src/store/slices/appSlice';
+import { addToFavorite, removeFromFavorite } from 'src/store/slices/authSlice';
 import {FaCloudDownloadAlt} from "react-icons/fa"
-
+import {MdFavorite} from "react-icons/md"
 
 
 const MovieDetail = ()=> {
@@ -27,6 +29,16 @@ const MovieDetail = ()=> {
 
     }, [])
 
+    function handleAddToFavorite(movieId){
+        toggleFavoriteMovie(movieId, function(data){
+            if(data.isAdded){
+                dispatch(addToFavorite(data.favorite))
+            } else {
+                dispatch(removeFromFavorite(data._id))
+            }
+        })
+
+    }
 
 
     function renderValue(key, value){
@@ -109,6 +121,16 @@ const MovieDetail = ()=> {
                     {/* video player  */}
                     <div className="mt-10"> 
                         <video controls className="w-full" src={fullPath("images/v.mp4")}></video>
+                    </div>
+
+
+                    <div className="mt-4 mb-6">
+
+                        <button onClick={()=>handleAddToFavorite(movie._id)} className="btn btn-primary">
+                            <MdFavorite className="text-lg"/>
+                            <span className="ml-2">Add to Favorite</span>
+                        </button>
+
                     </div>
 
 

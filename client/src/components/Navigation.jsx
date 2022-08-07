@@ -88,7 +88,7 @@ function Navigation() {
                             <div>
                                 <div className="relative">
                                     <div className='cursor-pointer flex items-center' onMouseEnter={()=>toggleExpandDropdown("auth")} onClick={()=>toggleExpandDropdown("auth")} >
-                                        <Avatar className="w-10 h-10" firstLetter={auth.auth.firstName[0]} />
+                                        <Avatar className="w-8 h-8" firstLetter={auth.auth.firstName[0]} />
                                         <h2 className="ml-1.5" >{auth.auth.firstName}</h2>
                                     </div>
                                     { state.openDropdown === "auth" && authDropdown() }

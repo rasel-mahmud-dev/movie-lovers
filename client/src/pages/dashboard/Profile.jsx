@@ -21,7 +21,10 @@ function Profile(props) {
 
     return (
         <div>
-            <h1 className="text-6xl text-gray-100 font-medium">WellCame {authProfile.firstName} </h1>
+            <h1 className="text-3xl text-gray-100 font-medium mb-4">
+                Welcame 
+                <span> {authProfile.firstName}</span>
+             </h1>
 
             <table>
 

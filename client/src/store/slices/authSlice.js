@@ -7,6 +7,7 @@ const initialState = {
     verify: false,
     auth: null,
     authProfile: null,
+    favorites: [],
 }
 
 // First, create the thunk
@@ -77,6 +78,14 @@ export const counterSlice = createSlice({
       state.authProfile = action.payload;
     },
     
+    addToFavorite(state, action){
+      state.favorites = [...state.favorites, action.payload]
+    },
+
+    removeFromFavorite(state, action){
+      state.favorites = state.favorites.filter(f=>f.movieId !== action.payload)
+    },
+    
     logOutAction(state, payload){
       localStorage.removeItem("token")
       state.auth = null;
@@ -136,6 +145,11 @@ export const counterSlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-export const { logOutAction, setAuthProfile } = counterSlice.actions
+export const { 
+  logOutAction, 
+  setAuthProfile,
+  addToFavorite,
+  removeFromFavorite,
+} = counterSlice.actions
 
 export default counterSlice.reducer
