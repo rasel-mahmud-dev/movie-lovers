@@ -17,6 +17,9 @@ import Avatar from 'src/components/Avatar';
 
 import { fetchMovies } from 'src/store/actions/appActions';
 
+let id;
+
+
 function Navigation() {   
     const dispatch = useDispatch()
 
@@ -72,17 +75,50 @@ function Navigation() {
         )
     }
 
+    function handleChange(e){
+        
+        id && clearTimeout(id)
 
-    function handleSearchMovies(){
-        const {searchValue, pagination, movies} = app
-        if(searchValue){
-            fetchMovies(pagination.currentPage, pagination.perPageView, searchValue, (paginatedMovie)=>{
+        const {pagination} = app
+
+        dispatch(setSearchValue(e.target.value))
+   
+        if(e.target.value === ""){
+            fetchMovies({
+                currentPage: pagination.currentPage, 
+                perPageView:pagination.perPageView, 
+                searchValue: "", 
+                filter: null
+              }, (paginatedMovie)=>{
                 dispatch(setPaginatedMovie(paginatedMovie))
                 if(paginatedMovie){
                     navigate("/movies")
                 }
             }) 
+        } else{
+            id = setTimeout(()=>{
+                handleSearchMovies(e)
+            }, 600)
         }
+
+    }
+
+
+    function handleSearchMovies(e){
+        e.preventDefault && e.preventDefault()
+        const {searchValue, pagination} = app
+      
+        fetchMovies({
+            currentPage: pagination.currentPage, 
+            perPageView:pagination.perPageView, 
+            searchValue: searchValue ? searchValue : "", 
+            filter: null
+          }, (paginatedMovie)=>{
+            dispatch(setPaginatedMovie(paginatedMovie))
+            if(paginatedMovie){
+                navigate("/movies")
+            }
+        }) 
     }
 
 
@@ -106,19 +142,22 @@ function Navigation() {
                             <li><NavLink className="bg-transparent" to="/series">Series</NavLink></li>
                             <li><NavLink className="bg-transparent" to="/movies">Movies</NavLink></li>
                             <li><NavLink className="bg-transparent" to="/price_and_planling">Pricing</NavLink></li>
+                            <li><NavLink className="bg-transparent" to="/about-us">About Us</NavLink></li>
                             <li><NavLink className="bg-transparent" to="/contact">Contact</NavLink></li>
                         </ul>
                     </div>
 
                     <div className="w-1/2">
                        <div className="flex px-2 justify-between items-center h-auto input input-bordered input-primary text-gray-200 w-full">
-                        <input 
+                        <form onSubmit={handleSearchMovies}>
+                            <input 
                                 type="text" 
                                 value={app.searchValue}
-                                onChange={(e)=> dispatch(setSearchValue(e.target.value))}
+                                onChange={handleChange}
                                 placeholder="Search movie" 
                                 className="py-1 pl-1.5 outline-none bg-transparent w-full placeholder:text-gray-200"
                             />
+                        </form>
                             <BiSearchAlt onClick={handleSearchMovies} className="text-xl cursor-pointer" />
                        </div>
                     </div>

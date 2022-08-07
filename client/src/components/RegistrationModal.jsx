@@ -92,8 +92,8 @@ function RegistrationModal() {
 
         return (
             <div>
-                <h1 class="font-bold text-3xl text-gray-200 text-center">Login</h1>
-                <p class="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+                <h1 className="font-bold text-3xl text-gray-200 text-center">Login</h1>
+                <p className="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
 
                 <form action="">
                     <div className="div">
@@ -121,7 +121,7 @@ function RegistrationModal() {
                     <p className="mt-3 text-gray-300 link link-hover" onClick={toggleResetPasswordModal} >Forgot password ?</p>
                 </form>
 
-                <div class="mt-8 flex justify-between items-center">
+                <div className="mt-8 flex justify-between items-center">
                     
                     <div>
                         
@@ -141,8 +141,8 @@ function RegistrationModal() {
 
         return (
             <div>
-                <h1 class="font-bold text-3xl text-gray-200 text-center">Create a new Account</h1>
-                <p class="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+                <h1 className="font-bold text-3xl text-gray-200 text-center">Create a new Account</h1>
+                <p className="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
                 <h1>{auth.verify}</h1>
                 <form action="">
                     <div className="div">
@@ -205,7 +205,7 @@ function RegistrationModal() {
                     </div>
                 </form>
 
-                <div class="mt-8 flex justify-between">
+                <div className="mt-8 flex justify-between">
                     <a className="text-gray-300">Already have an Account? <span className="cursor-pointer link link-hover" onClick={() => dispatch(toggleModal("login"))}>Login here</span> </a>
 
                     <label for="my-modal" onClick={handleRegistration} className="btn text-white">Create</label>
@@ -219,8 +219,8 @@ function RegistrationModal() {
 
         return (
             <div>
-                <h1 class="font-bold text-3xl text-gray-200 text-center">Get OTP Code</h1>
-                <p class="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+                <h1 className="font-bold text-3xl text-gray-200 text-center">Get OTP Code</h1>
+                <p className="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
                 <h1>{auth.verify}</h1>
                 <form action="">
                     <div className="div">
@@ -237,7 +237,7 @@ function RegistrationModal() {
                     </div>
                 </form>
 
-                <div class="mt-8 flex justify-between">
+                <div className="mt-8 flex justify-between">
                 <span 
                     className="link link-hover"
                     onClick={() => dispatch(toggleModal("otp_verify_modal"))}>
@@ -253,8 +253,8 @@ function RegistrationModal() {
         return (
             <div>
 
-                <h1 class="font-bold text-3xl text-gray-200 text-center">Verify OTP Code</h1>
-                <p class="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+                <h1 className="font-bold text-3xl text-gray-200 text-center">Verify OTP Code</h1>
+                <p className="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
                 <form action="">
                     <div className="div">
 
@@ -270,7 +270,7 @@ function RegistrationModal() {
                     </div>
                 </form>
 
-                <div class="mt-8 flex justify-between">
+                <div className="mt-8 flex justify-between">
                     <a className="text-gray-300">
                         Did't Get a Code ?  
                         <span className="link link-hover"
@@ -298,8 +298,8 @@ function RegistrationModal() {
         return (
             <div>
 
-                <h1 class="font-bold text-3xl text-gray-200 text-center">Reset new Password</h1>
-                <p class="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+                <h1 className="font-bold text-3xl text-gray-200 text-center">Reset new Password</h1>
+                <p className="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
                 <form action="">
                     <div className="div">
                         <input
@@ -322,7 +322,7 @@ function RegistrationModal() {
                     </div>
                 </form>
 
-                <div class="mt-8 flex justify-between">
+                <div className="mt-8 flex justify-between">
                  
                        
                         <span className="link link-hover" 
@@ -426,10 +426,10 @@ function RegistrationModal() {
     return (
         <div>
 
-            {/* <input type="checkbox" id="my-modal" class="modal-toggle" /> */}
+            {/* <input type="checkbox" id="my-modal" className="modal-toggle" /> */}
 
             <div className={["modal", modal ? "visible opacity-100 pointer-events-auto" : ""].join(" ")}>
-                <div class="modal-box">
+                <div className="modal-box">
 
                     <div onClick={() => dispatch(toggleModal(""))} className="bg-neutral text-white absolute right-3 top-3 p-2 rounded-full">
                         <FaTimes />

@@ -26,7 +26,12 @@ const initialState = {
     currentPage: 1,
     perPageView: 20,
   },
-  totalMovie: 0
+  totalMovie: 0,
+  filter: {
+    genres: "",
+    language: "",
+    quality: "",
+  }
 }
 
 export const counterSlice = createSlice({
@@ -55,8 +60,12 @@ export const counterSlice = createSlice({
 
     changePageAction(state, action){
 
-        const {pageNumber, paginatedMovie} = action.payload
+        const {pageNumber, paginatedMovie, filter} = action.payload
 
+        if(filter){
+            state.filter = filter
+        }
+        
         state.pagination = {
             ...state.pagination,
             currentPage: pageNumber
@@ -98,10 +107,19 @@ export const counterSlice = createSlice({
     },
 
     setResetSearch(state, action){
+        const {paginatedMovie, updateFilter} = action.payload;
         state.searchValue = ""
-        state.movies = action.payload
+        state.movies = paginatedMovie
         state.pagination.currentPage = 1
+        if(updateFilter){
+            state.filter = updateFilter
+        }
     },
+
+    setFilter(state, action){
+        state.filter = payload.value
+        
+    }
 
   },
  
@@ -121,7 +139,11 @@ export const {
         toggleModal,
         setPaginatedMovie,
         setSearchValue,
-        setResetSearch
+        setResetSearch,
+        setFilter
+
+
+        
     } = counterSlice.actions
 
 export default counterSlice.reducer

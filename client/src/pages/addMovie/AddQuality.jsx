@@ -55,7 +55,7 @@ function AddQuality(props) {
  
   return (
     <div>
-      <h1 class="font-bold text-3xl text-gray-200 text-center">New Quality Label</h1>
+      <h1 className="font-bold text-3xl text-gray-200 text-center">New Quality Label</h1>
       <form onSubmit={handleSubmit}>
         <div className="div">
           <InputGroup 
@@ -72,7 +72,7 @@ function AddQuality(props) {
       
         <div className="mt-8">
           { state.loading 
-            ? <progress class="progress w-full"></progress>
+            ? <progress className="progress w-full"></progress>
             : <button type='submit' className="btn cursor-pointer text-white">Save</button> 
           }
         </div>

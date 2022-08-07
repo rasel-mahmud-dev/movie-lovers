@@ -96,10 +96,32 @@ export const counterSlice = createSlice({
     }
   },
   
-  extraReducers: function(builder){  
-    builder.addCase(loginAction.fulfilled, (state, action) => {
-      
-      const {data, status} = action.payload
+  extraReducers: {
+
+  // extraReducers: function(builder){  
+    
+    // builder.addCase(loginAction.fulfilled, (state, action) => {
+    //   const {data, status} = action.payload
+    //   if(status === 201){
+    //     localStorage.setItem("token", data.token)
+    //     return {
+    //       ...state,
+    //       auth: data.auth
+    //     }
+    //   }
+    // });
+    // builder.addCase(loginWithTokenAction.fulfilled, (state, action) => {
+    //   const {data, status} = action.payload
+    //   return {
+    //       ...state,
+    //       auth: data.auth
+    //     }
+    // });
+  // }
+    
+
+    [loginAction.fulfilled]: (state, {payload})=>{
+      const {data, status} = payload
       if(status === 201){
         localStorage.setItem("token", data.token)
         return {
@@ -107,43 +129,24 @@ export const counterSlice = createSlice({
           auth: data.auth
         }
       }
-    });
-    builder.addCase(loginWithTokenAction.fulfilled, (state, action) => {
-      const {data, status} = action.payload
-      return {
+    },
+  
+    [loginWithTokenAction.fulfilled]: (state, {payload})=>{
+      
+      const {data, status} = payload
+      if(status === 306){
+        return {
           ...state,
+          verify: true,
           auth: data.auth
         }
-    });
-
-
-    // [registration.pending]: (state)=>{
-    // },
-    // [registration.fulfilled]: (state, {payload})=>{
-    //   const {data, status} = payload
-    //   if(status === 206){
-    //     return {
-    //       ...state,
-    //       verify: true,
-    //       auth: data.auth
-    //     }
-    //   }
-    // },
-
-    // [login.pending]: (state)=>{
-    //   console.log("pending");
-    // },
-
-    // [login.fulfilled]: (state, response)=>{
-    //   const {data, status} = response
-    //   if(status === 306){
-    //     return {
-    //       ...state,
-    //       verify: true,
-    //       auth: data.auth
-    //     }
-    //   }
-    // }
+      } else {
+        return {
+            ...state,
+            auth: data.auth
+          }
+      }
+    }
   }
 })
 

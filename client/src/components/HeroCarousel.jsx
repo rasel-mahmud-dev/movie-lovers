@@ -51,7 +51,7 @@ function HeroCarousel() {
 
     return (
 
-        <div class="carousel w-full">
+        <div className="carousel w-full">
 
 
             <Swiper
@@ -78,7 +78,7 @@ function HeroCarousel() {
                 </Swiper>
 
 
-            {/* <div id="slide1" class="carousel-item relative w-full">
+            {/* <div id="slide1" className="carousel-item relative w-full">
 
             <div className="caption absolute left-[10%] top-1/2 -translate-y-1/2">
                     <div className="row">
@@ -88,13 +88,13 @@ function HeroCarousel() {
                     </div>
                 </div>
 
-                <img src={fullPath("images/slider-hm4-1.jpg")} class="w-full" />
-                <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                    <a href="#slide4" class="btn btn-circle">❮</a>
-                    <a href="#slide2" class="btn btn-circle">❯</a>
+                <img src={fullPath("images/slider-hm4-1.jpg")} className="w-full" />
+                <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                    <a href="#slide4" className="btn btn-circle">❮</a>
+                    <a href="#slide2" className="btn btn-circle">❯</a>
                 </div>
             </div>
-            <div id="slide2" class="carousel-item relative w-full">
+            <div id="slide2" className="carousel-item relative w-full">
                 
             <div className="caption absolute left-[10%] top-1/2 -translate-y-1/2">
                     <div className="row">
@@ -104,11 +104,11 @@ function HeroCarousel() {
                     </div>
                 </div>
 
-                <img src={fullPath("images/slider-hm4-2.jpg")} class="w-full" />
+                <img src={fullPath("images/slider-hm4-2.jpg")} className="w-full" />
 
-                <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                    <a href="#slide1" class="btn btn-circle">❮</a>
-                    <a href="#slide1" class="btn btn-circle">❯</a>
+                <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                    <a href="#slide1" className="btn btn-circle">❮</a>
+                    <a href="#slide1" className="btn btn-circle">❯</a>
                 </div>
             </div> */}
             

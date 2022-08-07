@@ -11,7 +11,7 @@ function TextArea({name, label, value, errorMessage, placeholder, onChange, clas
                     id={name}
                     placeholder={placeholder} 
                     onChange={onChange}
-                    class="textarea textarea-primary w-full h-32 text-gray-300 " 
+                    className="textarea textarea-primary w-full h-32 text-gray-300 " 
                 ></textarea>
                 <div className="mt-1">
                     {errorMessage && <span className="rounded-md text-error ">{errorMessage}</span> }

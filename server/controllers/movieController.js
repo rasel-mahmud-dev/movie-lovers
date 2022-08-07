@@ -10,9 +10,10 @@ const response = require("../utilities/response")
 
 exports.getMovies = async (req, res) => {  
 
-    const { text, pageNumber, perPageView } = req.body
+    const { text, pageNumber, perPageView, filter } = req.body
 
     try {
+
 
         let query = {}
 
@@ -20,7 +21,16 @@ exports.getMovies = async (req, res) => {
             query["title"] = { $regex: new RegExp(text, "i")}
         }
 
-        let doc = await Movie.find(text ? query : {})
+        if(filter){
+            for(let key in filter){
+                if(filter[key]){
+                    query[key] = filter[key]
+                }
+            }
+        }
+
+
+        let doc = await Movie.find(query)
         .skip((pageNumber - 1) * perPageView )
         .limit(perPageView)
         

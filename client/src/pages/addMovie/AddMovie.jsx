@@ -58,10 +58,13 @@ function AddMovie() {
 
 
     React.useState(() => {
-        fetchLanguages((data) => {
+            
+        (!languages || languages.length === 0) && fetchLanguages((data) => {
+        
             dispatch(setLanguages(data.languages))
         })
-        fetchQualities((data) => {
+    
+        (!qualities || qualities.length === 0) && fetchQualities((data) => {
             dispatch(setQualities(data.qualities))
         })
 
@@ -171,7 +174,7 @@ function AddMovie() {
         return (
             <div>
                 <div className={["modal", addMovieModal ? "visible opacity-100 pointer-events-auto" : ""].join(" ")}>
-                    <div class="modal-box">
+                    <div className="modal-box">
 
                         <div onClick={() => handleToggleModal("")} className="bg-neutral text-white absolute right-3 top-3 p-2 rounded-full">
                             <FaTimes />

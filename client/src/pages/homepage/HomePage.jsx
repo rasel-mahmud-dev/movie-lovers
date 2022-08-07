@@ -9,7 +9,7 @@ import Movie from "src/components/Movie"
 
 const HomePage = ()=> {
 
-    const {movies, sectionMovies} = useSelector(state=>state.app)
+    const {sectionMovies} = useSelector(state=>state.app)
     const  dispatch = useDispatch()
   
     React.useEffect(()=>{
@@ -22,9 +22,6 @@ const HomePage = ()=> {
         })
 
     }, [])
-
-    console.log(sectionMovies);
-
 
     return (
       <div>

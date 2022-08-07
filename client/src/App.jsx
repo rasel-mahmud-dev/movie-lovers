@@ -21,6 +21,8 @@ import MovieDetail from './pages/movieDetail/MovieDetail'
 import Series from './pages/series/Series'
 
 import { fetchGenres, fetchMovies } from './store/actions/appActions'
+import Contact from './pages/Contact';
+import AboutUs from './pages/AboutUs';
 
 
 function App() {
@@ -58,6 +60,9 @@ function App() {
         <Route exact={true} path="/auth/dashboard/:id" element={<Dashboard/>} />
         <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />
         <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
+
+        <Route exact={true} path="/about-us" element={<AboutUs/>} />
+        <Route exact={true} path="/contact" element={<Contact/>} />
       </Routes>
 
       <Footer />

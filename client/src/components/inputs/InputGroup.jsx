@@ -12,7 +12,7 @@ function InputGroup({name, type, label, value, errorMessage, placeholder, onChan
                     id={name}
                     placeholder={placeholder} 
                     onChange={onChange}
-                    class="input input-bordered input-primary w-full text-gray-300"
+                    className="input input-bordered input-primary w-full text-gray-300"
                 />
                 <div className="mt-1">
                     {errorMessage && <span className="rounded-md text-error">{errorMessage}</span> }

@@ -1,8 +1,6 @@
 import React from "react"
 
 import {  useSelector, useDispatch } from 'react-redux'
-import fullPath from 'src/utils/fullPath'
-import { Link } from "react-router-dom"
 import { api } from 'src/api';
 
 import Movie from "src/components/Movie"

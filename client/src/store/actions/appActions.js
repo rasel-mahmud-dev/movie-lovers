@@ -1,15 +1,24 @@
 import { api } from "../../api"
 
 
-export function fetchMovies(pageNumber, perPageView, searchValue, cb){
+export function fetchMovies(payload, cb){
+
+    const { currentPage, perPageView, searchValue, filter } = payload
     
     /******* Fetch all genres ********/
-    api.post("/api/movies", {pageNumber, perPageView, text: searchValue}).then(response=>{
+    api.post("/api/movies", {
+        pageNumber: currentPage, 
+        perPageView: perPageView, 
+        text: searchValue,
+        filter: filter,
+    })
+    .then(response=>{
         if(response.status === 200){
-            cb({[pageNumber]: response.data.movies});
+            cb({[currentPage]: response.data.movies});
         }
-      })    
+    })    
 }
+
 
 
 export function fetchGenres(cb){
@@ -23,6 +32,7 @@ export function fetchGenres(cb){
 }
 
 
+
 export function fetchLanguages(cb){
 
     /******* Fetch all languages ********/
@@ -30,8 +40,10 @@ export function fetchLanguages(cb){
         if(response.status === 200){
             cb(response.data)
         }
-      })    
+    })    
 }
+
+
 
 
 export function fetchQualities(cb){
