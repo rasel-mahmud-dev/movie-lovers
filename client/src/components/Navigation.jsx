@@ -8,6 +8,7 @@ import {Link, NavLink, useNavigate} from "react-router-dom"
 
 import {CgProfile} from "react-icons/cg"
 import { AiOutlineLogout } from "react-icons/ai"
+import { MdFavorite } from "react-icons/md"
 
 import fullPath from "src/utils/fullPath"
 import Avatar from 'src/components/Avatar';
@@ -45,6 +46,12 @@ function Navigation() {
                             <CgProfile /> 
                             <span className="ml-2">Profile</span>
                         </Link>
+                    </li>
+                    <li className="flex items-center link link-hover mt-2">
+                        <div onClick={()=>navigate(`/auth/dashboard/${auth.auth._id}`, { replace: true, state: "Favorites"})} className="flex items-center">
+                            <MdFavorite /> 
+                            <span className="ml-2">Favorite</span>
+                        </div>
                     </li>
                     <li className="flex items-center link link-hover mt-2">
                         <CgProfile />

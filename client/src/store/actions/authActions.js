@@ -14,8 +14,13 @@ export function toggleFavoriteMovie(movieId, cb){
 export function fetchFavoriteMovies(profileId, cb){
   /******* Fetch all Favorite Movieities ********/
   api.get("/api/user/favorite-movies/" + profileId).then(response=>{
-      if(response.status === 200){
-          cb(response.data.user)
+      if(response.status === 200){        
+        if(response.data.favorites){
+          let fv = response.data.favorites.map(fv=>{
+            return fv.movieId
+          })
+          cb(fv)
+        }
       }
     })    
   }

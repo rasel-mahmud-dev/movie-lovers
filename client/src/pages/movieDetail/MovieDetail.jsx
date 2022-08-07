@@ -1,4 +1,3 @@
-
 import React from "react"
 import {useSelector, useDispatch} from "react-redux"
 import fullPath from "src/utils/fullPath"
@@ -10,24 +9,39 @@ import { addToFavorite, removeFromFavorite } from 'src/store/slices/authSlice';
 import {FaCloudDownloadAlt} from "react-icons/fa"
 import {MdFavorite} from "react-icons/md"
 
+import { setFavoritesMovies } from "src/store/slices/authSlice"
+import { fetchFavoriteMovies } from "src/store/actions/authActions"
+
+
+
 
 const MovieDetail = ()=> {
 
     const {app, auth} = useSelector(state=>state)
 
     const {movie} = app
+    const {favorites} = auth
 
     const params =  useParams()
     const dispatch = useDispatch();
   
 
     React.useEffect(()=>{
-
         fetchMovieDetails(params.id, (movie)=>{
             dispatch(setMovie(movie))
         })
-
     }, [])
+
+    React.useEffect(() => {
+        if(auth.auth && auth.auth._id){
+            (!favorites || favorites.length === 0) && fetchFavoriteMovies(auth.auth._id, (favoriteMovies) => {
+                dispatch(setFavoritesMovies(favoriteMovies))
+            })
+        }
+
+    }, [auth.auth])
+
+
 
     function handleAddToFavorite(movieId){
         toggleFavoriteMovie(movieId, function(data){
@@ -37,12 +51,16 @@ const MovieDetail = ()=> {
                 dispatch(removeFromFavorite(data._id))
             }
         })
+    }
 
+    function isInFavorite(movieId){
+        let a = favorites && favorites.findIndex(f=>f._id === movieId) === -1 ? false : true;
+        return a
     }
 
 
     function renderValue(key, value){
-        console.log(value);
+    
         let item;
         switch (true) {
             case key === "author":
@@ -128,7 +146,7 @@ const MovieDetail = ()=> {
 
                         <button onClick={()=>handleAddToFavorite(movie._id)} className="btn btn-primary">
                             <MdFavorite className="text-lg"/>
-                            <span className="ml-2">Add to Favorite</span>
+                            <span className="ml-2">{isInFavorite(movie._id) ? "Remove to Favorite" : "Add to Favorite"}</span>
                         </button>
 
                     </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { setAuthProfile } from "src/store/slices/authSlice"
@@ -9,25 +9,30 @@ import Avatar from 'src/components/Avatar';
 import Profile from 'src/pages/dashboard/Profile';
 import FavoriteMovies from 'src/pages/dashboard/FavoriteMovies';
 
-
-
-function Dashboard() {
+function Dashboard(props) {
 
     const params = useParams();
     const dispatch = useDispatch();
+    const location = useLocation();
+
+    
 
     const { auth } = useSelector(state => state)
     const { authProfile } = auth
 
     const { id } = params
-
+    
     React.useEffect(() => {
-
-        fetchAuthProfile(id, (user) => {
+        !authProfile && fetchAuthProfile(id, (user) => {
             dispatch(setAuthProfile(user))
         })
-
     }, [id])
+
+    React.useEffect(()=>{
+        if(location.state){
+            setSideBarContent(location.state)
+        }
+    }, [location.state])
 
 
     const [sideBarContent, setSideBarContent] = React.useState("Profile")
@@ -60,7 +65,8 @@ function Dashboard() {
 
                         <ul className="p-5">
                             {sideBarData.map(item => (
-                                <li 
+                                <li     
+                                    key={item._id}
                                     onClick={() => selectSideBarSection(item)}
                                     className={["py-4 font-medium text-md text-gray-100 cursor-pointer", item.name === sideBarContent ? "active" : ""].join(" ")}>
                                     {item.name}

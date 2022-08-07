@@ -10,6 +10,7 @@ const {createHash, hashCompare} = require("../hash")
 const {createToken, getToken, parseToken} = require("../jwt")
 
 const response = require("../utilities/response")
+const Movie = require("../models/Movie")
 
 exports.getUser = async (req, res) => {
     
@@ -316,7 +317,7 @@ exports.toggleFavoriteMovie = async(req, res)=>{
             if(doc){
                 response(res, 201, {
                     isAdded: false,
-                    _id: favorite._id,
+                    _id: movieId,
                     message: "Movie sucessfully delete from favorite list"
                 })
             }
@@ -326,9 +327,10 @@ exports.toggleFavoriteMovie = async(req, res)=>{
                 customerId: userId
             })
             newItem = await newItem.save()
+            let movie = await Movie.findById({_id: movieId})
             response(res, 201, {
                 isAdded: true,
-                favorite: newItem,
+                favorite: movie,
                 message: "Movie sucessfully added to favorite list"
             })
         }
@@ -344,14 +346,15 @@ exports.toggleFavoriteMovie = async(req, res)=>{
 exports.getFavoriteMovies = async(req, res)=>{
     try {
 
-        let doc = await Favorites.findOne({_id: req.params.id})
-
-        response(res, 200, {
-            movie: doc
-        })
+        let doc = await Favorite.find({customerId: req.params.id})
+        .populate("movieId")
+            response(res, 200, {
+                favorites: doc
+            })
 
 
     } catch(ex){
+        console.log(ex);
         response(res, 500, {
             message: "Internal error. Please try again",
         })

@@ -78,12 +78,16 @@ export const counterSlice = createSlice({
       state.authProfile = action.payload;
     },
     
+    setFavoritesMovies(state, action){
+      state.favorites = action.payload
+    },
+    
     addToFavorite(state, action){
       state.favorites = [...state.favorites, action.payload]
     },
 
     removeFromFavorite(state, action){
-      state.favorites = state.favorites.filter(f=>f.movieId !== action.payload)
+      state.favorites = state.favorites.filter(f=>f._id !== action.payload)
     },
     
     logOutAction(state, payload){
@@ -148,6 +152,7 @@ export const counterSlice = createSlice({
 export const { 
   logOutAction, 
   setAuthProfile,
+  setFavoritesMovies,
   addToFavorite,
   removeFromFavorite,
 } = counterSlice.actions
