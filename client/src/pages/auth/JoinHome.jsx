@@ -11,6 +11,7 @@ import RegistrationModal from './RegistrationModal';
 import LoginModal from './LoginModal';
 
 
+
 function JoinHome() {
 
     const { app, auth } = useSelector(state => state)
