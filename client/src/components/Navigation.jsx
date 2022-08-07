@@ -9,6 +9,7 @@ import {Link, NavLink, useNavigate} from "react-router-dom"
 import {CgProfile} from "react-icons/cg"
 import { AiOutlineLogout } from "react-icons/ai"
 import { MdFavorite } from "react-icons/md"
+import { BiSearchAlt } from "react-icons/bi"
 
 import fullPath from "src/utils/fullPath"
 import Avatar from 'src/components/Avatar';
@@ -17,6 +18,8 @@ function Navigation() {
     const dispatch = useDispatch()
 
     const navigate = useNavigate()
+
+    const [searchValue, setSearchValue] = React.useState("")
 
     const auth = useSelector(state=>state.auth)
 
@@ -28,7 +31,6 @@ function Navigation() {
         dispatch(logOutAction())
         navigate("/")
     }
-
 
     function toggleExpandDropdown(dropdownName){
         setState({
@@ -69,20 +71,29 @@ function Navigation() {
     }
 
 
+    function handleSearchMovies(){
+        if(searchValue){
+            alert(searchValue)
+        }
+    }
+
+
     return (
         <>
             <header className="bg-dark-700 fixed w-full z-40">
             <div className="my_container">
-                <div class="navbar ">
-                    <div class="navbar-start">
-                        <Link to="/" class="btn btn-ghost normal-case text-xl">
+                <div className="navbar">
+
+                    <div className="navbar-start">
+                        <Link to="/" className="btn btn-ghost normal-case text-xl">
                             <div className="w-40">
                                 <img src={fullPath("images/logo-3.svg")} alt="" />
                             </div>
                         </Link>
                     </div>
-                    <div class="w-full hidden lg:flex">
-                        <ul class="menu menu-horizontal p-0">
+
+                    <div className="w-full hidden lg:flex">
+                        <ul className="menu menu-horizontal p-0">
                             <li><NavLink className="bg-transparent" to="/">Home</NavLink></li>
                             <li><NavLink className="bg-transparent" to="/series">Series</NavLink></li>
                             <li><NavLink className="bg-transparent" to="/movies">Movies</NavLink></li>
@@ -90,7 +101,20 @@ function Navigation() {
                             <li><NavLink className="bg-transparent" to="/contact">Contact</NavLink></li>
                         </ul>
                     </div>
-                    <div class="navbar-end">
+
+                    <div className="w-1/2">
+                       <div className="flex px-2 justify-between items-center h-auto input input-bordered input-primary text-gray-200 w-full">
+                        <input 
+                                type="text" 
+                                onChange={(e)=>setSearchValue(e.target.value)}
+                                placeholder="Search movie" 
+                                className="py-1 pl-1.5 outline-none bg-transparent w-full placeholder:text-gray-200"
+                            />
+                            <BiSearchAlt onClick={handleSearchMovies} className="text-xl cursor-pointer" />
+                       </div>
+                    </div>
+
+                    <div className="navbar-end w-4/12">
                         { auth.auth ? (
                             <div>
                                 <div className="relative">
@@ -103,8 +127,8 @@ function Navigation() {
                             </div>
                         ) : (
                             <div>
-                                <button class="btn btn-primary">Get started</button>
-                                <button onClick={()=>dispatch(toggleModal("registration"))} class="btn btn-primary ml-4">Join Now</button>
+                                <button className="btn btn-primary">Get started</button>
+                                <button onClick={()=>dispatch(toggleModal("registration"))} className="btn btn-primary ml-4">Join Now</button>
                             </div>
                         ) }
                         
