@@ -141,14 +141,14 @@ function Navigation() {
                             <li><NavLink className="bg-transparent" to="/">Home</NavLink></li>
                             <li><NavLink className="bg-transparent" to="/series">Series</NavLink></li>
                             <li><NavLink className="bg-transparent" to="/movies">Movies</NavLink></li>
-                            <li><NavLink className="bg-transparent" to="/price_and_planling">Pricing</NavLink></li>
+                            {/* <li><NavLink className="bg-transparent" to="/price_and_planling">Pricing</NavLink></li> */}
                             <li><NavLink className="bg-transparent" to="/about-us">About Us</NavLink></li>
                             <li><NavLink className="bg-transparent" to="/contact">Contact</NavLink></li>
                         </ul>
                     </div>
 
                     <div className="w-1/2">
-                       <div className="flex px-2 justify-between items-center h-auto input input-bordered input-primary text-gray-200 w-full">
+                       <div className="flex px-2 justify-between items-center h-auto input bg-white/10  text-gray-200 w-full">
                         <form onSubmit={handleSearchMovies}>
                             <input 
                                 type="text" 

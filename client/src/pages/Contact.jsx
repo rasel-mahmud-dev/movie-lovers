@@ -23,7 +23,8 @@ function Contact() {
     }
 
     function handleSendMessage(e){
-        e.preventDefault()
+        e.preventDefault();
+
     }
 
 
@@ -40,7 +41,6 @@ function Contact() {
                     </div>
                     <h2 className="text-xl font-medium text-gray-100 mt-4">Rasel Mahmud</h2>
                     <p className="text-base text-gray-100">rasel.mahmud.dev@gmail.com</p>
-
 
 
                     <h1 className="text-2xl font-medium text-gray-200 text-center mb-5 mt-10">Contact Form</h1>
