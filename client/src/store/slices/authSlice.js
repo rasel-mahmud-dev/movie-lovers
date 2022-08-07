@@ -7,7 +7,7 @@ const initialState = {
     verify: false,
     auth: null,
     authProfile: null,
-    favorites: [],
+    favorites: []
 }
 
 // First, create the thunk

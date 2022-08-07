@@ -38,12 +38,7 @@ function App() {
    fetchGenres((data)=>{
       dispatch(setGenres(data.genres))
     })
-
-    fetchMovies((data)=>{
-      dispatch(setMovies(data.movies))
-    })
- 
-  
+      
   }, [])
 
 

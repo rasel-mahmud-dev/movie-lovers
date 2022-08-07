@@ -4,9 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { setFavoritesMovies } from "src/store/slices/authSlice"
 import { fetchFavoriteMovies } from "src/store/actions/authActions"
-import Avatar from 'src/components/Avatar';
-import fullPath from "src/utils/fullPath"
-
+import Movie from 'src/components/Movie';
 
 
 function Profile() {
@@ -33,9 +31,7 @@ function Profile() {
 
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
                 { favorites && favorites.map(fvMovie=>(
-                    <div>
-                        <img src={fullPath(fvMovie.cover)} alt="" />
-                    </div>
+                    <Movie key={fvMovie._id} movie={fvMovie} />
                 )) }   
             </div>   
 

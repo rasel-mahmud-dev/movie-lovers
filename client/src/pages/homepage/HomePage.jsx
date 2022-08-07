@@ -1,12 +1,10 @@
 import React from "react"
 import HeroCarousel from "src/components/HeroCarousel"
-
 import {  useSelector, useDispatch } from 'react-redux'
-
 import {setSectionMovies} from "src/store/slices/appSlice"
-import fullPath from 'src/utils/fullPath'
-import { Link } from "react-router-dom"
 import { api } from 'src/api';
+
+import Movie from "src/components/Movie"
 
 
 const HomePage = ()=> {
@@ -43,11 +41,7 @@ const HomePage = ()=> {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:md:grid-cols-6 gap-4">
                     {sectionMovies[section] && sectionMovies[section].map(movie=>(
-                    <Link to={`/movie/${movie._id}`}>
-                        <div class="card">
-                        <img className="rounded-xl" src={fullPath(movie.cover)} alt="car!" />
-                        </div>
-                        </Link>
+                        <Movie movie={movie} key={movie._id} />
                     )) }
                     </div>
 
