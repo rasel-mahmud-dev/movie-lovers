@@ -55,11 +55,3 @@ export function fetchMovieDetails(movieId, cb){
 
 
 
-export function fetchAuthProfile(profileId, cb){
- /******* Fetch all qualities ********/
- api.get("/api/user/" + profileId).then(response=>{
-    if(response.status === 200){
-        cb(response.data.user)
-    }
-  })    
-}

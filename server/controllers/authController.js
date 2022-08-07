@@ -10,6 +10,28 @@ const {createToken, getToken, parseToken} = require("../jwt")
 
 const response = require("../utilities/response")
 
+exports.getUser = async (req, res) => {
+    
+   try{
+    let user = await User.findOne({_id: req.params.id}).select("-password")
+    if(user){
+        return response(res, 200, {
+            user: user,
+        })
+    } else {
+        return response(res, 404, {
+            user: null,
+            message: "User not found "
+        })
+    }
+
+   } catch(ex){
+    response(res, 500, {
+        message: "Internal error. Please try again",
+    })
+   }
+}
+
 exports.registration = async (req, res) => {
     const {firstName, lastName, email, gender } = req.body
 

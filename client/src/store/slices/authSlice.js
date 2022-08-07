@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { api, getApi } from '../../api';
 
-import appSlice, {toggleModal} from "../slices/appSlice"
+import {toggleModal} from "../slices/appSlice"
 
 const initialState = {
     verify: false,
-    auth: null
-    
+    auth: null,
+    authProfile: null,
 }
 
 // First, create the thunk
@@ -72,6 +72,11 @@ export const counterSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+
+    setAuthProfile(state, action){
+      state.authProfile = action.payload;
+    },
+    
     logOutAction(state, payload){
       localStorage.removeItem("token")
       state.auth = null;
@@ -131,6 +136,6 @@ export const counterSlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-export const { logOutAction } = counterSlice.actions
+export const { logOutAction, setAuthProfile } = counterSlice.actions
 
 export default counterSlice.reducer
