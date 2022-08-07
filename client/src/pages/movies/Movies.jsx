@@ -2,7 +2,7 @@
 import React from "react"
 import {useSelector, useDispatch} from "react-redux"
 
-import {setMovies, changePageAction} from "src/store/slices/appSlice"
+import {setMovies, setPaginatedMovie, setTotalMovie, changePageAction} from "src/store/slices/appSlice"
 import { fetchMovies } from 'src/store/actions/appActions'
 import Movie from "src/components/Movie"
 import Pagination from "src/components/Pagination"
@@ -10,31 +10,43 @@ import { api } from 'src/api';
 
 const Movies = (props)=> {
 
-    const {movies, pagination, totalMovies} = useSelector(state=>state.app)
+    const {movies, pagination, totalMovie} = useSelector(state=>state.app)
+
 
     const dispatch = useDispatch();
 
     React.useEffect(()=>{
       
-      // (!movies || movies.length === 0) && fetchMovies((data)=>{
-      //   dispatch(setMovies(data.movies))
-      // })
+      {!movies && (
       
-      if(!totalMovies){
-        api.get("/api/total-movies").then(response=>{
-          
+        fetchMovies(pagination.currentPage, pagination.perPageView, (paginatedMovie)=>{
+          dispatch(setMovies(paginatedMovie))
+        }) 
+      
+      )}
+      
+      if(!totalMovie){
+        api.get("/api/total-movie").then(response=>{
+          if(response.status === 200){
+            dispatch(setTotalMovie(response.data.total))
+          }
         })
       }
-      // (!totalMovies && fetchMovies((data)=>{
-      //   dispatch(setMovies(data.movies))
-      // })
  
     }, [])
 
     function handleChangePage(pageNumber){
-      dispatch(changePageAction(pageNumber))
-    }
+      // use caching data if already this page are fetched.
+      if(movies[pageNumber] && movies[pageNumber].length !== 0){
+        dispatch(changePageAction({pageNumber, paginatedMovie: null}))
+      } else {
 
+        // no cache. so send request into server 
+        fetchMovies(pageNumber, pagination.perPageView, (paginatedMovie)=>{
+          dispatch(changePageAction({pageNumber, paginatedMovie}))
+        }) 
+      }
+    }
   
     return (
       <div>
@@ -43,13 +55,19 @@ const Movies = (props)=> {
               {/* {movies && movies.slice((pagination.currentPage - 1), pagination.perPageView * pagination.currentPage).map(movie=>(
                   <Movie key={movie._id} movie={movie} />
               )) } */}
+
+              { movies && movies[pagination.currentPage] && movies[pagination.currentPage].map(movie=>(
+                <Movie movie={movie} key={movie._id} />
+              ))}
+
+
             </div>
 
 
             {/* pagination  */}
             <div className="flex justify-center mt-20">
                 <Pagination 
-                  total={totalMovies} 
+                  total={totalMovie} 
                   perPageView={pagination.perPageView} 
                   currentPage={pagination.currentPage} 
                   onPageChange={handleChangePage} 

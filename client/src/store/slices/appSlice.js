@@ -12,7 +12,7 @@ const movies = [
 
 
 const initialState = {
-  movies: {},  // {1: Movie[], 2: Movie[], 3: Movie[]}
+  movies: null,  // {1: Movie[], 2: Movie[], 3: Movie[]} // // for caching
   movie: null,
   sectionMovies: {},
   seriesMovies: [],
@@ -26,25 +26,52 @@ const initialState = {
     currentPage: 1,
     perPageView: 20,
   },
-  totalMovies: 100
+  totalMovie: 0
 }
 
 export const counterSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
+
+    setTotalMovie(state, action){
+        state.totalMovie = action.payload
+    },
+
     setMovies(state, action){
         state.movies = action.payload;
     },
+    
+    setPaginatedMovie(state, action){
+        state.movies = {
+            ...state.movies,
+            ...action.payload
+        }
+    },
+
+
+
+
     setMovie(state, action){
         state.movie = action.payload;
     },
 
     changePageAction(state, action){
+
+        const {pageNumber, paginatedMovie} = action.payload
+
         state.pagination = {
             ...state.pagination,
-            currentPage: action.payload
+            currentPage: pageNumber
         };
+
+        // for caching
+        if(paginatedMovie){
+            state.movies = {
+                ...state.movies,
+                ...paginatedMovie
+            }
+        }
     },
 
     
@@ -83,7 +110,9 @@ export const {
         setSectionMovies, 
         setLanguages, 
         setQualities,
-        toggleModal 
+        setTotalMovie,
+        toggleModal,
+        setPaginatedMovie
     } = counterSlice.actions
 
 export default counterSlice.reducer

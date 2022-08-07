@@ -9,7 +9,7 @@ function a(v, next){
 
 module.exports = (router)=>{
 
-    router.get('/api/movies',  movieController.getMovies)
+    router.post('/api/movies',  movieController.getMovies)
     router.get('/api/movie/:id',  movieController.getMovie)
 
     router.get('/api/movie-details/:id',  movieController.getMovieDetails)
@@ -20,5 +20,6 @@ module.exports = (router)=>{
 
     router.post('/api/add-movie', admin, movieController.addMovie)
     router.post('/api/update-movie', admin, movieController.updateMovie)
+    router.get('/api/total-movie', movieController.calcTotalMovie)
 
 }

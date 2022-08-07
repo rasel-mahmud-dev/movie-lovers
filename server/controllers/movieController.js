@@ -9,10 +9,16 @@ const response = require("../utilities/response")
 
 
 exports.getMovies = async (req, res) => {  
+
+    const { pageNumber, perPageView } = req.body
+    console.log(pageNumber, perPageView);
+
     try {
 
         let doc = await Movie.find({})
-
+        .skip((pageNumber - 1) * perPageView )
+        .limit(perPageView)
+        
         response(res, 200, {
             movies: doc
         })
@@ -64,6 +70,20 @@ exports.getMovie = async (req, res) => {
         })
     }
 }
+
+exports.calcTotalMovie = async (req, res) => {  
+    try {
+        let total = await Movie.countDocuments()
+        response(res, 200, {
+            total: total
+        })
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
 
 exports.getMovieDetails = async (req, res) => {  
     try {
