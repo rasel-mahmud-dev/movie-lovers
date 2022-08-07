@@ -9,6 +9,8 @@ const {createHash} = require("../hash")
 
 const authController = require("../controllers/authController")
 
+const {auth} =  require("../middlewares")
+
 
 module.exports = (router)=>{
 
@@ -25,6 +27,12 @@ module.exports = (router)=>{
     router.post('/api/auth/validate-otp-code', authController.otpValidation)
 
     router.post('/api/auth/reset-password', authController.resetPassword)
+
+
+    router.get("/api/user/favorite-movies/:id", auth, authController.getFavoriteMovies)
+
+
+    router.post("/api/user/toggle-favorite", auth, authController.addFavoriteMovie)
 
 
 }

@@ -1,6 +1,7 @@
 
 const TempUser = require("../models/TempUser")
 const User = require("../models/User")
+const Favorite = require("../models/Favorite")
 
 const sendMail = require("../utilities/sendMail")
 const getOTP = require("../utilities/getOTP")
@@ -294,6 +295,58 @@ exports.resetPassword = async (req, res) => {
             auth: other
         })
     
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
+exports.addFavoriteMovie = async(req, res)=>{
+    try {
+
+        let doc = await Favorites.findOne({_id: req.params.id})
+
+        response(res, 200, {
+            movie: doc
+        })
+
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
+exports.getFavoriteMovies = async(req, res)=>{
+    try {
+        const {movieId} = req.body
+        const {userId} = req
+
+        let favorite = await Favorite.findOne({movieId: movieId})
+        if(favorite){
+            let doc = await Favorite.findByIdAndDelete({_id: favorite._id})
+            if(doc){
+                response(res, 200, {
+                    _id: favorite._id,
+                    message: "Movie sucessfully delete from favorite list"
+                })
+            }
+        } else {
+            let newItem = new Favorite({
+                movieId: movieId,
+                customerId: userId
+            })
+            newItem = await newItem.save()
+            response(res, 200, {
+                favorite: newItem,
+                message: "Movie sucessfully added to favorite list"
+            })
+        }
 
     } catch(ex){
         response(res, 500, {
