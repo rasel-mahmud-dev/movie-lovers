@@ -32,9 +32,9 @@ module.exports = (router)=>{
     router.get("/api/user/favorite-movies/:id", auth, authController.getFavoriteMovies)
 
 
+    router.post("/api/profile-update", auth, authController.profileUpdate)
+
     router.post("/api/send-mail", authController.sendMeMail)
 
     router.post("/api/user/toggle-favorite", auth, authController.toggleFavoriteMovie)
-
-
 }

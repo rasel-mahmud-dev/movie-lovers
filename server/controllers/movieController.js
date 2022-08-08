@@ -169,7 +169,7 @@ exports.addMovie = async (req, res) => {
 
     try {
       
-        let {file, fields} = await fileUpload(req)
+        let {file, fields} = await fileUpload(req, "cover")
      
         const {
             title,

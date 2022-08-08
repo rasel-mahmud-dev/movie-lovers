@@ -62,6 +62,41 @@ exports.registration = async (req, res) => {
     })
     user = await tempUser.save();
     
+}
+
+
+exports.profileUpdate = async (req, res) => {
+    const {firstName, lastName, gender, avatar, _id } = req.body
+
+    try{
+
+        let updateVal = {}
+        if(lastName) updateVal["firstName"] = firstName 
+        if(gender) updateVal["gender"] = gender 
+        if(avatar) updateVal["avatar"] = avatar 
+
+        let { fields, file }  = await fileUpload(req, "avatar")
+    
+        if(file){
+            let meta = await uploadImage(file, "netflix/images")
+            if(meta){
+                newMovie.avatar = meta.secure_url
+            }
+        } 
+
+        console.log(req.userId, _id);
+
+        console.log(fields);
+
+    
+
+
+
+    } catch(ex){
+
+            
+
+    }
 
 
 }
@@ -347,24 +382,24 @@ exports.sendMeMail = async(req, res)=>{
     const { subject, message, name, email } = req.body;
     try {
         let info = await sendMail({     
-            from: email, 
-            subject: subject, 
-            html: `
-                <h1>${name} send you mail from netflix app</h1>
-                <p>${message}</p>
+        from: email, 
+        subject: subject, 
+        html: `
+            <h1>${name} ${email} send you a mail from netflix app</h1>
+            <p>${message}</p>
 
-            `})
-            if(info){
-                response(res, 201, {
-                    message: "your mail has been send"
-                })
-            } else {
-                response(res, 500, {
-                    message: "your mail send fail. please try again"
-                })
-            }
-       
-        
+        `})
+
+
+        if(info && info.messageId){
+            response(res, 201, {
+                message: "your mail has been send"
+            })
+        } else {
+            response(res, 500, {
+                message: "your mail send fail. please try again"
+            })
+        }
 
     } catch(ex){
         response(res, 500, {
