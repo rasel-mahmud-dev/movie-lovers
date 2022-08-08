@@ -289,7 +289,7 @@ exports.updateMovie = async (req, res) => {
             let meta = await uploadImage(file, "netflix/images")
             if(meta){
                 updateMovie.cover = meta.secure_url
-            }
+            } 
         } else {
             updateMovie.cover = cover
         }

@@ -3,6 +3,8 @@ const Favorite = require("../models/Favorite")
 
 const sendMail = require("../utilities/sendMail")
 const getOTP = require("../utilities/getOTP")
+const fileUpload = require("../utilities/fileUpload")
+const imageCloudinary = require("../utilities/imageCloudinary")
 
 const {createHash, hashCompare} = require("../hash")
 const {createToken, getToken, parseToken} = require("../jwt")
@@ -13,7 +15,7 @@ const Movie = require("../models/Movie")
 exports.getUser = async (req, res) => {
     
    try{
-    let user = await User.findOne({_id: req.params.id}).select("-password")
+    let user = await User.findOne({_id: req.params.id}).select("-password -verify -OTPCode -role -expiredAt")
     if(user){
         return response(res, 200, {
             user: user,
@@ -74,34 +76,41 @@ exports.registration = async (req, res) => {
 
 
 exports.profileUpdate = async (req, res) => {
-    const {firstName, lastName, gender, avatar, _id } = req.body
+
 
     try{
 
         let updateVal = {}
-        if(lastName) updateVal["firstName"] = firstName 
-        if(gender) updateVal["gender"] = gender 
-        if(avatar) updateVal["avatar"] = avatar 
 
         let { fields, file }  = await fileUpload(req, "avatar")
     
+        const {firstName, lastName, gender, avatar, _id } = fields
+
+        if(firstName) updateVal["firstName"] = firstName 
+        if(lastName) updateVal["lastName"] = lastName 
+        if(gender) updateVal["gender"] = gender 
+        if(avatar) updateVal["avatar"] = avatar 
+
         if(file){
-            let meta = await uploadImage(file, "netflix/images")
+            let meta = await imageCloudinary(file, "netflix/images")
             if(meta){
-                newMovie.avatar = meta.secure_url
+                updateVal["avatar"] = meta.secure_url
+            } else {
+                return response(res, 500, {
+                    message: "Image upload fail. Try again",
+                })  
             }
-        } 
+        }
 
-        console.log(req.userId, _id);
-
-        console.log(fields);
-
-    
-
-
+        let updatedUser = await User.findByIdAndUpdate({_id: _id}, { $set: updateVal }, {new: true})
+                                .select("-password -verify -OTPCode -role -expiredAt")
+        if(updatedUser){
+            response(res, 201, {
+                user: updatedUser
+            }) 
+        }
 
     } catch(ex){
-
         response(res, 500, {
             message: "Internal error. Please try again",
         })  
@@ -301,15 +310,19 @@ exports.resetPassword = async (req, res) => {
         }
 
         user.password = hash
+        user.OTPCode = ""
+        user.expiredAt = new Date()
+ 
 
         let doc = await user.save()
+        let token = createToken(user._id, user.email)
 
         let {password: removePass, ...other} = doc._doc
 
-    
         response(res, 201, {
             message: "password changed",
-            auth: other
+            auth: other,
+            token: token 
         })
     
 

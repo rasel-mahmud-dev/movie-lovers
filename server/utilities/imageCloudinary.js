@@ -27,7 +27,8 @@ const uploadImage = (imagePath, dir)=>{
       resolve(s)
 
     } catch (ex){
-      reject(ex)
+      //  error: Error: getaddrinfo ENOTFOUND api.cloudinary.com
+      resolve(null)
     }
   })
   
