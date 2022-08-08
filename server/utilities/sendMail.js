@@ -15,7 +15,7 @@ function transporter(){
 
 function sendMail(mailOptions){
 
-  // let {to, from, subject, html} = mailOptions
+  // let {from, subject, html} = mailOptions
 
   mailOptions.to = process.env.APP_EMAIL
 

@@ -343,6 +343,37 @@ exports.toggleFavoriteMovie = async(req, res)=>{
 }
 
 
+exports.sendMeMail = async(req, res)=>{
+    const { subject, message, name, email } = req.body;
+    try {
+        let info = await sendMail({     
+            from: email, 
+            subject: subject, 
+            html: `
+                <h1>${name} send you mail from netflix app</h1>
+                <p>${message}</p>
+
+            `})
+            if(info){
+                response(res, 201, {
+                    message: "your mail has been send"
+                })
+            } else {
+                response(res, 500, {
+                    message: "your mail send fail. please try again"
+                })
+            }
+       
+        
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
 exports.getFavoriteMovies = async(req, res)=>{
     try {
 
