@@ -9,6 +9,7 @@ const schema = {
   avatar: String,
   OTPCode: String, // for login with otp
   expiredAt: Date,
+  verify: Boolean,
   createdAt: Date,
   role: {
     type: String,

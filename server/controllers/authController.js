@@ -1,5 +1,3 @@
-
-const TempUser = require("../models/TempUser")
 const User = require("../models/User")
 const Favorite = require("../models/Favorite")
 
@@ -37,6 +35,7 @@ exports.getUser = async (req, res) => {
 exports.registration = async (req, res) => {
     const {firstName, lastName, email, gender } = req.body
 
+   try{ 
     let user = await User.findOne({email})
     if(user){
         return response(res, 500, {
@@ -45,22 +44,31 @@ exports.registration = async (req, res) => {
         })
     }
 
-    user = await TempUser.findOne({email})
-    if(user){
-        return response(res, 206, {
-            auth: null,
-            message: "Please verify your email",
-        })
-    }
-
-    let tempUser = new TempUser({
+    user = new User({
         firstName, 
         lastName, 
         email, 
         gender,
+        verify: false,
         role: "customer"
     })
-    user = await tempUser.save();
+    user = await user.save();
+
+
+    if(user){
+     
+        response(res, 201, {
+            message: "account added"
+        })
+    
+    }
+
+   } catch(ex){
+    response(res, 500, {
+        message: "Internal error. Please try again",
+    })
+   }
+
     
 }
 
@@ -94,10 +102,11 @@ exports.profileUpdate = async (req, res) => {
 
     } catch(ex){
 
-            
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })  
 
     }
-
 
 }
 
@@ -106,12 +115,13 @@ exports.profileUpdate = async (req, res) => {
 exports.login = async (req, res) => {
    
     const { email, password } = req.body
-    let user = await User.findOne({email: email})
+    try{
+        let user = await User.findOne({email: email})
 
     if(!user){
    
         return response(res, 404, {
-            message: "user not registered",
+            message: "User is not registered",
         })
     }
 
@@ -132,6 +142,11 @@ exports.login = async (req, res) => {
         auth: other,
         token: token
     })
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
     
 }
 
@@ -171,25 +186,25 @@ exports.getOtpCode = async (req, res) => {
     try {
 
         let code = getOTP(6)
-        // let info = await sendMail({
-        //     from: email,
-        //     subject: "Verify your email to create your account",
-        //     html: `
-        //     <div>
-        //         <h1>Hi ${to}</h1>
-        //         <p>Your OTP Code 
-        //             <h1>${code}</h1>
-        //         </p>
-        //     </div>
-        //     `
-        // })
+        let info = await sendMail({
+            from: email,
+            subject: "Verify your email to create your account",
+            html: `
+            <div>
+                <h1>Hi ${to}</h1>
+                <p>Your OTP Code 
+                    <h1>${code}</h1>
+                </p>
+            </div>
+            `
+        })
 
         if("info"){
             let haftHour = (1000 * 60) * 30
 
             let exp = new Date(Date.now() + haftHour)
   
-            let doc = await TempUser.findOneAndUpdate(
+            let doc = await User.findOneAndUpdate(
                 {email},
                 { $set: {
                     OTPCode: code,
@@ -197,7 +212,6 @@ exports.getOtpCode = async (req, res) => {
                 }}
             )
             if(doc){    
-                
                 response(res, 201, {
                     message: "OTP Code has been send",
                     expiredAt: exp
@@ -209,8 +223,6 @@ exports.getOtpCode = async (req, res) => {
                 })
             }
         }
-
-        // context.body = info
 
     } catch(ex){
         response(res, 500, {
@@ -224,65 +236,29 @@ exports.otpValidation = async (req, res) => {
   
     try {
   
-        let tempUser = await TempUser.findOne({email: email})
+        let user = await User.findOne({email: email}).select("-password")
         
-        if(!tempUser){
-            let user = User.findOne({email}).select("-password")
-            if(user){
-                return response(res, 200, {
-                    message: "This user already verified",
-                    auth: user
-                })
-                
-            } else {
-                return response(res, 404, {
-                    message: "user not found",
-                })
-            }
-
+        if(!user){
+            return response(res, 404, {
+                message: "user not found",
+            })
         }
 
-        if(tempUser.expiredAt < new Date()){
+        if(user.expiredAt < new Date()){
             return response(res, 409, {
                 message: "OTP Code expired",
             })
         }
      
-        if(tempUser.OTPCode != otp){
+        if(user.OTPCode != otp){
             return response(res, 409, {
                 message: "OTP does't match",
             })
-        }
+        }    
 
-       
-        let user = await User.findOne({email}).select("-password")
-
-        if(user){
-            return response(res, 409, {
-                message: "This user already verified",
-            })
-        }
-    
-
-        let varifiedUser = new User({
-            firstName: tempUser.firstName,
-            lastName: tempUser.lastName,
-            email: tempUser.email,
-            createdAt: tempUser.createdAt,
-            gender: tempUser.gender,
-            role: tempUser.role
-        })
-        // varifiedUser = await varifiedUser.save()
-
-        try{
-            // await TempUser.deleteOne({email: email})
-
-        } catch(ex){
-
-        }
         return response(res, 201, {
             message: "verification successfully",
-            auth: varifiedUser
+            auth: user
         })
         
 
@@ -294,7 +270,7 @@ exports.otpValidation = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
 
-    const { email, password, otp } = req.body
+    const { email, password, otpCode } = req.body
   
     try {
   
@@ -311,7 +287,7 @@ exports.resetPassword = async (req, res) => {
             })
         }
      
-        if(user.OTPCode != otp){
+        if(user.OTPCode != otpCode){
              return response(res, 409, {
                 message: "OTP does't match",  
             })

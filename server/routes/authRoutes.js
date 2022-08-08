@@ -1,12 +1,3 @@
-
-const TempUser = require("../models/TempUser")
-const User = require("../models/User")
-
-const sendMail = require("../utilities/sendMail")
-const getOTP = require("../utilities/getOTP")
-
-const {createHash} = require("../hash")
-
 const authController = require("../controllers/authController")
 
 const {auth} =  require("../middlewares")
