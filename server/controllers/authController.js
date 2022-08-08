@@ -102,77 +102,6 @@ exports.profileUpdate = async (req, res) => {
 }
 
 
-exports.otpValidation = async (req, res) => {
-    const { email, otp } = req.body
-  
-    try {
-  
-        let tempUser = await TempUser.findOne({email: email})
-        
-        if(!tempUser){
-            let user = User.findOne({email}).select("-password")
-            if(user){
-                return response(res, 200, {
-                    message: "This user already verified",
-                    auth: user
-                })
-                
-            } else {
-                return response(res, 404, {
-                    message: "user not found",
-                })
-            }
-
-        }
-
-        if(tempUser.expiredAt < new Date()){
-            return response(res, 409, {
-                message: "OTP Code expired",
-            })
-        }
-     
-        if(tempUser.OTPCode != otp){
-            return response(res, 409, {
-                message: "OTP does't match",
-            })
-        }
-
-        if(tempUser){
-            let user = await User.findOne({email}).select("-password")
-
-            if(user){
-                return response(res, 409, {
-                    message: "This user already verified",
-                })
-            }
-        
-
-            let varifiedUser = new User({
-                firstName: tempUser.firstName,
-                lastName: tempUser.lastName,
-                email: tempUser.email,
-                createdAt: tempUser.createdAt,
-                gender: tempUser.gender,
-                role: tempUser.role
-            })
-            varifiedUser = await varifiedUser.save()
-
-            try{
-                await TempUser.deleteOne({email: email})
-            } catch(ex){
-
-            }
-            return response(res, 201, {
-                message: "verification successfully",
-                auth: varifiedUser
-            })
-        }
-
-    } catch(ex){
-        console.log(ex) 
-    }
-}
-
 
 exports.login = async (req, res) => {
    
@@ -274,6 +203,10 @@ exports.getOtpCode = async (req, res) => {
                     expiredAt: exp
                 })
                
+            } else {
+                response(res, 404, {
+                    message: "This user doesn't exists",
+                })
             }
         }
 
@@ -283,6 +216,78 @@ exports.getOtpCode = async (req, res) => {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
+    }
+}
+
+exports.otpValidation = async (req, res) => {
+    const { email, otp } = req.body
+  
+    try {
+  
+        let tempUser = await TempUser.findOne({email: email})
+        
+        if(!tempUser){
+            let user = User.findOne({email}).select("-password")
+            if(user){
+                return response(res, 200, {
+                    message: "This user already verified",
+                    auth: user
+                })
+                
+            } else {
+                return response(res, 404, {
+                    message: "user not found",
+                })
+            }
+
+        }
+
+        if(tempUser.expiredAt < new Date()){
+            return response(res, 409, {
+                message: "OTP Code expired",
+            })
+        }
+     
+        if(tempUser.OTPCode != otp){
+            return response(res, 409, {
+                message: "OTP does't match",
+            })
+        }
+
+       
+        let user = await User.findOne({email}).select("-password")
+
+        if(user){
+            return response(res, 409, {
+                message: "This user already verified",
+            })
+        }
+    
+
+        let varifiedUser = new User({
+            firstName: tempUser.firstName,
+            lastName: tempUser.lastName,
+            email: tempUser.email,
+            createdAt: tempUser.createdAt,
+            gender: tempUser.gender,
+            role: tempUser.role
+        })
+        // varifiedUser = await varifiedUser.save()
+
+        try{
+            // await TempUser.deleteOne({email: email})
+
+        } catch(ex){
+
+        }
+        return response(res, 201, {
+            message: "verification successfully",
+            auth: varifiedUser
+        })
+        
+
+    } catch(ex){
+        console.log(ex) 
     }
 }
 
