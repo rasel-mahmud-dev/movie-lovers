@@ -2,7 +2,7 @@ import './App.css'
 import { Suspense } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { lazy, useEffect } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 
 
 import Navigation from './components/Navigation'
@@ -28,7 +28,8 @@ function App() {
   const dispatch = useDispatch()
 
   
-  const modal = useSelector(state => state.app.modal)
+  const {app, auth} = useSelector(state => state)
+  const {modal} = app
 
 
   useEffect(()=>{
@@ -54,20 +55,26 @@ function App() {
           <Route exact={true} path="/series" element={<Series/>} />
           <Route exact={true} path="/movie/:id" element={<MovieDetail/>} />
 
-          <Route exact={true} path="/auth/dashboard/:id" element={<Dashboard/>} />
-          <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />
-          <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
+          {auth.auth ? (
+            <>
+              <Route exact={true} path="/auth/dashboard/:id" element={<Dashboard/>} /> 
+              <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />
+              <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
+            </>
+          ) : (
+            <Route
+                path="*"
+                element={<Navigate to="/" replace />}
+            />
+          )}
 
           <Route exact={true} path="/about-us" element={<AboutUs/>} />
           <Route exact={true} path="/contact" element={<Contact/>} />
         </Routes>
       </Suspense>
 
-
       <Footer />
-
     </div>
-
   )
 }
 
