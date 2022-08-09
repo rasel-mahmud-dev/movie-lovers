@@ -360,10 +360,10 @@ function AddMovie() {
             <h1 className="text-center font-bold text-4xl text-gray-50 mt-4 mb-3">Add new Movie</h1>
 
             <div className="max-w-3xl w-full mx-auto">
-                <div className="flex justify-end mt-10">
-                    <button onClick={() => handleToggleModal("addGenre")} className="btn btn-primary ml-5">Add Genre</button>
-                    <button onClick={() => handleToggleModal("addQuality")} className="btn btn-primary ml-5">Add Quality</button>
-                    <button onClick={() => handleToggleModal("addLanguage")} className="btn btn-primary ml-5">Add Language</button>
+                <div className="flex flex-wrap gap-4 justify-center md:justify-end mt-10">
+                    <button onClick={() => handleToggleModal("addGenre")} className="btn btn-primary ">Add Genre</button>
+                    <button onClick={() => handleToggleModal("addQuality")} className="btn btn-primary ">Add Quality</button>
+                    <button onClick={() => handleToggleModal("addLanguage")} className="btn btn-primary ">Add Language</button>
 
                 </div>
 
