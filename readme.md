@@ -1,9 +1,52 @@
-Free Movie Watcher Site
+# Free Movie Watcher Site  netflix2-0
+
+## front-end + backend hosted vercel and netlify
+
+# Live Link: https://netflix2-0.netlify.app
 
 
-task in 09-08-2022
-1. Create profile update controller backend. ==> 
-2. Auth Modal re-factoring complete.
-3. Contact page send email feature. ==> done
-4. home section empty genre remove from controller
-5. add 3rd party movie video player 
+
+features
+
+- OTP base and password based authentication.
+
+- Reset password
+
+- Movie Pagination
+
+- Movie Filter by Genres, Quality, Language
+
+- Movie search by Title
+
+- Movie add to Favorite
+
+- User Dashboard. 
+
+- Profile Updater and avatar Upload
+
+- Movie Adding Feature only admin user.
+
+- Movie delete only admin user.
+
+- User can delete their Account.
+
+- Contact Email sending
+
+- All form validation
+
+  
+
+Technology used.
+
+- react 
+- redux-toolkits
+- react-router-dom (Route base code spliting)
+- daisyUI (tailwindcss)
+- expressjs
+- mongoose
+- formidable
+- jsonwebtoken etc....
+
+
+
+Live Link https://netflix2-0.netlify.app
