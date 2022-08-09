@@ -19,6 +19,7 @@ const Dashboard = lazy(()=>import("src/pages/dashboard/Dashboard"))
 const Contact  = lazy(()=>import('./pages/Contact'));
 const AboutUs  = lazy(()=>import('./pages/AboutUs'));
 const JoinHome = lazy(()=>import("src/pages/auth/JoinHome"))
+import Loader from 'src/components/loader/Loader';
 
 
 
@@ -43,7 +44,7 @@ function App() {
     <div className="App">
       <Navigation />
      
-      <Suspense fallback={<h1 className="text-center text-3xl text-white mt-10">Module Loading</h1>}>
+      <Suspense fallback={<Spinner />}>
 
        { modal && <JoinHome /> }
 
@@ -70,6 +71,15 @@ function App() {
   )
 }
 
+const Spinner = ()=>{
+  return (
+    <div className="flex flex-col items-center py-10 min-h-[500px] justify-center">
+      <h1 className="text-center text-3xl text-white">Loading Please wait...</h1>
+      <Loader className="big_loader mt-4" />
+    </div>
+
+  )
+}
 
 
 export default App

@@ -14,7 +14,7 @@ const movies = [
 const initialState = {
   movies: null,  // {1: Movie[], 2: Movie[], 3: Movie[]} // // for caching
   movie: null,
-  sectionMovies: {},
+  sectionMovies: null, // {}
   seriesMovies: [],
   categories: [],
   modal: "", // login, registration, "",

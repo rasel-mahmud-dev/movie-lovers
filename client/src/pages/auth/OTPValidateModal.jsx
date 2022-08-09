@@ -36,7 +36,7 @@ function OTPValidateModal(props) {
             })
         }
 
-    }, [authProfile.email])
+    }, [authProfile])
 
 
     async function handleCheckOTPCode(e) {

@@ -30,7 +30,7 @@ function HeroCarousel() {
                     </div>
                 </div>
             ),
-            image: "images/1191374.jpg" 
+            image: "/1191374.jpg" 
         },
         { 
             caption: ()=> (
@@ -45,7 +45,7 @@ function HeroCarousel() {
                     </div>
                 </div>
             ),
-            image: "images/3034968.jpg" 
+            image: "/3034968.jpg" 
         },
         { 
             caption: ()=> (
@@ -60,7 +60,7 @@ function HeroCarousel() {
                     </div>
                 </div>
             ),
-            image: "images/slider-hm4-1.jpg" 
+            image: "/slider-hm4-1.jpg" 
         },
         
 
@@ -88,7 +88,7 @@ function HeroCarousel() {
                         <SwiperSlide key={i} className="relative">
                             
                             <div >
-                                <img src={fullPath(item.image)} alt="" />
+                                <img className="brightness-90" src={item.image} alt="slider image" />
                             </div>
                             { item.caption() }
 

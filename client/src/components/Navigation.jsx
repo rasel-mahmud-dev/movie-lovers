@@ -129,8 +129,8 @@ function Navigation() {
                 <div className="navbar">
 
                     <div className="navbar-start">
-                        <Link to="/" className="btn btn-ghost normal-case text-xl">
-                            <div className="w-40">
+                        <Link to="/" className="normal-case text-xl">
+                            <div className="w-20 md:w-40">
                                 <img src="logo-3.svg" alt="" />
                             </div>
                         </Link>
@@ -181,7 +181,11 @@ function Navigation() {
                             </div>
                         ) : (
                             <div>
-                                <button onClick={()=>dispatch(toggleModal("registration"))} className="btn btn-primary ml-4">Join Now</button>
+                                <button onClick={()=>dispatch(toggleModal("registration"))} className="btn btn-sm sm:btn-md btn-primary ml-4">
+
+                                Join <span className='hidden md:inline-block ml-1'> Now</span>
+
+                                </button>
                             </div>
                         ) }
                         

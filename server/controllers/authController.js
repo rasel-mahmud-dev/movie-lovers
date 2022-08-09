@@ -12,7 +12,7 @@ const {createToken, getToken, parseToken} = require("../jwt")
 
 const response = require("../utilities/response")
 const Movie = require("../models/Movie")
-const { use } = require("passport")
+
 
 exports.getUser = async (req, res) => {
     
@@ -121,7 +121,6 @@ exports.profileUpdate = async (req, res) => {
     }
 
 }
-
 
 
 exports.login = async (req, res) => {

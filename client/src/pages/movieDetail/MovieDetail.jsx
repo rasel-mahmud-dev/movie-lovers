@@ -96,11 +96,17 @@ const MovieDetail = () => {
                 break;
 
             default:
-                if (typeof value === "object") {
-                    item = value.name
-                } else {
-                    item = value
+                if(value){
+                    if (typeof value === "object") {
+
+                        item = value.name
+                    } else {
+                        item = value
+                    }
+                } else{
+                    item = ""
                 }
+                
                 break;
         }
 

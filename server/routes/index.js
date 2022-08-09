@@ -5,10 +5,11 @@ const languageRoutes = require("./languageRoutes");
 const qualityRoutes = require("./qualityRoutes");
 const movieRoutes = require("./movieRoutes");
 
-module.exports = function (router){
-    authRoutes(router)
-    genreRoutes(router)
-    languageRoutes(router)
-    qualityRoutes(router)
-    movieRoutes(router)
+module.exports = (app)=>{
+
+    authRoutes(app)
+    genreRoutes(app)
+    languageRoutes(app)
+    qualityRoutes(app)
+    movieRoutes(app)
 }

@@ -14,12 +14,14 @@ const HomePage = ()=> {
   
     React.useEffect(()=>{
 
-        api.get("/api/home-section-movies").then(res=>{
-            dispatch(setSectionMovies(res.data.data))
-        })
-        .catch(ex=>{
-            console.log(ex);
-        })
+        if(!sectionMovies){
+            api.get("/api/home-section-movies").then(res=>{
+                dispatch(setSectionMovies(res.data.data))
+            })
+            .catch(ex=>{
+                console.log(ex);
+            })
+        }
 
     }, [])
 
@@ -30,7 +32,7 @@ const HomePage = ()=> {
           <div className="my_container">
 
 
-            { Object.keys(sectionMovies).map((section, i)=>(
+            { sectionMovies && Object.keys(sectionMovies).map((section, i)=>(
 
                 <div className="mt-10" key={i}>
                     <h2 className="text-3xl text-gray-100 font-medium mt-10 mb-4 pb-4 border-b 

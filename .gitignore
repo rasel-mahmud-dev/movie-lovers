@@ -1,5 +1,12 @@
 client/dist
 client/node_modules
+client/.netlify
+
 server/node_modules
 server/.env
+server/.netlify
 server/public
+server/dist
+server/.vercel
+# Local Netlify folder
+.netlify

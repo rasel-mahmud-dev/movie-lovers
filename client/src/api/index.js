@@ -1,6 +1,9 @@
 import axios from "axios"
 
-export const apiServer = "http://localhost:3000"
+
+const isDev = import.meta.env.MODE === "development"
+
+export const apiServer = isDev ? "http://localhost:1000" : "https://netlflx-api-20.vercel.app"
 
 export const api = axios.create({
     baseURL: apiServer

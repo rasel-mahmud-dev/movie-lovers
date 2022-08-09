@@ -9,7 +9,7 @@ import fullPath from '../utils/fullPath'
 export default function Footer() {
     return (
         <div className='bg-dark-700 '>
-            <footer className="footer p-10 my_container text-base-content">
+            <footer className="footer flex flex-col items-center md:grid p-10 my_container text-base-content">
                 <div>
                     <span className="footer-title">Services</span>
                     <a href='https://rasel-portfolio.vercel.app/' className="link link-hover">Branding</a>
@@ -28,16 +28,16 @@ export default function Footer() {
      
                 </div>
             </footer>
-            <footer className="footer  my_container px-4 py-4 border-t bg-dark-700 text-base-content border-base-300 items-center">
-                <div className="flex flex-col ">
+            <footer className="footer flex flex-col md:grid my_container px-4 py-4 border-t bg-dark-700 text-base-content border-base-300 items-center">
+                <div className="flex flex-col  ">
                     <Link to="/" className="normal-case text-xl">
                         <div className="w-28">
-                            <img src={fullPath("images/logo-3.svg")} alt="" />
+                            <img src={"/logo-3.svg"} alt="" />
                         </div>
                     </Link>
                     <p>Providing reliable tech since 2020</p>
                 </div>
-                    <div className="md:place-self-center md:justify-self-end">
+                    <div className="md:place-self-center md:justify-self-end -mt-8 md:mt-auto">
                         <div className="grid grid-flow-col gap-4">
 
                         <div class="flex mt-6 justify-center">
