@@ -199,7 +199,6 @@ const MovieDetail = () => {
 
 
 
-
                             {/* video player  */}
                             <div className="mt-10">
                             { isYoutubeVideo(movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl) ? (
@@ -224,20 +223,9 @@ const MovieDetail = () => {
                             ) }
                             </div>
 
-                          
-                            {/* <ReactPlayer
-                                onPlay={handlePlay}
-                                onError={handleError}  controls={true} 
-                            
-                                url={movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl}
-                             /> */}
-                            {/* url='https://www.youtube.com/watch?v=RfLlwL7YvAw&ab_channel=PinakiBhattacharya' /> */}
-
-
-
+            
 
                             <div className="mt-4 mb-6">
-
                                 <button onClick={() => handleAddToFavorite(movie._id)} className="btn btn-primary">
                                     <MdFavorite className="text-lg" />
                                     <span className="ml-2">{isInFavorite(movie._id) ? "Remove to Favorite" : "Add to Favorite"}</span>
