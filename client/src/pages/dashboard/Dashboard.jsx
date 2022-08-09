@@ -9,6 +9,11 @@ import Avatar from 'src/components/Avatar';
 import Profile from 'src/pages/dashboard/Profile';
 import FavoriteMovies from 'src/pages/dashboard/FavoriteMovies';
 import EditProfile from './EditProfile';
+import UserSettings from './UserSettings';
+import {CgProfile, CgPlayList} from 'react-icons/cg'
+import {BsFillBookmarkHeartFill} from 'react-icons/bs'
+import {IoIosSettings} from "react-icons/io"
+
 
 function Dashboard(props) {
 
@@ -37,17 +42,19 @@ function Dashboard(props) {
 
 
     const [sideBarContent, setSideBarContent] = React.useState("Profile")
-    const [editProfile, setEditProfile] = React.useState(true)
+    const [editProfile, setEditProfile] = React.useState(false)
 
     const sideBarData = [
-        { name: "Profile" },
-        { name: "Favorites" },
-        { name: "Playlist" }
+        { icon:  <CgProfile/> , name: "Profile" },
+        { icon:  <BsFillBookmarkHeartFill/> , name: "Favorites" },
+        { icon:  <CgPlayList/> , name: "Playlist" },
+        { icon:  <IoIosSettings/> , name: "Settings" }
     ]
 
     function selectSideBarSection(sideBarItem) {
         setSideBarContent(sideBarItem.name)
     }
+
 
 
     return (
@@ -58,7 +65,7 @@ function Dashboard(props) {
                     <div className='col-span-1 bg-dark-700 h-screen'>
 
                         <div className="flex flex-col items-center mt-8">
-                            <Avatar firstLetter={authProfile.firstName[0]} />
+                            <Avatar firstLetter={authProfile.firstName[0]} url={authProfile.avatar} />
                             <span className="font-medium text-gray-100 text-lg mt-2">
                                 {authProfile.firstName} {" "}
                                 {authProfile.lastName}
@@ -70,8 +77,9 @@ function Dashboard(props) {
                                 <li     
                                     key={item._id}
                                     onClick={() => selectSideBarSection(item)}
-                                    className={["py-4 font-medium text-md text-gray-100 cursor-pointer", item.name === sideBarContent ? "active" : ""].join(" ")}>
-                                    {item.name}
+                                    className={["py-4 flex items-center font-medium text-md text-gray-100 cursor-pointer", item.name === sideBarContent ? "active" : ""].join(" ")}>
+                                    <span className="mr-1">{item.icon}</span>
+                                    <span>{item.name}</span>
                                 </li>
                             ))}
                         </ul>
@@ -79,9 +87,9 @@ function Dashboard(props) {
                     </div>
 
                     <div className="col-span-3">
-                        {sideBarContent === "Profile" && editProfile 
+                        {sideBarContent === "Profile" ? editProfile 
                         ? <EditProfile 
-                                auth={auth.auth}
+                                auth={auth}
                                 editProfile={editProfile} 
                                 setEditProfile={setEditProfile} 
                             /> 
@@ -89,9 +97,10 @@ function Dashboard(props) {
                         :  <Profile 
                                 editProfile={editProfile} 
                                 setEditProfile={setEditProfile}
-                            />
+                            /> : ""
                         }
                         {sideBarContent === "Favorites" && <FavoriteMovies />}
+                        {sideBarContent === "Settings" && <UserSettings />}
                     </div>
                 </div>
             )}

@@ -1,17 +1,13 @@
 import React from 'react'
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { setAuthProfile } from "src/store/slices/authSlice"
-import { fetchAuthProfile } from "src/store/actions/authActions"
-import Avatar from 'src/components/Avatar';
-import EditProfile from './EditProfile';
-
-
+import {BiPencil} from "react-icons/bi"
 
 function Profile(props) {
 
-    const {setEditProfile, editProfile} = props
+    const {setEditProfile} = props
+
+    let skipFields = ["_id", "__v", "avatar", "updatedAt"]
 
 
     const params = useParams();
@@ -21,25 +17,46 @@ function Profile(props) {
 
     const { id } = params
 
+    function renderItem(key, value){
+        switch(true){
+            case key === "createdAt":
+                return (
+                    <>
+                        <td className="py-2 w-[200px]  text-gray-200">Join on</td>
+                         <td>{new Date(value).toLocaleString()}</td>
+                    </>
+                )
+
+            default:  
+                return (
+                    <>
+                        <td className="py-2 w-[200px] text-gray-200">{key}</td>
+                         <td className=''>{value}</td>
+                    </>
+                )
+        }
+
+    }
 
 
     return (
         <div>
             <div>
-            <h1 className="text-3xl text-gray-100 font-medium mb-4">
+            <h1 className="text-3xl text-gray-100 font-medium mb-4 text-center">
                 Welcame 
                 <span> {authProfile.firstName}</span>
              </h1>
-             <button className='btn' onClick={()=>setEditProfile(true)} >Edit Profile</button>
+             <button className='btn mb-4' onClick={()=>setEditProfile(true)} >
+                 <BiPencil className="mr-1" />
+                 Edit Profile</button>
             </div>
 
-            <table>
+            <table className="w-full">
 
                 <tbody>
-                    {authProfile && Object.keys(authProfile).map(key => (
+                    {authProfile && Object.keys(authProfile).map(key => !skipFields.includes(key) && (
                         <tr>
-                            <td>{key}</td>
-                            <td>{authProfile[key]}</td>
+                            {renderItem(key, authProfile[key])}
                         </tr>
                     ))}
                 </tbody>

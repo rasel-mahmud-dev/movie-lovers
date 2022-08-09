@@ -5,19 +5,18 @@ import {toggleModal} from "../slices/appSlice"
 
 const initialState = {
     verify: false,
-    auth: null,
-    authProfile: null,
-    favorites: []
+    auth: null,  // {}
+    authProfile: null, // {}
+    favorites: null // []
 }
 
 // First, create the thunk
-export const registration = createAsyncThunk(
+export const registrationAction = createAsyncThunk(
     'auth/registration',
     async function(userData, thunkAPI){
       try{
         let res = await api.post( "/api/registration", userData)
-
-        thunkAPI.dispatch(toggleModal("verify_modal"))
+        thunkAPI.dispatch(toggleModal("get_otp_modal"))
         return {status: res.status, data: res.data}
       } catch(ex){
         thunkAPI.rejectWithValue("somethig were wrong")
@@ -25,6 +24,7 @@ export const registration = createAsyncThunk(
     }
   )
 
+  
 // First, create the thunk
 export const loginAction = createAsyncThunk(
     'auth/login',
@@ -32,7 +32,11 @@ export const loginAction = createAsyncThunk(
       try{
         let res = await api.post("/api/login", userData)
         if(res.status === 201){
-          thunkAPI.dispatch(toggleModal(""))
+          if(!res.data.auth.verify){
+            return thunkAPI.dispatch(toggleModal("get_otp_modal"))
+          } else{
+            thunkAPI.dispatch(toggleModal(""))
+          }
         }
         return {status: res.status, data: res.data}
       } catch(ex){
@@ -48,7 +52,12 @@ export const loginAction = createAsyncThunk(
       try{
         let res = await getApi().post("/api/auth/login-token")
         if(res.status === 201){
-          return { status: res.status, data: res.data}
+          if(!res.data.auth.verify){
+            thunkAPI.dispatch(toggleModal("get_otp_modal"))
+            return { status: 403, data: res.data}
+          } else{
+            return { status: res.status, data: res.data}
+          }
         }
 
       } catch(ex){
@@ -67,8 +76,6 @@ export const loginAction = createAsyncThunk(
     // }))
   )
   
-
-
 export const counterSlice = createSlice({
   name: 'auth',
   initialState,
@@ -76,6 +83,15 @@ export const counterSlice = createSlice({
 
     setAuthProfile(state, action){
       state.authProfile = action.payload;
+      state.auth =  {
+        ...state.auth,
+        ...action.payload 
+      };
+    },
+
+    setAuth(state, action){
+      localStorage.setItem("token", action.payload.token)
+      state.auth = action.payload.auth;
     },
     
     setFavoritesMovies(state, action){
@@ -93,6 +109,7 @@ export const counterSlice = createSlice({
     logOutAction(state, payload){
       localStorage.removeItem("token")
       state.auth = null;
+      state.authProfile = null;
     }
   },
   
@@ -140,11 +157,18 @@ export const counterSlice = createSlice({
           verify: true,
           auth: data.auth
         }
+      }  else if(status === 403){
+        return {
+          ...state,
+          verify: false,
+          authProfile: data.auth
+        }
       } else {
         return {
-            ...state,
-            auth: data.auth
-          }
+          ...state,
+          verify: true,
+          auth: data.auth
+        }
       }
     }
   }
@@ -158,6 +182,7 @@ export const {
   setFavoritesMovies,
   addToFavorite,
   removeFromFavorite,
+  setAuth,
 } = counterSlice.actions
 
 export default counterSlice.reducer

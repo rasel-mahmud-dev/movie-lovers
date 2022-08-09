@@ -148,8 +148,9 @@ exports.getMoviesForHomeSection = async (req, res) => {
         let data = {}
         homeMovieSection.forEach(async (section, i)=>{
             let doc = await Movie.find({genres: section._id}).limit(10)
-            data[section.name] = doc;
-
+            if(doc && doc.length > 0){
+                data[section.name] = doc;
+            }
             if((i + 1) === homeMovieSection.length){
                 response(res, 200, {
                     data: data

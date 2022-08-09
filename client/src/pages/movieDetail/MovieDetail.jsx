@@ -12,6 +12,8 @@ import { MdFavorite } from "react-icons/md"
 import { setFavoritesMovies } from "src/store/slices/authSlice"
 import { fetchFavoriteMovies } from "src/store/actions/authActions"
 
+import ReactPlayer from 'react-player'
+import ResponseAlert from './../../components/ResponseAlert';
 
 
 
@@ -24,6 +26,11 @@ const MovieDetail = () => {
 
     const params = useParams()
     const dispatch = useDispatch();
+
+    const [state, setState] = React.useState({
+        httpResponse: "",
+        httpStatus: 0
+    })
 
 
     React.useEffect(() => {
@@ -64,7 +71,7 @@ const MovieDetail = () => {
         let item;
         switch (true) {
             case key === "author":
-                item = <span>{value.firstName} {value.lastName}</span>
+                item = value && <span>{value.firstName} {value.lastName}</span>
                 break;
 
             case key === "price":
@@ -100,21 +107,39 @@ const MovieDetail = () => {
         return item
     }
 
-    let whiteList = ["updatedAt", "createdAt", "__v", "summary", "videoUrl", "cover", "_id"]
+    let whiteList = ["updatedAt", "createdAt", "__v", "summary", "videoUrl", "trailerUrl", "cover", "_id"]
+
+    function handleError(e){
+        if(e){
+            setState({
+                httpResponse: "This video can't play",
+                httpStatus: 500
+            })
+        }
+    }
+
+    function handlePlay(e){
+        setState({
+            httpResponse: "",
+            httpStatus: 0
+        })
+    }
+
+    function handleDownload(e){
+        alert("Download feature not implement yet")
+    } 
 
 
     return (
         <div>
             <div className="max-w-screen-lg mx-auto">
-                <div className="">
+                <div className="mb-10">
                     {movie && (
                         <div className="">
 
-                            <div className="flex justify-center gap-x-2 text-xl font-medium text-gray-100">
+                            <div className="flex justify-center gap-x-2 text-xl font-medium text-gray-100 mt-2">
                                 <h4>{movie.title}</h4>
-                                <h4>4 Minutes</h4>
-                                <h4>2022-03-28</h4>
-                                <h4>Romantic/Action</h4>
+                                <h4 className="text-orange-400">{movie.genres && movie.genres.name}</h4>
                             </div>
 
 
@@ -124,9 +149,24 @@ const MovieDetail = () => {
 
 
                             {/* video player  */}
-                            <div className="mt-10">
+                            {/* <div className="mt-10">
                                 <video controls className="w-full" src={fullPath("images/v.mp4")}></video>
-                            </div>
+                            </div> */}
+
+
+                            <ResponseAlert 
+                                message={state.httpResponse} statusCode={state.httpStatus}
+                            />
+                          
+                            <ReactPlayer
+                                onPlay={handlePlay}
+                            onError={handleError}  controls={true} 
+                            
+                                url={movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl}
+                             />
+                            {/* url='https://www.youtube.com/watch?v=RfLlwL7YvAw&ab_channel=PinakiBhattacharya' /> */}
+
+
 
 
                             <div className="mt-4 mb-6">
@@ -160,7 +200,7 @@ const MovieDetail = () => {
                             </div>
 
 
-                            <button className="mt-10 btn btn-primary">
+                            <button className="mt-10 btn btn-primary" onClick={handleDownload}>
                                 <FaCloudDownloadAlt className="text-lg" />
                                 <span className="ml-2">Download</span>
                             </button>

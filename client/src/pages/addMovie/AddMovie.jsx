@@ -8,8 +8,8 @@ import InputGroup from "src/components/inputs/InputGroup"
 import MultiInput from "src/components/inputs/MultiInput"
 import FileUpload from "src/components/inputs/FileUpload"
 
-import { setLanguages, setQualities } from "src/store/slices/appSlice"
-import { fetchLanguages, fetchQualities } from "src/store/actions/appActions"
+import { setLanguages, setGenres, setQualities } from "src/store/slices/appSlice"
+import { fetchLanguages, fetchGenres, fetchQualities } from "src/store/actions/appActions"
 
 
 
@@ -19,12 +19,17 @@ import TextArea from '../../components/inputs/TextArea'
 import { getApi } from '../../api'
 import { useParams } from 'react-router-dom';
 import { api } from 'src/api';
+import ResponseAlert from './../../components/ResponseAlert';
+import errorMessage from './../../utils/errorResponse';
 
 
 function AddMovie() {
     const dispatch = useDispatch()
     const { app } = useSelector(state => state)
     const params = useParams()
+
+    const { genres, qualities, languages, } = useSelector(state => state.app)
+
 
 
     const [state, setState] = React.useState({
@@ -46,68 +51,82 @@ function AddMovie() {
             summary: { value: "", errorMessage: "", tauch: false },
             language: { value: "", errorMessage: "", tauch: false }, // id
         },
-        addMovieModal: "" // addGenre | addLanguage |  addQuality
+        addMovieModal: "", // addGenre | addLanguage |  addQuality
+        httpResponse: "",
+        httpStatus: 0
     })
 
 
-    function fetchMovie(id, cb){
-        api.get("/api/movie/"+id).then(res=>{
+    function fetchMovie(id, cb) {
+        api.get("/api/movie/" + id).then(res => {
             cb(res.data.movie)
         })
     }
 
 
     React.useState(() => {
-            
-        (!languages || languages.length === 0) && fetchLanguages((data) => {
-        
-            dispatch(setLanguages(data.languages))
-        })
-    
-        (!qualities || qualities.length === 0) && fetchQualities((data) => {
-            dispatch(setQualities(data.qualities))
-        })
 
-        try {
-            if (params.id) {
-                fetchMovie(params.id, (movie)=>{
-                    let updateMovieData = {...state.movieData}
-                    for (let key in updateMovieData) {
-                        if(key === "releaseYear"){
-                            let i = movie[key].indexOf("T")
-                            updateMovieData[key] = {
-                                ...updateMovieData[key],
-                                value: movie[key].slice(0, i),
-                                tauch: movie[key] ? true: false,
-                                errorMessage: ""
-                            }
-                        } else if(key === "price"){
-                            let isZero = movie[key] == 0 
-                            updateMovieData[key] = {
-                                ...updateMovieData[key],
-                                value: isZero ? "0" : movie[key],
-                                tauch: true,
-                                errorMessage: ""
-                            }
-                            
-                        } else {
-                            updateMovieData[key] = {
-                                ...updateMovieData[key],
-                                value: movie[key],
-                                tauch: movie[key] ? true: false,
-                                errorMessage: ""
-                            }
+
+        if (typeof fetchLanguages === "function") {
+            (!languages || languages.length === 0) && fetchLanguages((data) => {
+                dispatch(setLanguages(data.languages))
+            })
+        }
+
+
+        if (typeof fetchQualities === "function") {
+            (!qualities || qualities.length === 0) && fetchQualities((data) => {
+                dispatch(setQualities(data.qualities))
+            })
+        }
+
+        if (typeof fetchGenres === "function") {
+            (!genres || genres.length === 0) && fetchGenres((data) => {
+                console.log(data);
+                dispatch(setGenres(data.genres))
+            })
+        }
+
+
+       
+        if (params.id) {
+            fetchMovie(params.id, (movie) => {
+                let updateMovieData = { ...state.movieData }
+                for (let key in updateMovieData) {
+                    if (key === "releaseYear") {
+                        let i = movie[key].indexOf("T")
+                        updateMovieData[key] = {
+                            ...updateMovieData[key],
+                            value: movie[key].slice(0, i),
+                            tauch: movie[key] ? true : false,
+                            errorMessage: ""
+                        }
+                    } else if (key === "price") {
+                        let isZero = movie[key] == 0
+                        updateMovieData[key] = {
+                            ...updateMovieData[key],
+                            value: isZero ? "0" : movie[key],
+                            tauch: true,
+                            errorMessage: ""
+                        }
+
+                    } else {
+                        updateMovieData[key] = {
+                            ...updateMovieData[key],
+                            value: movie[key],
+                            tauch: movie[key] ? true : false,
+                            errorMessage: ""
                         }
                     }
-                    console.log(updateMovieData);
-
-                    setState({
-                        ...state,
-                        movieData: updateMovieData
-                    })
+                }
+                setState({
+                    ...state,
+                    movieData: updateMovieData
                 })
+            })
 
-            } else {
+        } else {
+            try {
                 let d = JSON.parse(localStorage.getItem("userData"))
                 if (d) {
                     setState({
@@ -115,11 +134,14 @@ function AddMovie() {
                         movieData: d
                     })
                 }
-            }
+            } catch (_) { }
+        }
 
-        } catch (_) { }
+
 
     }, [])
+
+   
 
 
     const { addMovieModal, movieData } = state
@@ -227,10 +249,13 @@ function AddMovie() {
 
     function handleAddMovie(e) {
         e.preventDefault();
-        let isCompleted = true;
-        let updatedState = {}
 
-        
+        setState({...state, httpResponse: "", httpStatus: 0})
+
+        let isCompleted = true;
+        let updatedState = { ...state.movieData }
+
+
         for (let key in movieData) {
             if (key === "tags") {
 
@@ -244,7 +269,7 @@ function AddMovie() {
                     isCompleted = false;
                 } else {
                     // only check when image is blob data;
-                    if(!params.id){
+                    if (!params.id) {
                         if (movieData[key].value.size > "102400") { // 100kb
                             updatedState[key].errorMessage = `${key} size should be under 100kb`
                             isCompleted = false;
@@ -266,9 +291,7 @@ function AddMovie() {
                 movieData: updatedState
             })
             return;
-        } else {
-            console.log("SADDDDD");
-        }
+        } 
 
         localStorage.setItem("userData", JSON.stringify(movieData))
 
@@ -283,24 +306,50 @@ function AddMovie() {
         }
 
 
+        setState({ ...state, httpResponse: "pending" })
         // Update existing movie
-        if(params.id){
+        if (params.id) {
             formData.append("_id", params.id)
             getApi().post("/api/update-movie", formData).then(response => {
-                console.log(response);
+                setState({
+                    ...state,
+                    httpResponse: "Movie updated...",
+                    httpStatus: 200
+                })
             }).catch(ex => {
-                console.log(ex);
+                setState({
+                    ...state,
+                    httpResponse: errorMessage(ex),
+                    httpStatus: 500
+                })
             })
 
 
         } else {
             getApi().post("/api/add-movie", formData).then(response => {
-                console.log(response);
+                if(response.status === 201){
+                    setState({
+                        ...state,
+                        httpResponse: "movie added",
+                        httpStatus: 200
+                    })
+                } else {
+                    setState({
+                        ...state,
+                        httpResponse: response.data?.message,
+                        httpStatus: 200
+                    })
+                }
+
             }).catch(ex => {
-                console.log(ex);
+                setState({
+                    ...state,
+                    httpResponse: errorMessage(ex),
+                    httpStatus: 500
+                })
             })
         }
-        
+
     }
 
     return (
@@ -320,6 +369,13 @@ function AddMovie() {
 
 
                 <form className="mt-8" onSubmit={handleAddMovie}>
+
+
+                    <ResponseAlert
+                        className="my-2"
+                        message={state.httpResponse}
+                        statusCode={state.httpStatus}
+                    />
 
                     {/*********** Title **************/}
                     <InputGroup
@@ -382,9 +438,9 @@ function AddMovie() {
                         options={() => {
                             return (
                                 <>
-                                    <option selected>Select Genre</option>
+                                    <option defaultValue={true} value="">Select Genre</option>
                                     {app.genres && app.genres.map(genre => (
-                                        <option value={genre._id} >{genre.name}</option>
+                                        <option key={genre._id} value={genre._id} >{genre.name}</option>
                                     ))}
                                 </>
                             )
@@ -448,9 +504,9 @@ function AddMovie() {
                         options={() => {
                             return (
                                 <>
-                                    <option selected>Select quality</option>
+                                    <option defaultValue={true} value="" >Select quality</option>
                                     {app.qualities && app.qualities.map(quality => (
-                                        <option value={quality._id} >{quality.name}</option>
+                                        <option key={quality._id} value={quality._id} >{quality.name}</option>
                                     ))}
                                 </>
                             )
@@ -468,9 +524,9 @@ function AddMovie() {
                         options={() => {
                             return (
                                 <>
-                                    <option selected>Select language</option>
+                                    <option defaultValue={true} value="">Select language</option>
                                     {app.languages && app.languages.map(language => (
-                                        <option value={language._id} >{language.name}</option>
+                                        <option key={language._id} value={language._id} >{language.name}</option>
                                     ))}
                                 </>
                             )

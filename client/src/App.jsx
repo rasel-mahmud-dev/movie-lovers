@@ -1,47 +1,40 @@
 import './App.css'
-import Navigation from './components/Navigation'
-
-import HomePage from "src/pages/homepage/HomePage"
-import Dashboard from "src/pages/dashboard/Dashboard"
-import Footer from "src/components/Footer"
-
-import {setMovies, setGenres} from "src/store/slices/appSlice"
-
-import {loginWithTokenAction} from "src/store/slices/authSlice"
-
-
+import { Suspense } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import { lazy, useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-import AddMovie from './pages/addMovie/AddMovie'
-import Movies from './pages/movies/Movies'
-import MovieDetail from './pages/movieDetail/MovieDetail'
-import Series from './pages/series/Series'
 
-import { fetchGenres, fetchMovies } from './store/actions/appActions'
-import Contact from './pages/Contact';
-import AboutUs from './pages/AboutUs';
+import Navigation from './components/Navigation'
 
-import JoinHome from 'src/pages/auth/JoinHome'
+import Footer from "src/components/Footer"
+import {loginWithTokenAction} from "src/store/slices/authSlice"
+
+const HomePage = lazy(()=>import("src/pages/homepage/HomePage"))
+const AddMovie = lazy(()=>import( './pages/addMovie/AddMovie'))
+const Movies =  lazy(()=>import( './pages/movies/Movies'))
+const MovieDetail = lazy(()=>import('./pages/movieDetail/MovieDetail'))
+const Series = lazy(()=>import('./pages/series/Series'))
+const Dashboard = lazy(()=>import("src/pages/dashboard/Dashboard"))
+const Contact  = lazy(()=>import('./pages/Contact'));
+const AboutUs  = lazy(()=>import('./pages/AboutUs'));
+const JoinHome = lazy(()=>import("src/pages/auth/JoinHome"))
+
 
 
 function App() {
 
-  const {app} = useSelector(state=>state)
-
   const dispatch = useDispatch()
 
+  
+  const modal = useSelector(state => state.app.modal)
+
+
   useEffect(()=>{
-    let token =  localStorage.getItem("token")
+    let token = localStorage.getItem("token")
     if(token){
       dispatch(loginWithTokenAction(token))
-    }
-
-   fetchGenres((data)=>{
-      dispatch(setGenres(data.genres))
-    })
-      
+    }      
   }, [])
 
 
@@ -50,21 +43,25 @@ function App() {
     <div className="App">
       <Navigation />
      
-      <JoinHome />
+      <Suspense fallback={<h1 className="text-center text-3xl text-white mt-10">Module Loading</h1>}>
 
-      <Routes>
-        <Route exact={true} path="/" element={<HomePage/>} />
-        <Route exact={true} path="/movies" element={<Movies/>} />
-        <Route exact={true} path="/series" element={<Series/>} />
-        <Route exact={true} path="/movie/:id" element={<MovieDetail/>} />
+       { modal && <JoinHome /> }
 
-        <Route exact={true} path="/auth/dashboard/:id" element={<Dashboard/>} />
-        <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />
-        <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
+        <Routes>
+          <Route exact={true} path="/" element={<HomePage/>} />
+          <Route exact={true} path="/movies" element={<Movies/>} />
+          <Route exact={true} path="/series" element={<Series/>} />
+          <Route exact={true} path="/movie/:id" element={<MovieDetail/>} />
 
-        <Route exact={true} path="/about-us" element={<AboutUs/>} />
-        <Route exact={true} path="/contact" element={<Contact/>} />
-      </Routes>
+          <Route exact={true} path="/auth/dashboard/:id" element={<Dashboard/>} />
+          <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />
+          <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
+
+          <Route exact={true} path="/about-us" element={<AboutUs/>} />
+          <Route exact={true} path="/contact" element={<Contact/>} />
+        </Routes>
+      </Suspense>
+
 
       <Footer />
 

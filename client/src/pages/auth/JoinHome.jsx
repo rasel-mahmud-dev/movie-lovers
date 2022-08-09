@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleModal } from "src/store/slices/appSlice"
-import { registration, loginAction } from "src/store/slices/authSlice"
+
 
 import { FaTimes } from "react-icons/fa"
 import OTPValidateModal from './OTPValidateModal';
@@ -20,58 +20,69 @@ function JoinHome() {
 
     const dispatch = useDispatch()
 
-    const [userData, setUserData] = useState({
-        firstName: {value: "", errorMessage: "", tauch: false},
-        lastName: {value: "", errorMessage: "", tauch: false},
-        email: {value: "", errorMessage: "", tauch: false},
-        password: {value: "", errorMessage: "", tauch: false},
-        confirmPassword: {value: "", errorMessage: "", tauch: false},
-        gender: {value: "", errorMessage: "", tauch: false},
-    })
-
     const [state, setState] = useState({
-        verifyFor: "newAccount" // newAcc, resetPassword
+        userData: {
+            firstName: { value: "", errorMessage: "", tauch: false },
+            lastName: { value: "", errorMessage: "", tauch: false },
+            email: { value: "", errorMessage: "", tauch: false },
+            password: { value: "", errorMessage: "", tauch: false },
+            confirmPassword: { value: "", errorMessage: "", tauch: false },
+            gender: { value: "", errorMessage: "", tauch: false },
+            otpCode: { value: "", errorMessage: "", tauch: false },
+            result: { value: "", errorMessage: "", tauch: false }
+        },
+        verifyFor: "newAccount", // newAcc, resetPassword
+        httpResponse: "",
+        httpStatus: 200
     })
 
-
-    useEffect(() => {
-        if (app.modal === "verify_modal") {
-            if (auth.auth) {
-                setUserData({ ...userData, email: auth.auth.email })
+    function handleResetUserData(resetProps = {}){
+        let updateUserData = { ...state.userData }
+        for(let key in updateUserData){
+            updateUserData[key] = {
+                ...updateUserData[key],
+                value: "",
+                errorMessage: "",
+                tauch: false
             }
         }
-    }, [app.modal, auth.auth])
-
-
-    function handleChange(e, value) {
-        if (e.target.name === "gender") {
-            setUserData({
-                ...userData,
-                [e.target.name]: value
-            })
-        } else {
-            setUserData({
-                ...userData,
-                [e.target.name]: e.target.value
-            })
-        }
+        setState({
+            ...state,
+            userData: updateUserData,
+            ...resetProps
+        })
     }
 
-    function handleRegistration() {
-        let isCompleted = true
-        for (const key in userData) {
-            if (!userData[key]) {
-                isCompleted = false;
+    // useEffect(() => {
+    //     if (app.modal === "verify_modal") {
+    //         if (auth.auth) {
+    //             setUserData({ ...userData, email: auth.auth.email })
+    //         }
+    //     }
+    // }, [app.modal, auth.auth])
+
+
+    function handleChange(e) {
+        const { name, value } = e.target
+        let updateUserData = { ...state.userData }
+
+        updateUserData = {
+            ...updateUserData,
+            [name]: {
+                ...updateUserData[name],
+                value: value,
+                tauch: true,
+                errorMessage: updateUserData[name] ? "" : updateUserData[name].errorMessage
             }
         }
-        if (isCompleted) {
-            dispatch(registration({
-                ...userData
-            }))
-        } else {
-            alert("please fill up give input")
-        }
+
+        setState({
+            ...state,
+            userData: updateUserData
+        })
+
     }
+
 
 
     return (
@@ -88,42 +99,47 @@ function JoinHome() {
 
                     {modal === "login" && <LoginModal
                         state={state}
+                        onChange={handleChange}
                         setState={setState}
-                        userData={userData}
-                        app={app} 
+                        app={app}
                         auth={auth}
+                        onResetUserData={handleResetUserData}
                         dispatch={dispatch}
                     />}
                     {modal === "registration" && <RegistrationModal
                         state={state}
-                        userData={userData}
+                        onChange={handleChange}
                         setState={setState}
-                        app={app} 
+                        app={app}
                         auth={auth}
+                        onResetUserData={handleResetUserData}
                         dispatch={dispatch}
                     />}
                     {modal === "get_otp_modal" && <GetOTPModal
                         state={state}
-                        userData={userData}
+                        onChange={handleChange}
                         setState={setState}
-                        app={app} 
+                        app={app}
                         auth={auth}
-                        dispatch={dispatch}
-                     />}
-                    {modal === "otp_verify_modal" && <OTPValidateModal 
-                        state={state}
-                        userData={userData}
-                        setState={setState}
-                        app={app} 
-                        auth={auth}
+                        onResetUserData={handleResetUserData}
                         dispatch={dispatch}
                     />}
-                    {modal === "resetPasswordModal" && <ResetPassword 
+                    {modal === "otp_verify_modal" && <OTPValidateModal
                         state={state}
-                        userData={userData}
                         setState={setState}
-                        app={app} 
+                        onChange={handleChange}
+                        app={app}
                         auth={auth}
+                        onResetUserData={handleResetUserData}
+                        dispatch={dispatch}
+                    />}
+                    {modal === "reset_password_modal" && <ResetPassword
+                        state={state}
+                        setState={setState}
+                        onChange={handleChange}
+                        app={app}
+                        auth={auth}
+                        onResetUserData={handleResetUserData}
                         dispatch={dispatch}
                     />}
                 </div>

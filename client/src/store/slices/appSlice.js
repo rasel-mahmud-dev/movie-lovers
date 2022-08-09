@@ -24,7 +24,7 @@ const initialState = {
   searchValue: "",
   pagination: {
     currentPage: 1,
-    perPageView: 20,
+    perPageView: 15,
   },
   totalMovie: 0,
   filter: {

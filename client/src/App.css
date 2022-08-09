@@ -7,8 +7,9 @@
 .progress::after{
   background-color: hsl(var(--p)) !important;
 }
-
-
+.progress:indeterminate::after {
+  animation-duration: 1.5s !important;
+}
 
 
 .swiper {
@@ -51,9 +52,15 @@
   font-size: 31px !important;
   font-weight: bold; 
 }
+@media screen and (max-width: 500px) {
+  .swiper .swiper-button-next:after, .swiper-button-prev:after {
+    font-size: 18px !important;
+    font-weight: bold; 
+  }
+}
 
 .active{
-    color: #978dff !important;
+    color: #57575c !important;
     font-weight: 500;
 }
 

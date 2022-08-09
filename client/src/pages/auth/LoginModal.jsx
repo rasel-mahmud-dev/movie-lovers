@@ -1,43 +1,79 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { toggleModal } from "src/store/slices/appSlice"
-import {  loginAction } from "src/store/slices/authSlice"
-
 import InputGroup from 'src/components/inputs/InputGroup';
+import { setAuth } from 'src/store/slices/authSlice';
+import errorMessage from 'src/utils/errorResponse';
+import ResponseAlert from './../../components/ResponseAlert';
+import { api } from 'src/api';
 
 
 function LoginModal(props) {
 
-
-    const {app, auth, state, userData, dispatch, setState } = props
-
+    const { state, onChange, setState, dispatch } = props
 
 
-    function handleChange(){
-
-    }
-
-    function handleRegistration(){
-
-    }
-
-
-
-    function toggleResetPasswordModal(){
+    React.useEffect(()=>{
         setState({
-            ...state, 
-            verifyFor: "resetPassword"
+            ...state,
+            httpResponse: "",
+            httpStatus: 0
         })
+    }, [])
+
+
+    function toggleResetPasswordModal() {
         dispatch(toggleModal("get_otp_modal"));
     }
 
-    function loginHandler(){
-        if(userData.email && userData.password){
-            dispatch(loginAction({
-                email: userData.email,
-                password: userData.password,
-            }))
-        } else{
-            alert("please provide email and password")
+    async function loginHandler(e) {
+        e.preventDefault();
+
+        let isCompleted = true;
+        let updatedUserData = { ...state.userData }
+
+        let loginData = {
+            email: updatedUserData.email,
+            password: updatedUserData.password,
+        }
+        let payload = {}
+
+        for (let key in loginData) {
+            if (!updatedUserData[key].tauch || !updatedUserData[key].value) {
+                updatedUserData[key].errorMessage = `${key} is required`
+                isCompleted = false;
+            } else {
+                payload[key] = updatedUserData[key].value
+            }
+        }
+
+        if (!isCompleted) {
+            setState({
+                ...state,
+                userData: updatedUserData
+            })
+            return;
+        }
+
+        try {
+
+            setState({ ...state, httpResponse: "pending" })
+
+            let res = await api.post("/api/login", payload)
+            if (res.status === 201) {
+                if (!res.data.auth.verify) {
+                    return dispatch(toggleModal("get_otp_modal"))
+                } else {
+                    dispatch(toggleModal(""))
+                    dispatch(setAuth(res.data))
+                }
+            }
+
+        } catch (ex) {
+            setState({
+                ...state,
+                httpResponse: errorMessage(ex),
+                httpStatus: 500
+            })
         }
     }
 
@@ -45,47 +81,60 @@ function LoginModal(props) {
     return (
         <div>
             <h1 className="font-bold text-3xl text-gray-200 text-center">Login</h1>
-            <p className="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
 
-            <form action="">
-                <div className="div">
 
-                    <InputGroup
-                        name="email"
-                        type="email"
-                        label="Email"
-                        placeholder="Enter email"
-                        onChange={handleChange}
-                        value={userData.email.value}
-                        errorMessage={userData.email.errorMessage}
-                    />
+            <form onSubmit={loginHandler}>
 
-                    <InputGroup
-                        name="password"
-                        type="password"
-                        label="password"
-                        placeholder="Enter password"
-                        onChange={handleChange}
-                        value={userData.password.value}
-                        errorMessage={userData.password.errorMessage}
-                    />
 
-                </div>
-                <p className="mt-3 text-gray-300 link link-hover" onClick={toggleResetPasswordModal}>Forgot password ?</p>
-            </form>
 
-            <div className="mt-8 flex justify-between items-center">
-                
+                <ResponseAlert
+                    className="my-2"
+                    message={state.httpResponse}
+                    statusCode={state.httpStatus}
+                />
+
                 <div>
-                    
-                    <a className="text-gray-300">Not an Account ?
+                    <div className="div">
+                        <InputGroup
+                            name="email"
+                            type="email"
+                            inputClass="mt-2"
+                            className="!flex-col"
+                            label="Email"
+                            placeholder="Enter email"
+                            onChange={onChange}
+                            value={state.userData.email.value}
+                            errorMessage={state.userData.email.errorMessage}
+                        />
 
-                    <span className="cursor-pointer link link-hover"
-                        onClick={() => dispatch(toggleModal("registration"))}>Create new one</span></a>
+                        <InputGroup
+                            name="password"
+                            type="password"
+                            label="password"
+                            inputClass="mt-2"
+                            className="!flex-col"
+                            placeholder="Enter password"
+                            onChange={onChange}
+                            value={state.userData.password.value}
+                            errorMessage={state.userData.password.errorMessage}
+                        />
+                    </div>
+                    <p className="mt-5 text-gray-300 link link-hover" onClick={toggleResetPasswordModal}>Forgot password ?</p>
                 </div>
 
-                <label onClick={loginHandler} for="my-modal" className="btn cursor-pointer text-white">Login</label>
-            </div>
+                <div className="mt-8 flex justify-between items-center">
+                    <div>
+                        <a className="text-gray-300">Not an Account ?
+                            <span
+                                className="cursor-pointer link link-hover ml-1"
+                                onClick={() => dispatch(toggleModal("registration"))}>
+                                Create new one
+                            </span>
+                        </a>
+                    </div>
+                    <button type="submit" className="btn cursor-pointer text-white">Login</button>
+                </div>
+            </form>
         </div>
     )
 }

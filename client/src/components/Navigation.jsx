@@ -49,7 +49,7 @@ function Navigation() {
             <div onMouseLeave={()=>toggleExpandDropdown("auth")} className="border-slate-900 bg-neutral p-6 pt-4 absolute right-0 top-8 z-20 text-white w-[250px] text-start rounded-md">
                 <ul>
                     <li className="flex items-center link link-hover">
-                        <Link to={`/auth/dashboard/${auth.auth._id}`} className="flex items-center">
+                        <Link to={`/auth/dashboard/${auth.auth._id}`} state={"Profile"} className="flex items-center">
                             <CgProfile /> 
                             <span className="ml-2">Profile</span>
                         </Link>
@@ -131,7 +131,7 @@ function Navigation() {
                     <div className="navbar-start">
                         <Link to="/" className="btn btn-ghost normal-case text-xl">
                             <div className="w-40">
-                                <img src={fullPath("images/logo-3.svg")} alt="" />
+                                <img src="logo-3.svg" alt="" />
                             </div>
                         </Link>
                     </div>
@@ -167,8 +167,14 @@ function Navigation() {
                             <div>
                                 <div className="relative">
                                     <div className='cursor-pointer flex items-center' onMouseEnter={()=>toggleExpandDropdown("auth")} onClick={()=>toggleExpandDropdown("auth")} >
-                                        <Avatar className="w-8 h-8" firstLetter={auth.auth.firstName[0]} />
-                                        <h2 className="ml-1.5" >{auth.auth.firstName}</h2>
+
+                                        <Avatar 
+                                            className="w-6 h-6"
+                                            firstLetter={auth.auth.firstName[0]} 
+                                            url={auth.auth.avatar}
+                                         />
+
+                                        <h2 className="ml-1.5 text-gray-200 font-medium" >{auth.auth.firstName}</h2>
                                     </div>
                                     { state.openDropdown === "auth" && authDropdown() }
                                 </div>

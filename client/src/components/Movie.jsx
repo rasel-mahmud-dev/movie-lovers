@@ -11,7 +11,7 @@ export default function Movie({ movie }) {
                 <div className="flex justify-center p-5 text-white">
                     <div>
                         <h1 className="text-center text-xl">{movie.title}</h1>
-                        <button className='btn btn-primary mt-5'>
+                        <button className='btn btn-primary mt-5 mx-auto block'>
                             <Link to={`/movie/${movie._id}`}>Watch Now</Link>
                         </button>
                     </div>

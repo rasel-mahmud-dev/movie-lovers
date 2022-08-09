@@ -2,9 +2,9 @@
 import React from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import { setMovies, setFilter, setPaginatedMovie, setLanguages, setQualities, setResetSearch, setTotalMovie, changePageAction } from "src/store/slices/appSlice"
+import { setMovies, setGenres, setLanguages, setQualities, setResetSearch, setTotalMovie, changePageAction } from "src/store/slices/appSlice"
 
-import { fetchMovies, fetchQualities, fetchLanguages } from 'src/store/actions/appActions'
+import { fetchMovies, fetchGenres, fetchQualities, fetchLanguages } from 'src/store/actions/appActions'
 
 import Movie from "src/components/Movie"
 import Pagination from "src/components/Pagination"
@@ -22,20 +22,18 @@ const Movies = (props) => {
 
   React.useEffect(() => {
 
-    {
-      !movies && (
-
-        fetchMovies({
-          currentPage: pagination.currentPage, 
-          perPageView:pagination.perPageView, 
-          searchValue, 
-          filter: null
-        }, (paginatedMovie) => {
-          dispatch(setMovies(paginatedMovie))
-        })
-
-      )
-    }
+    
+    !movies && (
+      fetchMovies({
+        currentPage: pagination.currentPage, 
+        perPageView:pagination.perPageView, 
+        searchValue, 
+        filter: null
+      }, (paginatedMovie) => {
+        dispatch(setMovies(paginatedMovie))
+      })
+    )
+    
 
     if (!totalMovie) {
       api.get("/api/total-movie").then(response => {
@@ -52,13 +50,19 @@ const Movies = (props) => {
     }
 
 
-    (!qualities || qualities.length === 0) && fetchQualities((data) => {
-      dispatch(setQualities(data.qualities))
-    })
+    if (typeof fetchQualities === "function") {
+      (!qualities || qualities.length === 0) && fetchQualities((data) => {
+        dispatch(setQualities(data.qualities))
+      })
+    }
 
+    if (typeof fetchGenres === "function") {
+      (!genres || genres.length === 0) && fetchGenres((data)=>{
+        dispatch(setGenres(data.genres))
+      })
+    }
 
   }, [])
-
 
 
 
