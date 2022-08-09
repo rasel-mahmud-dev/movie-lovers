@@ -6,7 +6,7 @@ import { fetchMovieDetails } from 'src/store/actions/appActions';
 import { toggleFavoriteMovie } from 'src/store/actions/authActions';
 import { setMovie } from 'src/store/slices/appSlice';
 import { addToFavorite, removeFromFavorite } from 'src/store/slices/authSlice';
-import { FaCloudDownloadAlt } from "react-icons/fa"
+import { FaCloudDownloadAlt, FaTimes } from "react-icons/fa"
 import { MdFavorite } from "react-icons/md"
 
 import { setFavoritesMovies } from "src/store/slices/authSlice"
@@ -14,6 +14,7 @@ import { fetchFavoriteMovies } from "src/store/actions/authActions"
 
 import ReactPlayer from 'react-player'
 import ResponseAlert from './../../components/ResponseAlert';
+import DialogBox from './../../components/DialogBox';
 
 
 
@@ -29,7 +30,8 @@ const MovieDetail = () => {
 
     const [state, setState] = React.useState({
         httpResponse: "",
-        httpStatus: 0
+        httpStatus: 0,
+        popupMessage: ""
     })
 
 
@@ -49,8 +51,14 @@ const MovieDetail = () => {
     }, [auth.auth])
 
 
-
     function handleAddToFavorite(movieId) {
+        if(!auth.auth){
+            setState({
+                ...state,
+                popupMessage: "Please login first"
+            })
+            return;
+        }
         toggleFavoriteMovie(movieId, function (data) {
             if (data.isAdded) {
                 dispatch(addToFavorite(data.favorite))
@@ -61,7 +69,7 @@ const MovieDetail = () => {
     }
 
     function isInFavorite(movieId) {
-        let a = favorites && favorites.findIndex(f => f._id === movieId) === -1 ? false : true;
+        let a = favorites && (favorites.findIndex(f => f._id === movieId) !== -1) ? true : false;
         return a
     }
 
@@ -132,14 +140,44 @@ const MovieDetail = () => {
     }
 
     function handleDownload(e){
-        alert("Download feature not implement yet")
+        setState({
+            ...state,
+            popupMessage: "Download feature not implement yet"
+        })
     } 
+
+    function dismissPopup(){
+        setState({
+            ...state,
+            popupMessage: ""
+        })
+    }
+
+    function isYoutubeVideo(url){
+        if(url && url.startsWith("https://www.youtube.com")){
+            return true
+        } else{
+            return false
+        }
+    }
 
 
     return (
         <div>
-            <div className="max-w-screen-lg mx-auto">
+            <div className="max-w-screen-lg mx-auto px-3">
                 <div className="mb-10">
+
+
+                    <DialogBox className="shadow-10xl" isOpen={state.popupMessage}>
+                        <>
+                            <h3 class="font-bold text-2xl text-center text-white">{state.popupMessage}</h3>
+                            <div onClick={dismissPopup} className="cursor-pointer bg-neutral text-white absolute right-3 top-3 p-2 rounded-full">
+                                <FaTimes />
+                            </div>
+                        </>
+                    </DialogBox>
+
+
                     {movie && (
                         <div className="">
 
@@ -154,22 +192,45 @@ const MovieDetail = () => {
                             </button>}
 
 
-                            {/* video player  */}
-                            {/* <div className="mt-10">
-                                <video controls className="w-full" src={fullPath("images/v.mp4")}></video>
-                            </div> */}
-
 
                             <ResponseAlert 
                                 message={state.httpResponse} statusCode={state.httpStatus}
                             />
+
+
+
+
+                            {/* video player  */}
+                            <div className="mt-10">
+                            { isYoutubeVideo(movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl) ? (
+                                <div className="iframe-container">
+                                <iframe 
+                                    width="925"
+                                    height="520" 
+                                    src="https://www.youtube.com/embed/oqxAJKy0ii4" 
+                                 
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+
+                                </iframe>
+                                </div>
+                                // <iframe src={movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl} frameborder="0"></iframe>
+                            ) : (
+                                <video controls className="w-full" src={movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl}>
+                                
+                                </video>
+
+                            ) }
+                            </div>
+
                           
-                            <ReactPlayer
+                            {/* <ReactPlayer
                                 onPlay={handlePlay}
-                            onError={handleError}  controls={true} 
+                                onError={handleError}  controls={true} 
                             
                                 url={movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl}
-                             />
+                             /> */}
                             {/* url='https://www.youtube.com/watch?v=RfLlwL7YvAw&ab_channel=PinakiBhattacharya' /> */}
 
 
@@ -200,7 +261,7 @@ const MovieDetail = () => {
                             </table>
 
 
-                            <div className="mt-1 flex">
+                            <div className="mt-1 flex flex-col md:flex-row ">
                                 <span className="flex-shrink-0 py-2 w-[150px] capitalize  text-red-500 font-bold text-xl">Summary</span>
                                 <p className="text-gray-200 mt-4">{movie.summary}</p>
                             </div>

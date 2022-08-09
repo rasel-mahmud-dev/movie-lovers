@@ -26,7 +26,7 @@ function Profile() {
 
 
     return (
-        <div>
+        <div className="min-h-[50vh]">
             <h1 className="font-bold text-3xl text-gray-200 text-center mb-10">Favorite Movies</h1>
 
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">

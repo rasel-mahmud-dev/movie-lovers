@@ -4,8 +4,9 @@ import ResponseAlert from '../../components/ResponseAlert';
 import errorMessage from './../../utils/errorResponse';
 import { logOutAction } from 'src/store/slices/authSlice';
 import { useDispatch } from 'react-redux';
-import {AiFillDelete} from "react-icons/ai"
+import { AiFillDelete } from "react-icons/ai"
 import { useNavigate } from 'react-router-dom';
+import DialogBox from '../../components/DialogBox';
 
 function UserSettings() {
 
@@ -19,23 +20,23 @@ function UserSettings() {
         httpStatus: 0,
     })
 
-    function deleteUserPopup(){
+    function deleteUserPopup() {
         setConfirmMessage("open")
     }
 
-    function deleteUser(){
+    function deleteUser() {
         setState({ ...state, httpResponse: "pending" })
-        api.post("/api/user/remove").then(response=>{
-            if(response.status === 201){
+        api.post("/api/user/remove").then(response => {
+            if (response.status === 201) {
                 dispatch(logOutAction())
                 setState({
                     ...state,
                     httpResponse: "",
-                    httpStatus:0
-                }) 
+                    httpStatus: 0
+                })
                 navigate("/")
             }
-        }).catch(ex=>{
+        }).catch(ex => {
             setState({
                 ...state,
                 httpResponse: errorMessage(ex),
@@ -44,33 +45,31 @@ function UserSettings() {
         })
     }
 
-  return (
-    <div>
-        <h1 className="text-3xl text-gray-100 font-medium mb-4 text-center">
-            User Setting
-        </h1>
+    return (
+        <div className="min-h-[50vh]"> 
+            <h1 className="text-3xl text-gray-100 font-medium mb-4 text-center">
+                User Setting
+            </h1>
 
-        <ResponseAlert message={state.httpResponse} statusCode={state.httpStatus} />
+            <ResponseAlert message={state.httpResponse} statusCode={state.httpStatus} />
 
-        <div>
-            <div class={`${confirmMessage === "open" ? "visible opacity-100 pointer-events-auto" : "" } modal modal-bottom sm:modal-middle`}>
-            <div class="modal-box">
-                <h3 class="font-bold text-3xl">Are your sure to delete account?</h3>
-                <p class="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
-                <div class="modal-action">
-                    <label for="my-modal-6" onClick={()=>setConfirmMessage("")} class="btn  text-white">No!</label>
-                    <label for="my-modal-6" onClick={deleteUser} class="btn btn-error text-white">Yay!</label>
-                </div>
-            </div>
-            </div>
+            <DialogBox isOpen={confirmMessage === "open"}>
+                <>
+                    <h3 class="font-bold text-3xl">Are your sure to delete account?</h3>
+                    <p class="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+                    <div class="modal-action">
+                        <label for="my-modal-6" onClick={() => setConfirmMessage("")} class="btn  text-white">No!</label>
+                        <label for="my-modal-6" onClick={deleteUser} class="btn btn-error text-white">Yay!</label>
+                    </div>
+                </>
+            </DialogBox>
+
+
+            <button className='btn btn-error text-white' onClick={deleteUserPopup} >
+                <AiFillDelete class="mr-2" />
+                Delete User</button>
         </div>
-
-             
-        <button className='btn btn-error text-white' onClick={deleteUserPopup} >
-        <AiFillDelete class="mr-2" />
-            Delete User</button>
-    </div>
-  )
+    )
 }
 
 export default UserSettings

@@ -11,6 +11,9 @@ module.exports = {
         dark: {
           700: "#141414"
         }
+      },
+      boxShadow: {
+        "10xl": "1px 6px 14px 4px #1c1c1cd1"
       }
     },
   },

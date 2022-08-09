@@ -130,7 +130,7 @@ function Navigation() {
 
                     <div className="navbar-start">
                         <Link to="/" className="normal-case text-xl">
-                            <div className="w-20 md:w-40">
+                            <div className="w-24 md:w-40">
                                 <img src="logo-3.svg" alt="" />
                             </div>
                         </Link>
