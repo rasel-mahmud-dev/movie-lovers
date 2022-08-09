@@ -1,5 +1,6 @@
 const User = require("../models/User")
 const Favorite = require("../models/Favorite")
+const TrashUser = require("../models/TrashUser")
 
 const sendMail = require("../utilities/sendMail")
 const getOTP = require("../utilities/getOTP")
@@ -11,6 +12,7 @@ const {createToken, getToken, parseToken} = require("../jwt")
 
 const response = require("../utilities/response")
 const Movie = require("../models/Movie")
+const { use } = require("passport")
 
 exports.getUser = async (req, res) => {
     
@@ -55,12 +57,13 @@ exports.registration = async (req, res) => {
         role: "customer"
     })
     user = await user.save();
-
-
+  
     if(user){
-     
+        let token = createToken(user._id, user.email, user.role, "30d")
         response(res, 201, {
-            message: "account added"
+            message: "account added",
+            auth: user,
+            token: token
         })
     
     }
@@ -193,14 +196,13 @@ exports.getOtpCode = async (req, res) => {
     const { email } = req.body
     let to = process.env.APP_EMAIL;
     try {
-
         let code = getOTP(6)
         let info = await sendMail({
             from: email,
-            subject: "Verify your email to create your account",
+            subject: "Verify your email to create your netflix2.0 account",
             html: `
             <div>
-                <h1>Hi ${to}</h1>
+                <h1>Welcome ${email}</h1>
                 <p>Your OTP Code 
                     <h1>${code}</h1>
                 </p>
@@ -208,7 +210,7 @@ exports.getOtpCode = async (req, res) => {
             `
         })
 
-        if("info"){
+        if(info && info.messageId){
             let haftHour = (1000 * 60) * 30
 
             let exp = new Date(Date.now() + haftHour)
@@ -231,6 +233,10 @@ exports.getOtpCode = async (req, res) => {
                     message: "This user doesn't exists",
                 })
             }
+        } else {
+            response(res, 500, {
+                message: "Mail send fail. Please try again",
+            })
         }
 
     } catch(ex){
@@ -264,6 +270,9 @@ exports.otpValidation = async (req, res) => {
                 message: "OTP does't match",
             })
         }    
+
+        user.verify = true
+        user = await user.save()
 
         return response(res, 201, {
             message: "verification successfully",
@@ -414,7 +423,35 @@ exports.getFavoriteMovies = async(req, res)=>{
 
 
     } catch(ex){
-        console.log(ex);
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
+exports.removeUser = async(req, res)=>{
+    try {
+        let userId = req.userId
+        let user = await User.findById(userId)
+        
+        await Favorite.deleteMany({customerId: userId})
+        let trashUser =  new TrashUser({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            gender: user.gender,
+            avatar: user.avatar,
+            role: user.role,
+        })
+
+        await trashUser.save()
+        await User.deleteOne({_id: userId})
+        response(res, 201, {
+            message: "User removed",
+        })
+
+    } catch(ex){
         response(res, 500, {
             message: "Internal error. Please try again",
         })

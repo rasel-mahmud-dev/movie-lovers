@@ -28,4 +28,6 @@ module.exports = (router)=>{
     router.post("/api/send-mail", authController.sendMeMail)
 
     router.post("/api/user/toggle-favorite", auth, authController.toggleFavoriteMovie)
+
+    router.post("/api/user/remove", auth, authController.removeUser)
 }

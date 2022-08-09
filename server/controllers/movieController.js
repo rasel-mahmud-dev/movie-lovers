@@ -243,7 +243,7 @@ exports.updateMovie = async (req, res) => {
 
     try {
       
-        let {file, fields} = await fileUpload(req)
+        let {file, fields} = await fileUpload(req, "cover")
      
         const {
             _id,
