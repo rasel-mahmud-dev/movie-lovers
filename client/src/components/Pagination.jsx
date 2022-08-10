@@ -4,7 +4,7 @@ function Pagination({ currentPage, total, perPageView, onPageChange }) {
 
     return (
         <div className="flex flex-wrap  ">
-            {total && new Array(Math.round(total / perPageView)).fill(1).map((item, index) => (
+            {total ? new Array(Math.round(total / perPageView)).fill(1).map((item, index) => (
                 <button key={index}
                     onClick={() => onPageChange(index + 1)}
                         className={["bg-dark-700 px-2 py-1 text-white m-1 w-10 h-10 "  + 
@@ -12,7 +12,7 @@ function Pagination({ currentPage, total, perPageView, onPageChange }) {
                         currentPage === (index + 1) ? "bg-primary" : ""].join(" ")}>
                     {index + 1}
                 </button>
-            ))}
+            )) : ''}
         </div>
     )
 }

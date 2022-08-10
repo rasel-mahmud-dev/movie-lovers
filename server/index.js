@@ -59,6 +59,7 @@ app.get("/", (req, res)=>{
 const routes  = require('./routes');
 routes(app)
 
+
 mongoose.connect(process.env.NODE_ENV === "development" 
     ? "mongodb://127.0.0.1:27017/netflix" 
     : process.env.MONGODB_URL

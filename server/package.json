@@ -1,7 +1,7 @@
 {
   "name": "netflix-server",
   "scripts": {
-    "start": "set NODE_ENV=development && nodemon index.js",
+    "start": "set NODE_ENV=development&& nodemon index.js",
     "serve": "node index.js"
   },
   "dependencies": {

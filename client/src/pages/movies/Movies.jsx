@@ -132,14 +132,14 @@ const Movies = (props) => {
       <div className="my_container">
 
         <div className="flex items-center justify-between mb-6">
-          <div className={["w-full flex items-center gap-x-6", searchValue ? "justify-between" : "gap-x-6"].join(" ")}>
+          <div className={["w-full grid  grid-cols-1 sm:grid-cols-12 items-center gap-x-6 gap-y-4 relative", searchValue ? "justify-between" : "gap-x-6"].join(" ")}>
 
             {searchValue && <h1 className="text-center text-gray-300 text-sm mr-5">Search Result for <span className="active">{searchValue}</span></h1>}
 
 
             {/********* FIlter by Genre ***********/}
-            <div className="flex items-center">
-              <h1 className="flex item-center">
+            <div className="col-span-6 xl:col-span-3 flex items-center">
+              <h1 className="flex item-center max-w-[100px] w-full">
                 <FaFilter className="mt-1 text-sm" />
                 <span className="ml-1.5 text-gray-300 text-sm ">Genre</span>
               </h1>
@@ -149,7 +149,7 @@ const Movies = (props) => {
                 value={filter.genres}
                 placeholder="Select Genre"
                 onChange={handleChangeOnFilter}
-                className="bg-transparent border-primary text-gray-300 text-sm border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">
+                className="bg-transparent border-primary w-full md:w-auto  text-gray-300 text-sm border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">
 
                 <option className="bg-dark-700" defaultValue={true} value="">All Genre</option>
                 {genres && genres.map(genre => (
@@ -162,8 +162,8 @@ const Movies = (props) => {
 
 
             {/********* Filter by language ***********/}
-            <div className="flex items-center">
-              <h1 className="flex item-center">
+            <div className="col-span-6 xl:col-span-3 flex items-center">
+              <h1 className="flex item-center max-w-[100px] w-full">
                 <FaFilter className="mt-1 text-sm" />
                 <span className="ml-1.5 text-gray-300 text-sm ">Language</span>
               </h1>
@@ -173,7 +173,7 @@ const Movies = (props) => {
                 value={filter.language}
                 placeholder="Select Genre"
                 onChange={handleChangeOnFilter}
-                className="bg-transparent text-gray-300 text-sm  border-primary border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">
+                className="bg-transparent text-gray-300 w-full md:w-auto text-sm  border-primary border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">
 
                 <option className="bg-dark-700" defaultValue={true} value="">All language</option>
                 {languages && languages.map(language => (
@@ -187,8 +187,8 @@ const Movies = (props) => {
 
 
             {/********* Filter by Quality ***********/}
-            <div className="flex items-center">
-              <h1 className="flex item-center">
+            <div className="col-span-6 xl:col-span-3 flex items-center">
+              <h1 className="flex item-center max-w-[100px] w-full">
                 <FaFilter className="mt-1 text-sm" />
                 <span className="ml-1.5 text-gray-300 text-sm ">Quality</span>
               </h1>
@@ -198,7 +198,7 @@ const Movies = (props) => {
                 value={filter.quality}
                 placeholder="Select Genre"
                 onChange={handleChangeOnFilter}
-                className="bg-transparent border-primary text-gray-300 text-sm  border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">
+                className="bg-transparent border-primary w-full md:w-auto text-gray-300 text-sm  border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">
 
                 <option className="bg-dark-700" defaultValue={true} value="">All Quality</option>
                 {qualities && qualities.map(quality => (
@@ -210,8 +210,8 @@ const Movies = (props) => {
             </div>
 
 
-
-            <button onClick={handleClearSearch} className="flex bg-red-500 hover:bg-red-800 px-2 py-1 rounded items-center text-white text-sm ml-auto">
+            <button onClick={handleClearSearch} 
+            className="col-span-6 xl:col-span-3 w-max flex bg-red-500 hover:bg-red-800 px-2 py-1 ml-0 xl:ml-auto rounded items-center text-white text-sm ">
               <FaTimes />
               <span className="ml-1">Reset Filter </span>
             </button>
@@ -225,13 +225,16 @@ const Movies = (props) => {
                   <Movie key={movie._id} movie={movie} />
               )) } */}
 
-          {(movies && movies[pagination.currentPage]) ? movies[pagination.currentPage].map(movie => (
+          {(movies && movies[pagination.currentPage]) && movies[pagination.currentPage].map(movie => (
             <Movie movie={movie} key={movie._id} />
-          )) : (
-            <h1>Not Found</h1>
-          )}
+          ))}
         </div>
 
+        {!(movies && movies[pagination.currentPage]) && 
+        <div className="min-h-[50vh] flex items-center justify-center"> 
+          <h1 className="text-center text-2xl text-white">Not Found</h1> 
+        </div>
+        }
         {/* pagination  */}
         <div className="flex justify-center mt-20">
           <Pagination
