@@ -310,3 +310,51 @@ exports.updateMovie = async (req, res) => {
         })
     }
 }
+
+
+exports.getAllMovies = async (req, res)=>{
+    try{
+
+        let doc = await Movie.find({}).select("title cover videoUrl trailerUrl")
+    
+        response(res, 200, {
+            movies: doc
+        })
+
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
+exports.deleteMovie = async (req, res)=>{
+    try{
+
+        if(!req.params.id){
+            response(res, 500, {
+                message: "Please provide movie id",
+            })
+            return;
+        }
+
+        let doc = await Movie.findByIdAndDelete({_id: req.params.id})
+        if(doc){
+            response(res, 201, {
+                message: "movie deleted."
+            })
+        } else {
+            response(res, 404, {
+                message: "movie not found."
+            })
+        }
+
+
+    } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}

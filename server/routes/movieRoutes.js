@@ -1,6 +1,6 @@
 
 const movieController = require("../controllers/movieController")
-const {admin} = require("../middlewares")
+const {admin, auth} = require("../middlewares")
 
 function a(v, next){
     console.log(v);
@@ -25,5 +25,8 @@ module.exports = (router)=>{
 
 
     router.post('/api/search-movie', movieController.searchMovie)
+    router.get('/api/all-movies', auth, movieController.getAllMovies)
+
+    router.delete('/api/movie/:id', admin, movieController.deleteMovie)
 
 }

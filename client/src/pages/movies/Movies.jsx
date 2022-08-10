@@ -139,6 +139,7 @@ const Movies = (props) => {
 
             {/********* FIlter by Genre ***********/}
             <div className="col-span-6 xl:col-span-3 flex items-center">
+              
               <h1 className="flex item-center max-w-[100px] w-full">
                 <FaFilter className="mt-1 text-sm" />
                 <span className="ml-1.5 text-gray-300 text-sm ">Genre</span>

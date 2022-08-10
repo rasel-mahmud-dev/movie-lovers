@@ -92,6 +92,7 @@ export const counterSlice = createSlice({
     setAuth(state, action){
       localStorage.setItem("token", action.payload.token)
       state.auth = action.payload.auth;
+      state.authProfile = action.payload.auth;
     },
     
     setFavoritesMovies(state, action){

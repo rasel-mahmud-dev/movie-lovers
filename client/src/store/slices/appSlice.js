@@ -14,6 +14,7 @@ const movies = [
 const initialState = {
   movies: null,  // {1: Movie[], 2: Movie[], 3: Movie[]} // // for caching
   movie: null,
+  allMovies: null, // []
   sectionMovies: null, // {}
   seriesMovies: [],
   categories: [],
@@ -45,6 +46,10 @@ export const counterSlice = createSlice({
 
     setMovies(state, action){
         state.movies = action.payload;
+    },
+
+    setAllMovie(state, action){
+        state.allMovies = action.payload;
     },
     
     setPaginatedMovie(state, action){
@@ -140,7 +145,8 @@ export const {
         setPaginatedMovie,
         setSearchValue,
         setResetSearch,
-        setFilter
+        setFilter,
+        setAllMovie
 
 
         

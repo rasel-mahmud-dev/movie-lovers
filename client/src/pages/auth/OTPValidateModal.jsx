@@ -17,7 +17,6 @@ function OTPValidateModal(props) {
 
 
     React.useEffect(() => {
-
         if (!authProfile || !authProfile.email ) {
             dispatch(toggleModal("get_otp_modal"))
         } else {

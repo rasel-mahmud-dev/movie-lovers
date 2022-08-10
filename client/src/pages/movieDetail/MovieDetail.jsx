@@ -168,7 +168,7 @@ const MovieDetail = () => {
                 <div className="mb-10">
 
 
-                    <DialogBox className="shadow-10xl" isOpen={state.popupMessage}>
+                    <DialogBox className="" isOpen={state.popupMessage}>
                         <>
                             <h3 class="font-bold text-2xl text-center text-white">{state.popupMessage}</h3>
                             <div onClick={dismissPopup} className="cursor-pointer bg-neutral text-white absolute right-3 top-3 p-2 rounded-full">

@@ -15,6 +15,8 @@ import {BsFillBookmarkHeartFill} from 'react-icons/bs'
 import {IoIosSettings} from "react-icons/io"
 import {FaBars} from "react-icons/fa"
 import Playlist from './Playlist';
+import AllMovies from './AllMovies';
+
 
 function Dashboard(props) {
 
@@ -67,6 +69,7 @@ function Dashboard(props) {
         { icon:  <CgProfile/> , name: "Profile" },
         { icon:  <BsFillBookmarkHeartFill/> , name: "Favorites" },
         { icon:  <CgPlayList/> , name: "Playlist" },
+        { icon:  <CgPlayList/> , name: "AllMovies" },
         { icon:  <IoIosSettings/> , name: "Settings" }
     ]
 
@@ -157,6 +160,7 @@ function Dashboard(props) {
                         {sideBarContent === "Favorites" && <FavoriteMovies />}
                         {sideBarContent === "Playlist" && <Playlist />}
                         {sideBarContent === "Settings" && <UserSettings />}
+                        {sideBarContent === "AllMovies" && <AllMovies />}
                     </div>
                 </div>
             )}
