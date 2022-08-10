@@ -63,9 +63,9 @@ function AllMovies() {
         <div className="min-h-[50vh]">
             <h1 className="font-bold text-3xl text-gray-200 text-center mb-10">Movies</h1>
  
-            <DialogBox isOpen={dialogMessage != ""}>
+            <DialogBox isOpen={dialogMessage != ""} className="bg-red-600">
                 <div className="flex justify-between">
-                    <h3 class="font-bold text-xl">{dialogMessage}</h3>
+                    <h3 class="font-bold text-xl text-white">{dialogMessage}</h3>
                         <div onClick={()=>setDialogMessage("")} className="cursor-pointer bg-neutral text-white p-2  rounded-full">
                                 <FaTimes />
                             </div>

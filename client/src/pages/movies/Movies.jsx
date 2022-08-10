@@ -131,12 +131,11 @@ const Movies = (props) => {
     <div>
       <div className="my_container">
 
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6">
+
+          {searchValue && <h1 className="text-center text-gray-300 text-sm mr-5 my-4">Search Result for <span className="active">{searchValue}</span></h1>}
+
           <div className={["w-full grid  grid-cols-1 sm:grid-cols-12 items-center gap-x-6 gap-y-4 relative", searchValue ? "justify-between" : "gap-x-6"].join(" ")}>
-
-            {searchValue && <h1 className="text-center text-gray-300 text-sm mr-5">Search Result for <span className="active">{searchValue}</span></h1>}
-
-
             {/********* FIlter by Genre ***********/}
             <div className="col-span-6 xl:col-span-3 flex items-center">
               

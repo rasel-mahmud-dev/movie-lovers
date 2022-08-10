@@ -1,8 +1,8 @@
-# Free Movie Watcher Site  netflix2-0
+# Free Movie Watcher Site  movie-lovers
 
 ## front-end + backend hosted vercel and netlify
 
-# Live Link: https://netflix2-0.netlify.app
+# Live Link: https://movie-lovers.netlify.app
 
 
 
@@ -49,4 +49,4 @@ Technology used.
 
 
 
-Live Link https://netflix2-0.netlify.app
+Live Link https://movie-lovers.netlify.app

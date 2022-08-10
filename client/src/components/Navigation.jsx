@@ -125,7 +125,7 @@ function Navigation() {
     return (
         <>
             <header className="bg-dark-700 fixed w-full z-40">
-            <div className="my_container">
+            <div className="my_container py-0 md:py-2">
                 <div className="navbar">
 
                     <div className="navbar-start">
@@ -194,7 +194,7 @@ function Navigation() {
 
             </div>
             </header>
-            <div className='pb-[96px]'></div>
+            <div className='pb-[64px] md:pb-[80px]'></div>
         </>
     )
 }

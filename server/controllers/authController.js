@@ -208,6 +208,7 @@ exports.getOtpCode = async (req, res) => {
             </div>
             `
         })
+        console.log(info);
 
         if(info && info.messageId){
             let haftHour = (1000 * 60) * 30
@@ -234,11 +235,13 @@ exports.getOtpCode = async (req, res) => {
             }
         } else {
             response(res, 500, {
+                
                 message: "Mail send fail. Please try again",
             })
         }
 
     } catch(ex){
+        console.log(ex);
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -430,7 +433,17 @@ exports.getFavoriteMovies = async(req, res)=>{
 
 
 exports.removeUser = async(req, res)=>{
+    const {email} = req.body
     try {
+
+        if(email === "rasel2@gmail.com"){
+            response(res, 500, {
+                message: "You can't delete this account. because admin protected this for testing",
+            })
+            return;
+        }
+
+
         let userId = req.userId
         let user = await User.findById(userId)
         
@@ -451,6 +464,7 @@ exports.removeUser = async(req, res)=>{
         })
 
     } catch(ex){
+        console.log(ex);
         response(res, 500, {
             message: "Internal error. Please try again",
         })

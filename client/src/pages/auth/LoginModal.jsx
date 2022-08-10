@@ -10,12 +10,27 @@ import { api } from 'src/api';
 function LoginModal(props) {
 
     const { state, onChange, setState, dispatch } = props
-    
+
     React.useEffect(()=>{
         setState({
             ...state,
             httpResponse: "",
-            httpStatus: 0
+            httpStatus: 0,
+            userData: {
+                ...state.userData,
+                email: {
+                    ...state.userData.email,
+                    errorMessage: "",
+                    tauch: true,
+                    value: "rasel2@gmail.com"
+                },
+                password: {
+                    ...state.userData.email,
+                    errorMessage: "",
+                    tauch: true,
+                    value: "a"
+                }
+            }
         })
     }, [])
 
