@@ -44,7 +44,7 @@ function App() {
   return (
     <div className="App">
       <Navigation />
-     
+    
       <Suspense fallback={<Spinner />}>
 
        { modal && <JoinHome /> }

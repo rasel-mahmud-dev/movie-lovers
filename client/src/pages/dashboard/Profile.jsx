@@ -2,20 +2,18 @@ import React from 'react'
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {BiPencil} from "react-icons/bi"
+import fullPath from './../../utils/fullPath';
 
 function Profile(props) {
 
     const {setEditProfile} = props
 
-    let skipFields = ["_id", "__v", "avatar", "updatedAt"]
-
+    let skipFields = ["_id", "__v", "avatar", "updatedAt", "OTPCode","expiredAt","verify"]
 
     const params = useParams();
     const dispatch = useDispatch();
     const { auth } = useSelector(state => state)
     const { authProfile } = auth
-
-    const { id } = params
 
     function renderItem(key, value){
         switch(true){
@@ -50,6 +48,12 @@ function Profile(props) {
                  <BiPencil className="mr-1" />
                  Edit Profile</button>
             </div>
+
+
+            {authProfile && <div className='mb-4'>
+                <img className=" w-48" src={fullPath(authProfile.avatar)} alt="" />
+            </div> }
+
 
             <table className="w-full">
 

@@ -10,8 +10,7 @@ import { api } from 'src/api';
 function LoginModal(props) {
 
     const { state, onChange, setState, dispatch } = props
-
-
+    
     React.useEffect(()=>{
         setState({
             ...state,

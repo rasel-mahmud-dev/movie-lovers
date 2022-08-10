@@ -24,8 +24,8 @@ function JoinHome() {
         userData: {
             firstName: { value: "", errorMessage: "", tauch: false },
             lastName: { value: "", errorMessage: "", tauch: false },
-            email: { value: "", errorMessage: "", tauch: false },
-            password: { value: "", errorMessage: "", tauch: false },
+            email: { value: "rasel2@gmail.com", errorMessage: "", tauch: false },
+            password: { value: "a", errorMessage: "", tauch: false },
             confirmPassword: { value: "", errorMessage: "", tauch: false },
             gender: { value: "", errorMessage: "", tauch: false },
             otpCode: { value: "", errorMessage: "", tauch: false },

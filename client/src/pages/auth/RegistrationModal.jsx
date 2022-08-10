@@ -136,7 +136,9 @@ function RegistrationModal(props) {
         
 
                 <div className="mt-8 flex justify-between items-center">
-                    <a className="text-gray-300">Already have an Account? <span className="cursor-pointer link link-hover" onClick={() => dispatch(toggleModal("login"))}>Login here</span> </a>
+                    <a className="text-gray-300">Already have an Account? 
+                        <span className="cursor-pointer block ml-0 md:ml-1.5 md:inline-block link link-hover" onClick={() => dispatch(toggleModal("login"))}>Login here</span> 
+                    </a>
                     <button type="submit" className="btn text-white">Create</button>
                 </div>
 
