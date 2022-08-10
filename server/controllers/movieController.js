@@ -7,8 +7,13 @@ const homeMovieSection = require("../models/homeMovieSection.json")
 
 const response = require("../utilities/response")
 
+const redisConnect = require("../redis")
 
-exports.getMovies = async (req, res) => {  
+
+let homePageData = null
+
+
+exports.getMovies = async (req, res) => {
 
     const { text, pageNumber, perPageView, filter } = req.body
 
@@ -17,13 +22,13 @@ exports.getMovies = async (req, res) => {
 
         let query = {}
 
-        if(text){
-            query["title"] = { $regex: new RegExp(text, "i")}
+        if (text) {
+            query["title"] = { $regex: new RegExp(text, "i") }
         }
 
-        if(filter){
-            for(let key in filter){
-                if(filter[key]){
+        if (filter) {
+            for (let key in filter) {
+                if (filter[key]) {
                     query[key] = filter[key]
                 }
             }
@@ -31,15 +36,15 @@ exports.getMovies = async (req, res) => {
 
 
         let doc = await Movie.find(query)
-        .skip((pageNumber - 1) * perPageView )
-        .limit(perPageView)
-        
+            .skip((pageNumber - 1) * perPageView)
+            .limit(perPageView)
+
         response(res, 200, {
             movies: doc
         })
 
 
-    } catch(ex){
+    } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -47,21 +52,21 @@ exports.getMovies = async (req, res) => {
 }
 
 
-exports.getSeriesMovies = async (req, res) => {  
+exports.getSeriesMovies = async (req, res) => {
     try {
 
-        let s = homeMovieSection.find(s=>s.name === "Series")
-        if(!s){
+        let s = homeMovieSection.find(s => s.name === "Series")
+        if (!s) {
             return response(res, 404, {
                 message: "Series not found",
             })
         }
-        let doc = await Movie.find({genres: s._id})
+        let doc = await Movie.find({ genres: s._id })
         response(res, 200, {
             movies: doc
         })
 
-    } catch(ex){
+    } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -69,30 +74,30 @@ exports.getSeriesMovies = async (req, res) => {
 }
 
 
-exports.getMovie = async (req, res) => {  
+exports.getMovie = async (req, res) => {
     try {
 
-        let doc = await Movie.findOne({_id: req.params.id})
+        let doc = await Movie.findOne({ _id: req.params.id })
 
         response(res, 200, {
             movie: doc
         })
 
 
-    } catch(ex){
+    } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
     }
 }
 
-exports.calcTotalMovie = async (req, res) => {  
+exports.calcTotalMovie = async (req, res) => {
     try {
         let total = await Movie.countDocuments()
         response(res, 200, {
             total: total
         })
-    } catch(ex){
+    } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -100,21 +105,21 @@ exports.calcTotalMovie = async (req, res) => {
 }
 
 
-exports.getMovieDetails = async (req, res) => {  
+exports.getMovieDetails = async (req, res) => {
     try {
 
-        let doc = await Movie.findOne({_id: req.params.id})
-        .populate("genres", "name")
-        .populate("quality", "name")
-        .populate("language", "name")
-        .populate("author", "firstName lastName avatar")
+        let doc = await Movie.findOne({ _id: req.params.id })
+            .populate("genres", "name")
+            .populate("quality", "name")
+            .populate("language", "name")
+            .populate("author", "firstName lastName avatar")
 
         response(res, 200, {
             movie: doc
         })
 
 
-    } catch(ex){
+    } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -122,12 +127,12 @@ exports.getMovieDetails = async (req, res) => {
 }
 
 
-exports.searchMovie = async (req, res) => {  
+exports.searchMovie = async (req, res) => {
     const { text } = req.body;
     try {
 
         let doc = await Movie.findOne({
-            title: { $regex: new RegExp(text, "i")}
+            title: { $regex: new RegExp(text, "i") }
         })
 
         response(res, 200, {
@@ -135,43 +140,108 @@ exports.searchMovie = async (req, res) => {
         })
 
 
-    } catch(ex){
+    } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
     }
 }
 
+function getFormMongodb(cb) {
+    let data = {}
+    homeMovieSection.forEach(async (section, i) => {
+        let doc = await Movie.find({ genres: section._id }).limit(10)
+        if (doc && doc.length > 0) {
+            data[section.name] = doc;
+        }
+        if ((i + 1) === homeMovieSection.length) {
+            cb(data)
+        }
+    })
+}
 
-exports.getMoviesForHomeSection = async (req, res) => {  
-    try {
-        let data = {}
-        homeMovieSection.forEach(async (section, i)=>{
-            let doc = await Movie.find({genres: section._id}).limit(10)
-            if(doc && doc.length > 0){
-                data[section.name] = doc;
-            }
-            if((i + 1) === homeMovieSection.length){
+
+exports.getMoviesForHomeSection = async (req, res) => {
+
+    if (homePageData) {
+
+        try {
+            let data = JSON.parse(homePageData);
+            response(res, 200, {
+                data: data,
+                message: "from server cache"
+            })
+
+        } catch (ex) {
+            getFormMongodb((data) => {
+                homePageData = JSON.stringify(data)
                 response(res, 200, {
                     data: data
                 })
-            }
+            })
+        }
+
+    } else {
+        getFormMongodb((data) => {
+            homePageData = JSON.stringify(data)
+            response(res, 200, {
+                data: data
+            })
         })
 
-    } catch(ex){
-        response(res, 500, {
-            message: "Internal error. Please try again",
-        })
-    }
+    } 
+
+
+    // let client = await redisConnect()
+    // if (client) {
+    //     let a = await client.get("home_section_movies")
+    //     if (a) {
+    //         try{
+    //             let data = JSON.parse(a);
+    //             response(res, 200, {
+    //                 data: data,
+    //                 message: "from redis cache"
+    //             })
+
+    //         } catch(ex){
+    //             getFormMongodb((data)=>{
+    //                 client.set("home_section_movies", JSON.stringify(data))
+    //                response(res, 200, {
+    //                    data: data
+    //                })
+    //            })
+    //         } finally{
+    //             client?.quit()
+    //         }
+
+
+    //     } else{
+    //         getFormMongodb((data)=>{
+    //              client.set("home_section_movies", JSON.stringify(data))
+    //              client?.quit()
+    //             response(res, 200, {
+    //                 data: data
+    //             })
+    //         })
+    //     }
+    // } else {
+    //     // if redis connect fail...
+    //     getFormMongodb((data)=>{
+    //        response(res, 200, {
+    //            data: data
+    //        })
+    //    })
+    // }
+
 }
 
 exports.addMovie = async (req, res) => {
 
 
     try {
-      
-        let {file, fields} = await fileUpload(req, "cover")
-     
+
+        let { file, fields } = await fileUpload(req, "cover")
+
         const {
             title,
             author,
@@ -188,7 +258,7 @@ exports.addMovie = async (req, res) => {
             director,
             summary,
             language,
-          
+
         } = fields
 
         let newMovie = {
@@ -207,31 +277,31 @@ exports.addMovie = async (req, res) => {
             summary,
             language,
         }
-        
-         try{
+
+        try {
             let t = JSON.parse(tags)
             newMovie.tags = t
-        } catch(ex){}
+        } catch (ex) { }
 
 
-        if(file){
+        if (file) {
             let meta = await uploadImage(file, "netflix/images")
-            if(meta){
+            if (meta) {
                 newMovie.cover = meta.secure_url
             }
-        }   
-    
+        }
+
         newMovie.author = req.userId
-        
-        let doc = new Movie(newMovie)      
+
+        let doc = new Movie(newMovie)
         doc = await doc.save()
 
         return response(res, 201, {
             movie: doc
         })
 
-    } catch(ex){
-     
+    } catch (ex) {
+
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -243,9 +313,9 @@ exports.updateMovie = async (req, res) => {
 
 
     try {
-      
-        let {file, fields} = await fileUpload(req, "cover")
-     
+
+        let { file, fields } = await fileUpload(req, "cover")
+
         const {
             _id,
             title,
@@ -262,7 +332,7 @@ exports.updateMovie = async (req, res) => {
             director,
             summary,
             language,
-          
+
         } = fields
 
         let updateMovie = {
@@ -279,32 +349,32 @@ exports.updateMovie = async (req, res) => {
             summary,
             language,
         }
-        
-         try{
+
+        try {
             let t = JSON.parse(tags)
             updateMovie.tags = t
-        } catch(ex){}
+        } catch (ex) { }
 
 
-        if(file){
+        if (file) {
             let meta = await uploadImage(file, "netflix/images")
-            if(meta){
+            if (meta) {
                 updateMovie.cover = meta.secure_url
-            } 
+            }
         } else {
             updateMovie.cover = cover
         }
-    
+
         updateMovie.author = req.userId
-        
-        let doc = await Movie.findByIdAndUpdate({_id}, { $set: updateMovie }, { new: true })      
+
+        let doc = await Movie.findByIdAndUpdate({ _id }, { $set: updateMovie }, { new: true })
 
         return response(res, 201, {
             movie: doc
         })
 
-    } catch(ex){
-     
+    } catch (ex) {
+
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -312,17 +382,17 @@ exports.updateMovie = async (req, res) => {
 }
 
 
-exports.getAllMovies = async (req, res)=>{
-    try{
+exports.getAllMovies = async (req, res) => {
+    try {
 
         let doc = await Movie.find({}).select("title cover videoUrl trailerUrl")
-    
+
         response(res, 200, {
             movies: doc
         })
 
 
-    } catch(ex){
+    } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -330,18 +400,18 @@ exports.getAllMovies = async (req, res)=>{
 }
 
 
-exports.deleteMovie = async (req, res)=>{
-    try{
+exports.deleteMovie = async (req, res) => {
+    try {
 
-        if(!req.params.id){
+        if (!req.params.id) {
             response(res, 500, {
                 message: "Please provide movie id",
             })
             return;
         }
 
-        let doc = await Movie.findByIdAndDelete({_id: req.params.id})
-        if(doc){
+        let doc = await Movie.findByIdAndDelete({ _id: req.params.id })
+        if (doc) {
             response(res, 201, {
                 message: "movie deleted."
             })
@@ -352,7 +422,7 @@ exports.deleteMovie = async (req, res)=>{
         }
 
 
-    } catch(ex){
+    } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",
         })
