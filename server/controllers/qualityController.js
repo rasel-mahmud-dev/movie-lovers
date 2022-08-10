@@ -28,7 +28,8 @@ exports.addAddQuality = async (req, res) => {
             response(res, 404, {
                 message: "quality already exists",
             })
-        }
+            return;
+        } 
         
         let newQuality = new Quality({
             name: name
@@ -39,6 +40,10 @@ exports.addAddQuality = async (req, res) => {
             response(res, 201, {
                 message: "quality added",
                 quality: newQuality
+            })
+        } else{
+            response(res, 500, {
+                message: "Quality adding fail"
             })
         }
     

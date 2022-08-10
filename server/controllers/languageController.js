@@ -40,6 +40,10 @@ exports.addAddLanguage = async (req, res) => {
                 message: "language added",
                 language: newLanguage
             })
+        } else {
+            response(res, 500, {
+                message: "Language adding fail"
+            })
         }
     
 

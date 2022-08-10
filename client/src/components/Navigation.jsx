@@ -11,11 +11,11 @@ import { AiOutlineLogout } from "react-icons/ai"
 import { MdFavorite } from "react-icons/md"
 import { BiSearchAlt } from "react-icons/bi"
 
-import fullPath from "src/utils/fullPath"
 import Avatar from 'src/components/Avatar';
 
 
 import { fetchMovies } from 'src/store/actions/appActions';
+import { FaPlus } from 'react-icons/fa';
 
 let id;
 
@@ -50,24 +50,24 @@ function Navigation() {
                 <ul>
                     <li className="flex items-center link link-hover">
                         <Link to={`/auth/dashboard/${auth.auth._id}`} state={"Profile"} className="flex items-center">
-                            <CgProfile /> 
+                            <CgProfile  className="text-xl"/> 
                             <span className="ml-2">Profile</span>
                         </Link>
                     </li>
                     <li className="flex items-center link link-hover mt-2">
                         <div onClick={()=>navigate(`/auth/dashboard/${auth.auth._id}`, { replace: true, state: "Favorites"})} className="flex items-center">
-                            <MdFavorite /> 
+                            <MdFavorite className="text-xl" /> 
                             <span className="ml-2">Favorite</span>
                         </div>
                     </li>
                     <li className="flex items-center link link-hover mt-2">
-                        <CgProfile />
+                        <FaPlus className="text-lg" />
                         <span className="ml-2">
                             <Link to="/admin/add-movie">Add Movie</Link>
                         </span>
                     </li>
                     <li onClick={logOutHandler} className="flex items-center mt-2 link link-hover">
-                        <AiOutlineLogout />
+                        <AiOutlineLogout className="text-xl" />
                         <span className="ml-2">Log Out</span>
                     </li>
                 </ul>
@@ -98,7 +98,7 @@ function Navigation() {
         } else{
             id = setTimeout(()=>{
                 handleSearchMovies(e)
-            }, 600)
+            }, 400)
         }
 
     }
@@ -155,7 +155,7 @@ function Navigation() {
                                 value={app.searchValue}
                                 onChange={handleChange}
                                 placeholder="Search movie" 
-                                className="py-1 pl-1.5 outline-none bg-transparent w-full placeholder:text-gray-200"
+                                className="py-1 pl-1.5 outline-none bg-transparent w-full placeholder:text-gray-400"
                             />
                         </form>
                             <BiSearchAlt onClick={handleSearchMovies} className="text-xl cursor-pointer" />

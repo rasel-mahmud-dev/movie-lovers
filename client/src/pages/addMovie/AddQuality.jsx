@@ -2,14 +2,18 @@ import React from 'react'
 import { api, getApi } from 'src/api';
 import InputGroup from 'src/components/inputs/InputGroup';
 
+import  errorMessage from 'src/utils/errorResponse';
+import ResponseAlert from 'src/components/ResponseAlert';
+
+
 function AddQuality(props) {
 
   const { setModal, onSave } = props
 
   const [state, setState] = React.useState({
     name: { value: "", errorMessage: "" },
-    errorMessage: "",
-    loading: false
+    httpResponse: "",
+    httpStatus: 0
   })
 
   function handleSubmit(e){
@@ -17,7 +21,7 @@ function AddQuality(props) {
 
     setState({
       ...state,
-      loading: true
+      httpResponse: ""
     })
 
     if(!state.name.value){
@@ -32,6 +36,12 @@ function AddQuality(props) {
       return;
     }
 
+    setState({
+      ...state,
+      httpResponse: "pending",
+
+    })
+
     getApi().post("/api/add-quality", {name: state.name.value})
     .then(response=>{
       if(response.status === 201){
@@ -40,14 +50,14 @@ function AddQuality(props) {
       }
       setState({
         ...state,
-        loading: false
+        httpResponse: ""
       })
-      
     })
     .catch(err=>{
       setState({
         ...state,
-        loading: false
+        httpResponse: errorMessage(err),
+        httpStatus: 500
       })
     })
 
@@ -57,6 +67,13 @@ function AddQuality(props) {
     <div>
       <h1 className="font-bold text-3xl text-gray-200 text-center">New Quality Label</h1>
       <form onSubmit={handleSubmit}>
+
+      <ResponseAlert
+            className="mt-2"
+            message={state.httpResponse}
+            statusCode={state.httpStatus}
+        />
+
         <div className="div">
           <InputGroup 
             className="!flex-col gap-y-2"

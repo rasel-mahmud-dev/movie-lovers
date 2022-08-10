@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const mongoose =  require("mongoose");
 require("dotenv").config()
 
+const isDev = process.env.NODE_ENV === "development" 
 
 const app = express();
 app.disable('x-powered-by');
@@ -23,6 +24,10 @@ let referrer_domain = process.env.FRONTEND
 
 // disable access outside of our app
 app.all('/*', function(req, res, next) {
+    if(isDev){
+        next()
+        return;
+    }
     if(req.headers.referer){
         if(req.headers.referer.indexOf(referrer_domain) == -1){
             res.send('Invalid Request')
@@ -40,13 +45,18 @@ const whitelist = [process.env.FRONTEND]
 const corsOptions = {
 	credentials: true,
 	origin: function (origin, callback) {
-
-    if(whitelist.indexOf(origin) !== -1) {
-        callback(null, true)
-        
-    } else 
-        // no access
-        callback(null, false)
+    
+        if(isDev){
+            callback(null, true)
+            return;
+        }
+        if(whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+            
+        } else { 
+            // no access
+            callback(null, false)
+        }
     }
 }
 
@@ -60,7 +70,7 @@ const routes  = require('./routes');
 routes(app)
 
 
-mongoose.connect(process.env.NODE_ENV === "development" 
+mongoose.connect(isDev 
     ? "mongodb://127.0.0.1:27017/netflix" 
     : process.env.MONGODB_URL
 ).then(()=>{

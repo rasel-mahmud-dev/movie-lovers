@@ -29,7 +29,7 @@ const HomePage = ()=> {
       <div>
          <HeroCarousel />
    
-          <div className="my_container">
+          <div className="my_container my-4">
 
 
             { sectionMovies && Object.keys(sectionMovies).map((section, i)=>(

@@ -6,6 +6,8 @@ import { getApi } from 'src/api';
 import errorMessage from 'src/utils/errorResponse';
 import generateNumber from 'src/utils/generateNumber';
 import sumOfArray from 'src/utils/sumOfArray';
+import ResponseAlert from 'src/components/ResponseAlert';
+
 
 function Contact() {
 
@@ -17,17 +19,18 @@ function Contact() {
             subject: { value: "", errorMessage: "" },
             result: { value: "", errorMessage: "" },
         },
-        responseMessage: "",
+        httpResponse: "",
+        httpStatus: 0,
         twoRandomNumber: []
     })
-   
 
-    React.useEffect(()=>{
-        setState({...state, twoRandomNumber: generateNumber(2) })
+
+    React.useEffect(() => {
+        setState({ ...state, twoRandomNumber: generateNumber(2) })
     }, [])
 
-    
-    const { userData, responseMessage, twoRandomNumber } = state
+
+    const { userData, twoRandomNumber } = state
 
 
     function handleChange(e) {
@@ -51,7 +54,8 @@ function Contact() {
 
         setState({
             ...state,
-            responseMessage: "",
+            httpResponse: "",
+            httpStatus: 0,
             userData: updateUserData
         })
     }
@@ -61,7 +65,8 @@ function Contact() {
 
         setState({
             ...state,
-            responseMessage: ""
+            httpResponse: "",
+            httpStatus: 0,
         })
 
         e.preventDefault();
@@ -75,9 +80,9 @@ function Contact() {
                 updatedState[key].errorMessage = `${key} is required`
                 isCompleted = false;
             } else {
-                if(key === "result"){
-                  
-                    if(sumOfArray(twoRandomNumber) != userData[key].value){
+                if (key === "result") {
+
+                    if (sumOfArray(twoRandomNumber) != userData[key].value) {
 
                         updatedState[key].errorMessage = `please enter a valid answer`
                         isCompleted = false;
@@ -97,27 +102,29 @@ function Contact() {
         }
         setState({
             ...state,
-            responseMessage: "pending"
+            httpResponse: "pending",
+            httpStatus: 0,
         })
 
         let ranTwoDigit = generateNumber(2)
 
         getApi().post("/api/send-mail", payload).then(response => {
-            if(response.status === 201){
+            if (response.status === 201) {
                 setState({
                     ...state,
                     twoRandomNumber: ranTwoDigit,
-                    responseMessage: response.data.message
-                })  
+                    httpResponse: response.data.message,
+                    httpStatus: 200
+                })
             }
         }).catch(ex => {
-
             setState({
                 ...state,
                 twoRandomNumber: ranTwoDigit,
-                responseMessage: errorMessage(ex)
+                httpResponse: errorMessage(ex),
+                httpStatus: 500,
             })
-        })  
+        })
     }
 
     return (
@@ -144,21 +151,13 @@ function Contact() {
 
                         <div className="my-8 mt-4">
 
-                            {responseMessage === "pending" && (
-                                <div className="w-7/12 mx-auto"><progress className="progress w-full"></progress></div>
-                            )}
 
-                            {responseMessage && responseMessage !== "pending" && (
-                                <div className="mt-8">
-                                    <div class="alert rounded-md  bg-rose-700 text-white shadow-lg">
-                                        <div>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                            <span>{responseMessage}</span>
-                                        </div>
-                                    </div>
+                            <ResponseAlert
+                                className="mt-2"
+                                message={state.httpResponse}
+                                statusCode={state.httpStatus}
+                            />
 
-                                </div>
-                            )}
 
                         </div>
 
@@ -211,11 +210,11 @@ function Contact() {
 
                         <div className="flex items-baseline justify-center mt-4">
                             <div className="flex items-center pt-4">
-                                <h1 className="text-white font-bold text-3xl">{twoRandomNumber[0]} + </h1> 
+                                <h1 className="text-white font-bold text-3xl">{twoRandomNumber[0]} + </h1>
                                 <h1 className="text-white font-bold text-3xl ml-2">
-                                      {twoRandomNumber[1]}  {" "} = </h1> 
+                                    {twoRandomNumber[1]}  {" "} = </h1>
                             </div>
-            
+
                             <InputGroup
                                 name="result"
                                 type="text"
@@ -229,7 +228,7 @@ function Contact() {
                         </div>
 
 
-                        {responseMessage !== "pending"
+                        {state.httpResponse !== "pending"
                             && <button type="submit" className="btn w-max flex justify-center mx-auto my-4">Send Mail</button>}
 
                     </form>

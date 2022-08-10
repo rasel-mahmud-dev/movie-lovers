@@ -88,6 +88,11 @@ export const counterSlice = createSlice({
     setGenres(state, action){
         state.genres = action.payload;
     },
+    
+    setAddGenre(state, action){
+        state.genres = [...state.genres, action.payload]
+    },
+    
     setSeriesMovies(state, action){
         state.seriesMovies = action.payload;
     },
@@ -99,8 +104,14 @@ export const counterSlice = createSlice({
     setLanguages(state, action){
         state.languages = action.payload;
     },
+    setAddLanguage(state, action){
+        state.languages = [...state.languages, action.payload];
+    },
     setQualities(state, action){
         state.qualities = action.payload;
+    },
+    setAddQuality(state, action){
+        state.qualities = [...state.qualities, ...action.payload]
     },
     
     toggleModal(state, action){
@@ -146,7 +157,11 @@ export const {
         setSearchValue,
         setResetSearch,
         setFilter,
-        setAllMovie
+        setAllMovie,
+
+        setAddLanguage,
+        setAddGenre,
+        setAddQuality
 
 
         

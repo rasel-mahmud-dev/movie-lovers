@@ -12,9 +12,9 @@ import { MdFavorite } from "react-icons/md"
 import { setFavoritesMovies } from "src/store/slices/authSlice"
 import { fetchFavoriteMovies } from "src/store/actions/authActions"
 
-import ReactPlayer from 'react-player'
 import ResponseAlert from './../../components/ResponseAlert';
 import DialogBox from './../../components/DialogBox';
+import { BiPlayCircle } from "react-icons/bi";
 
 
 
@@ -34,7 +34,6 @@ const MovieDetail = () => {
         popupMessage: ""
     })
 
-
     React.useEffect(() => {
         fetchMovieDetails(params.id, (movie) => {
             dispatch(setMovie(movie))
@@ -49,7 +48,6 @@ const MovieDetail = () => {
         }
 
     }, [auth.auth])
-
 
     function handleAddToFavorite(movieId) {
         if(!auth.auth){
@@ -67,6 +65,7 @@ const MovieDetail = () => {
             }
         })
     }
+
 
     function isInFavorite(movieId) {
         let a = favorites && (favorites.findIndex(f => f._id === movieId) !== -1) ? true : false;
@@ -123,19 +122,12 @@ const MovieDetail = () => {
 
     let whiteList = ["updatedAt", "createdAt", "__v", "summary", "videoUrl", "trailerUrl", "cover", "_id"]
 
-    function handleError(e){
-        if(e){
-            setState({
-                httpResponse: "This video can't play",
-                httpStatus: 500
-            })
-        }
-    }
 
-    function handlePlay(e){
+    function handlePlay(movie){
+        let videLink = movie.videoUrl ? movie.videoUrl.trim() : ""
         setState({
-            httpResponse: "",
-            httpStatus: 0
+            httpResponse: videLink ? "" : "Movie video not found",
+            httpStatus: videLink ? 0 : 500,
         })
     }
 
@@ -146,12 +138,14 @@ const MovieDetail = () => {
         })
     } 
 
+
     function dismissPopup(){
         setState({
             ...state,
             popupMessage: ""
         })
     }
+
 
     function isYoutubeVideo(url){
         if(url && url.startsWith("https://www.youtube.com")){
@@ -161,6 +155,20 @@ const MovieDetail = () => {
         }
     }
 
+    function updateYoutubeLink(url){
+        if(url && url.startsWith("https://www.youtube.com")){
+            let  a = url.replace("watch?v=", "embed/")
+            let i = a.indexOf("&")
+            if(i === -1){
+                return a
+            } else{
+                let o = a.slice(0, i)
+                return o
+            }
+        } else{
+            return url
+        }
+    }
 
     return (
         <div>
@@ -183,7 +191,6 @@ const MovieDetail = () => {
 
                             <div className="flex justify-center gap-x-2 text-xl font-medium text-gray-100 mt-2">
                                 <h4>{movie.title}</h4>
-                                <h4 className="text-orange-400">{movie.genres && movie.genres.name}</h4>
                             </div>
 
 
@@ -191,51 +198,58 @@ const MovieDetail = () => {
                                 <Link to={`/admin/update-movie/${movie._id}`}>Edit Movie</Link>
                             </button>}
 
-
-
                             <ResponseAlert 
                                 message={state.httpResponse} statusCode={state.httpStatus}
                             />
 
 
-
                             {/* video player  */}
-                            <div className="mt-10">
-                            { isYoutubeVideo(movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl) ? (
-                                <div className="iframe-container">
-                                <iframe 
-                                    width="925"
-                                    height="520" 
-                                    src="https://www.youtube.com/embed/oqxAJKy0ii4" 
-                                 
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen>
-
-                                </iframe>
-                                </div>
-                                // <iframe src={movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl} frameborder="0"></iframe>
-                            ) : (
-                                <video controls className="w-full" src={movie.videoUrl && movie.videoUrl.startsWith("http") ? movie.videoUrl : movie.trailerUrl}>
-                                
-                                </video>
-
+                            <div className="mt-4">
+                            {state.isTrailerMode && (
+                                <h2 className="text-white font-medium my-1">Trailer video</h2>
                             ) }
+
+                            {/* https://www.youtube.com/embed/oqxAJKy0ii4 */}
+                            { isYoutubeVideo(movie.videoUrl) ? (
+                                    <div className="iframe-container">
+                                    <iframe 
+                                        width="925"
+                                        height="520" 
+                                        src={updateYoutubeLink(movie.videoUrl)} 
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen>
+                                    </iframe>
+                                    </div>
+                                ) : (
+                                    <video
+                                        controlsList="nodownload"
+                                        controls 
+                                        className="w-full" 
+                                        src={movie.videoUrl}>
+                                    </video>
+                                )}
+
                             </div>
 
-            
 
-                            <div className="mt-4 mb-6">
-                                <button onClick={() => handleAddToFavorite(movie._id)} className="btn btn-primary">
+                            <div className="mt-4 mb-6 flex gap-2 flex-wrap">
+                                <button onClick={() => handleAddToFavorite(movie._id)} className="btn ">
                                     <MdFavorite className="text-lg" />
-                                    <span className="ml-2">{isInFavorite(movie._id) ? "Remove to Favorite" : "Add to Favorite"}</span>
+                                    <span className="ml-1">{isInFavorite(movie._id) ? "Remove to Favorite" : "Add to Favorite"}</span>
                                 </button>
 
+                                <button 
+                                    onClick={() => handlePlay(movie) } 
+                                    className="btn btn-primary">
+                                    <BiPlayCircle className="text-xl" />
+                                    <span className="ml-1">Watch Movie</span>
+                                </button>
                             </div>
 
+                            {/* <iframe width="668" height="376" src="https://www.youtube.com/embed/oqxAJKy0ii4" title="Squid Game | Official Trailer | Netflix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> */}
 
                             <table>
-
                                 <tbody>
                                     {Object.keys(movie).map(key => whiteList.indexOf(key) === -1 && (
                                         <tr className="">
@@ -244,8 +258,6 @@ const MovieDetail = () => {
                                         </tr>
                                     ))}
                                 </tbody>
-
-
                             </table>
 
 
@@ -260,16 +272,12 @@ const MovieDetail = () => {
                                 <span className="ml-2">Download</span>
                             </button>
 
-
                         </div>
                     )}
                 </div>
             </div>
-
-
         </div>
     )
-
 }
 
 export default MovieDetail

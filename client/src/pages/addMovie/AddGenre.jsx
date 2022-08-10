@@ -1,6 +1,10 @@
 import React from 'react'
 import { api, getApi } from 'src/api';
 import InputGroup from 'src/components/inputs/InputGroup';
+import  errorMessage from 'src/utils/errorResponse';
+import ResponseAlert from 'src/components/ResponseAlert';
+
+
 
 function AddGenre(props) {
 
@@ -8,8 +12,8 @@ function AddGenre(props) {
 
   const [state, setState] = React.useState({
     name: { value: "", errorMessage: "" },
-    errorMessage: "",
-    loading: false
+    httpResponse: "",
+    httpStatus: 0
   })
 
   function handleSubmit(e){
@@ -17,7 +21,7 @@ function AddGenre(props) {
 
     setState({
       ...state,
-      loading: true
+      httpResponse: ""
     })
 
     if(!state.name.value){
@@ -32,6 +36,13 @@ function AddGenre(props) {
       return;
     }
 
+
+    setState({
+      ...state,
+      httpResponse: "pending",
+
+    })
+
     getApi().post("/api/add-genre", {name: state.name.value})
     .then(response=>{
       if(response.status === 201){
@@ -40,23 +51,31 @@ function AddGenre(props) {
       }
       setState({
         ...state,
-        loading: false
+        httpResponse: ""
       })
       
     })
     .catch(err=>{
       setState({
         ...state,
-        loading: false
+        httpResponse: errorMessage(err),
+        httpStatus: 500
       })
     })
-
   }
 
   return (
     <div>
       <h1 class="font-bold text-3xl text-gray-200 text-center">Add New Genre</h1>
       <form onSubmit={handleSubmit}>
+
+        <ResponseAlert
+            className="mt-2"
+            message={state.httpResponse}
+            statusCode={state.httpStatus}
+        />
+
+
         <div className="div">
           <InputGroup 
             className="!flex-col gap-y-2"
@@ -71,10 +90,7 @@ function AddGenre(props) {
         </div>
       
         <div className="mt-8">
-          { state.loading 
-            ? <progress class="progress w-full"></progress>
-            : <button type='submit' className="btn cursor-pointer text-white">Save</button> 
-          }
+          { state.httpResponse !== "pending" && <button type='submit' className="btn cursor-pointer text-white">Save</button> }
         </div>
       </form>     
     </div>

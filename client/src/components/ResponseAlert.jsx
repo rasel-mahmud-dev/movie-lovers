@@ -26,4 +26,9 @@ function ResponseAlert({message, statusCode, className}) {
     )
 }
 
+
+ResponseAlert.PropType = {
+    message: "pending"  
+}
+
 export default ResponseAlert

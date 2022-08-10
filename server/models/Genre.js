@@ -2,7 +2,7 @@ const mongoose =  require("mongoose");
 
 
 const schema = {
-  name: String
+  name: {type: String, index: true, unique: true}
 }
 
 module.exports = mongoose.model(

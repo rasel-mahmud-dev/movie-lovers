@@ -2,10 +2,10 @@ const mongoose =  require("mongoose");
 
 
 const schema = {
-  name: String
+  name: {type: String, index: true, unique: true}
 }
 
- const Quality = mongoose.model(
+const Quality = mongoose.model(
   "Quality",
   new mongoose.Schema(schema, { timestamps: true })
 )

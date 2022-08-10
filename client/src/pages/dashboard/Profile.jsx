@@ -10,8 +10,7 @@ function Profile(props) {
 
     let skipFields = ["_id", "__v", "avatar", "updatedAt", "OTPCode","expiredAt","verify"]
 
-    const params = useParams();
-    const dispatch = useDispatch();
+
     const { auth } = useSelector(state => state)
     const { authProfile } = auth
 
@@ -38,7 +37,7 @@ function Profile(props) {
 
 
     return (
-        <div>
+        <div className="">
             <div>
             <h1 className="text-3xl text-gray-100 font-medium mb-4 text-center">
                 Welcame 

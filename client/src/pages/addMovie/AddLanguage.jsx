@@ -1,6 +1,9 @@
 import React from 'react'
 import { api, getApi } from 'src/api';
 import InputGroup from 'src/components/inputs/InputGroup';
+import  errorMessage from 'src/utils/errorResponse';
+import ResponseAlert from 'src/components/ResponseAlert';
+
 
 function AddLanguage(props) {
 
@@ -8,8 +11,8 @@ function AddLanguage(props) {
 
   const [state, setState] = React.useState({
     name: { value: "", errorMessage: "" },
-    errorMessage: "",
-    loading: false
+    httpResponse: "",
+    httpStatus: 0
   })
 
   function handleSubmit(e){
@@ -17,7 +20,7 @@ function AddLanguage(props) {
 
     setState({
       ...state,
-      loading: true
+      httpResponse: ""
     })
 
     if(!state.name.value){
@@ -32,6 +35,10 @@ function AddLanguage(props) {
       return;
     }
 
+    setState({
+      ...state,
+      httpResponse: "pending",
+    })
     getApi().post("/api/add-language", {name: state.name.value})
     .then(response=>{
       if(response.status === 201){
@@ -40,14 +47,15 @@ function AddLanguage(props) {
       }
       setState({
         ...state,
-        loading: false
+        httpResponse: ""
       })
       
     })
     .catch(err=>{
       setState({
         ...state,
-        loading: false
+        httpResponse: errorMessage(err),
+        httpStatus: 500
       })
     })
 
@@ -57,6 +65,12 @@ function AddLanguage(props) {
     <div>
       <h1 className="font-bold text-3xl text-gray-200 text-center">New Movie Language</h1>
       <form onSubmit={handleSubmit}>
+      <ResponseAlert
+            className="mt-2"
+            message={state.httpResponse}
+            statusCode={state.httpStatus}
+        />
+
         <div className="div">
           <InputGroup 
             className="!flex-col gap-y-2"

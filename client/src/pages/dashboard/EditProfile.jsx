@@ -149,7 +149,7 @@ function EditProfile(props) {
 
     return (
         <div>
-            <div>
+            <div className="">
                 <h1 className="font-bold text-3xl text-gray-200 text-center mb-10">Update Profile</h1>
                 <form onSubmit={handleUpdate}>
 

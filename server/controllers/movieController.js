@@ -7,7 +7,7 @@ const homeMovieSection = require("../models/homeMovieSection.json")
 
 const response = require("../utilities/response")
 
-const redisConnect = require("../redis")
+// const redisConnect = require("../redis")
 
 
 let homePageData = null
@@ -250,7 +250,7 @@ exports.addMovie = async (req, res) => {
             isPublic,
             quality,
             videoUrl,
-            trailerUrl,
+            
             tags,
             rating,
             price,
@@ -269,7 +269,7 @@ exports.addMovie = async (req, res) => {
             isPublic: true,
             quality,
             videoUrl,
-            trailerUrl,
+            
             rating,
             price,
             releaseYear,
@@ -324,7 +324,7 @@ exports.updateMovie = async (req, res) => {
             quality,
             cover,
             videoUrl,
-            trailerUrl,
+            
             tags,
             rating,
             price,
@@ -341,7 +341,7 @@ exports.updateMovie = async (req, res) => {
             runtime,
             quality,
             videoUrl,
-            trailerUrl,
+            
             rating,
             price,
             releaseYear,
@@ -385,7 +385,7 @@ exports.updateMovie = async (req, res) => {
 exports.getAllMovies = async (req, res) => {
     try {
 
-        let doc = await Movie.find({}).select("title cover videoUrl trailerUrl")
+        let doc = await Movie.find({}).select("title cover videoUrl")
 
         response(res, 200, {
             movies: doc

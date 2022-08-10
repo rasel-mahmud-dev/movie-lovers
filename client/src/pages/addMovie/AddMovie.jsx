@@ -8,7 +8,7 @@ import InputGroup from "src/components/inputs/InputGroup"
 import MultiInput from "src/components/inputs/MultiInput"
 import FileUpload from "src/components/inputs/FileUpload"
 
-import { setLanguages, setGenres, setQualities } from "src/store/slices/appSlice"
+import { setLanguages, setAddQuality, setAddLanguage, setAddGenre, setGenres, setQualities } from "src/store/slices/appSlice"
 import { fetchLanguages, fetchGenres, fetchQualities } from "src/store/actions/appActions"
 
 
@@ -41,7 +41,6 @@ function AddMovie() {
             // isPublic: {value: "", errorMessage: "", tauch: false},
             cover: { value: null, blob: null, errorMessage: "", tauch: false },
             quality: { value: "", errorMessage: "", tauch: false }, // id
-            trailerUrl: { value: "", errorMessage: "", tauch: false },
             videoUrl: { value: "", errorMessage: "", tauch: false },
             tags: { value: [], errorMessage: "", tauch: false },
             // rating: {value: "", errorMessage: "", tauch: false},
@@ -82,7 +81,6 @@ function AddMovie() {
 
         if (typeof fetchGenres === "function") {
             (!genres || genres.length === 0) && fetchGenres((data) => {
-                console.log(data);
                 dispatch(setGenres(data.genres))
             })
         }
@@ -185,7 +183,13 @@ function AddMovie() {
     }
 
     function handleAddNewGenre(data) {
-        console.log(data);
+        dispatch(setAddGenre(data.genre))
+    }
+    function handleAddNewQuality(data) {
+        dispatch(setAddQuality(data.quality))    
+    }
+    function handleAddNewLanguage(data) {
+        dispatch(setAddLanguage(data.language))
     }
 
     function handleToggleModal(value) {
@@ -211,13 +215,13 @@ function AddMovie() {
                         {addMovieModal === "addLanguage" &&
                             <AddLanguage
                                 setModal={handleToggleModal}
-                                onSave={handleAddNewGenre}
+                                onSave={handleAddNewLanguage}
                             />
                         }
                         {addMovieModal === "addQuality" &&
                             <AddQuality
                                 setModal={handleToggleModal}
-                                onSave={handleAddNewGenre}
+                                onSave={handleAddNewQuality}
                             />
                         }
 
@@ -368,7 +372,7 @@ function AddMovie() {
                 </div>
 
 
-                <form className="mt-8" onSubmit={handleAddMovie}>
+                <form className="my-8" onSubmit={handleAddMovie}>
 
 
                     <ResponseAlert
@@ -400,18 +404,6 @@ function AddMovie() {
                         value={movieData.cover.value}
                         defaultValue={movieData.cover.value}
                         errorMessage={movieData.cover.errorMessage}
-                    />
-
-
-                    {/*********** videoUrl **************/}
-                    <InputGroup
-                        name="trailerUrl"
-                        type="text"
-                        label="Trailer Url"
-                        placeholder="trailer url"
-                        onChange={handleChange}
-                        value={movieData.trailerUrl.value}
-                        errorMessage={movieData.trailerUrl.errorMessage}
                     />
 
 
