@@ -2,7 +2,7 @@
 
 module.exports = {
   content: [
-    "./index.html",
+    "./Skeleton.jsx",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
@@ -14,7 +14,7 @@ module.exports = {
       },
       boxShadow: {
         "10xl": "1px 6px 14px 4px #1c1c1cd1"
-      }
+      },
     },
   },
   plugins: [

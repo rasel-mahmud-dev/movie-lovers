@@ -1,5 +1,5 @@
 import React from 'react';
-import Skeleton from "../../components/Skeleton/Skeleton";
+import Skeleton from "../Skeleton/Skeleton";
 
 const PostSkeleton = () => {
     return (

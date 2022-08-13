@@ -10,9 +10,7 @@ import Navigation from './components/Navigation'
 import Footer from "src/components/Footer"
 import {loginWithTokenAction} from "src/store/slices/authSlice"
 
-const HomePage = lazy(()=>import("src/pages/homepage/HomePage"))
 const AddMovie = lazy(()=>import( './pages/addMovie/AddMovie'))
-const Movies =  lazy(()=>import( './pages/movies/Movies'))
 const MovieDetail = lazy(()=>import('./pages/movieDetail/MovieDetail'))
 const Series = lazy(()=>import('./pages/series/Series'))
 const Dashboard = lazy(()=>import("src/pages/dashboard/Dashboard"))
@@ -20,7 +18,8 @@ const Contact  = lazy(()=>import('./pages/Contact'));
 const AboutUs  = lazy(()=>import('./pages/AboutUs'));
 const JoinHome = lazy(()=>import("src/pages/auth/JoinHome"))
 import Loader from 'src/components/loader/Loader';
-
+import HomePageLite from "./pages/homepage/HomePageLite";
+import MoviesPageLite from "./pages/movies/MoviesLite";
 
 
 function App() {
@@ -44,14 +43,16 @@ function App() {
   return (
     <div className="App">
       <Navigation />
-    
+
+
+
       <Suspense fallback={<Spinner />}>
 
        { modal && <JoinHome /> }
 
         <Routes>
-          <Route exact={true} path="/" element={<HomePage/>} />
-          <Route exact={true} path="/movies" element={<Movies/>} />
+          <Route exact={true} path="/" element={<HomePageLite/>} />
+          <Route exact={true} path="/movies" element={<MoviesPageLite/>} />
           <Route exact={true} path="/series" element={<Series/>} />
           <Route exact={true} path="/movie/:id" element={<MovieDetail/>} />
 
@@ -62,7 +63,7 @@ function App() {
               <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
             </>
           ) : (
-            <Route
+            !auth.authFetched && <Route
                 path="*"
                 element={<Navigate to="/" replace />}
             />

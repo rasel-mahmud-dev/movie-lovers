@@ -35,7 +35,7 @@ exports.getMovies = async (req, res) => {
         }
 
 
-        let doc = await Movie.find(query)
+        let doc = await Movie.find(query).select("title cover")
             .skip((pageNumber - 1) * perPageView)
             .limit(perPageView)
 
@@ -150,12 +150,16 @@ exports.searchMovie = async (req, res) => {
 function getFormMongodb(cb) {
     let data = {}
     homeMovieSection.forEach(async (section, i) => {
-        let doc = await Movie.find({ genres: section._id }).limit(10)
-        if (doc && doc.length > 0) {
-            data[section.name] = doc;
-        }
-        if ((i + 1) === homeMovieSection.length) {
-            cb(data)
+        try{
+            let doc = await Movie.find({ genres: section._id }).select("title cover").limit(10)
+            if (doc && doc.length > 0) {
+                data[section.name] = doc;
+            }
+            if ((i + 1) === homeMovieSection.length) {
+                cb(data)
+            }
+        } catch(ex){
+
         }
     })
 }
@@ -163,7 +167,7 @@ function getFormMongodb(cb) {
 
 exports.getMoviesForHomeSection = async (req, res) => {
 
-    if (homePageData) {
+    if (homePageData && Object.keys(homePageData).length > 3) {
 
         try {
             let data = JSON.parse(homePageData);
@@ -296,6 +300,7 @@ exports.addMovie = async (req, res) => {
         let doc = new Movie(newMovie)
         doc = await doc.save()
 
+        homePageData = null
         return response(res, 201, {
             movie: doc
         })
@@ -365,16 +370,16 @@ exports.updateMovie = async (req, res) => {
             updateMovie.cover = cover
         }
 
+  
         updateMovie.author = req.userId
 
         let doc = await Movie.findByIdAndUpdate({ _id }, { $set: updateMovie }, { new: true })
-
+        homePageData = null
         return response(res, 201, {
             movie: doc
         })
 
     } catch (ex) {
-
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -384,7 +389,6 @@ exports.updateMovie = async (req, res) => {
 
 exports.getAllMovies = async (req, res) => {
     try {
-
         let doc = await Movie.find({}).select("title cover videoUrl")
 
         response(res, 200, {
@@ -412,6 +416,7 @@ exports.deleteMovie = async (req, res) => {
 
         let doc = await Movie.findByIdAndDelete({ _id: req.params.id })
         if (doc) {
+            homePageData = null
             response(res, 201, {
                 message: "movie deleted."
             })

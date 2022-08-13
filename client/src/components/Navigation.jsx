@@ -15,7 +15,8 @@ import Avatar from 'src/components/Avatar';
 
 
 import { fetchMovies } from 'src/store/actions/appActions';
-import { FaPlus } from 'react-icons/fa';
+import {FaPlus, FaRegUser} from 'react-icons/fa';
+import {GoThreeBars} from "react-icons/all";
 
 let id;
 
@@ -126,9 +127,12 @@ function Navigation() {
         <>
             <header className="bg-dark-700 fixed w-full z-40">
             <div className="my_container py-0 md:py-2">
-                <div className="navbar">
+                <div className="navbar justify-between md:justify-start">
 
                     <div className="navbar-start">
+
+                        <GoThreeBars  className="block md:hidden  cursor-pointer text-white text-2xl mr-5" />
+
                         <Link to="/" className="normal-case text-xl">
                             <div className="w-24 md:w-40">
                                 <img src="logo-3.svg" alt="" />
@@ -147,7 +151,7 @@ function Navigation() {
                         </ul>
                     </div>
 
-                    <div className="w-1/2">
+                    <div className="hidden md:block w-1/2">
                        <div className="flex px-2 justify-between items-center h-auto input bg-white/10  text-gray-200 w-full">
                         <form onSubmit={handleSearchMovies}>
                             <input 
@@ -158,11 +162,17 @@ function Navigation() {
                                 className="py-1 pl-1.5 outline-none bg-transparent w-full placeholder:text-gray-400"
                             />
                         </form>
-                            <BiSearchAlt onClick={handleSearchMovies} className="text-xl cursor-pointer" />
+                           <BiSearchAlt onClick={handleSearchMovies} className="text-xl cursor-pointer" />
                        </div>
                     </div>
 
-                    <div className="navbar-end w-4/12">
+                    <div className="navbar-end w-auto md:w-4/12">
+
+                        <BiSearchAlt
+                            onClick={handleSearchMovies}
+                            className="block md:hidden  cursor-pointer text-white text-2xl mr-5"
+                        />
+
                         { auth.auth ? (
                             <div>
                                 <div className="relative">
@@ -180,11 +190,10 @@ function Navigation() {
                                 </div>
                             </div>
                         ) : (
-                            <div>
-                                <button onClick={()=>dispatch(toggleModal("registration"))} className="btn btn-sm sm:btn-md btn-primary ml-4">
-
-                                Join <span className='hidden md:inline-block ml-1'> Now</span>
-
+                            <div onClick={()=>dispatch(toggleModal("registration"))}>
+                                <FaRegUser className="block md:hidden text-white  text-xl ml-auto" />
+                                <button  className="hidden md:inline-block btn btn-sm sm:btn-md btn-primary ml-4">
+                                    Join Now
                                 </button>
                             </div>
                         ) }

@@ -1,0 +1,31 @@
+
+:root{
+    --skeleton-bg: rgba(169, 169, 169, 1);
+}
+
+.skeleton-circle{
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    animation: loader-animation 1s linear infinite alternate-reverse;
+    background:  var(--skeleton-bg);
+}
+
+.skeleton-line{
+    width: 30px;
+    height: 30px;
+    background:  var(--skeleton-bg);
+    animation: loader-animation 1s linear infinite alternate-reverse;
+    margin-bottom: 2px;
+    border-radius: 3px;
+}
+
+
+@keyframes loader-animation {
+    0%{
+        background: rgba(0, 0, 0, 0.4)
+    }
+    100%{
+        background: rgba(0, 0, 0, 1)
+    }
+}

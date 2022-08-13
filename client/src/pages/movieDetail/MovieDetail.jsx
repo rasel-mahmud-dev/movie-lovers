@@ -225,6 +225,7 @@ const MovieDetail = () => {
                                     <video
                                         controlsList="nodownload"
                                         controls 
+                                        // application/x-mpegURL
                                         className="w-full" 
                                         src={movie.videoUrl}>
                                     </video>

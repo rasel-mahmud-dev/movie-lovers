@@ -5,6 +5,7 @@ import {toggleModal} from "../slices/appSlice"
 
 const initialState = {
     verify: false,
+    authFetched: false,
     auth: null,  // {}
     authProfile: null, // {}
     favorites: null // []
@@ -90,6 +91,7 @@ export const counterSlice = createSlice({
     },
 
     setAuth(state, action){
+      state.authFetched = true
       localStorage.setItem("token", action.payload.token)
       state.auth = action.payload.auth;
       state.authProfile = action.payload.auth;
@@ -111,6 +113,7 @@ export const counterSlice = createSlice({
       localStorage.removeItem("token")
       state.auth = null;
       state.authProfile = null;
+      state.authFetched = true
     }
   },
   
