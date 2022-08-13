@@ -15,6 +15,7 @@ import { FaFilter } from 'react-icons/fa'
 import PageSkeleton from "./PageSkeleton";
 import {BiSort, FiFilter} from "react-icons/all";
 import Drawer from "../../components/Drawer";
+import Filter from "./Filter";
 
 
 const Movies = (props) => {
@@ -149,17 +150,16 @@ const Movies = (props) => {
         <Drawer
             toggleSidebar={toggleSidebar}
             isOpenBackdrop={state.isOpenBackdrop}>
-              <div className="p-5">
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
-                <h1>sadddddddddddd</h1>
+              <div className="">
+                <Filter
+                    filter={filter}
+                    searchValue={searchValue}
+                    genres={genres}
+                    languages={languages}
+                    qualities={qualities}
+                    handleChangeOnFilter={handleChangeOnFilter}
+                    handleClearSearch={handleClearSearch}
+                />
               </div>
         </Drawer>
 
@@ -176,93 +176,8 @@ const Movies = (props) => {
         </div>
 
         <div className="mb-4">
-
           {searchValue && <h1 className="text-center text-gray-300 text-sm mr-5 my-4">Search Result for <span className="active">{searchValue}</span></h1>}
-
-          {/*<div className={["w-full grid  grid-cols-1 sm:grid-cols-12 items-center gap-x-6 gap-y-4 relative", searchValue ? "justify-between" : "gap-x-6"].join(" ")}>*/}
-          {/*  /!********* FIlter by Genre ***********!/*/}
-          {/*  <div className="col-span-6 xl:col-span-3 flex items-center">*/}
-          {/*    */}
-          {/*    <h1 className="flex item-center max-w-[100px] w-full">*/}
-          {/*      <FaFilter className="mt-1 text-sm" />*/}
-          {/*      <span className="ml-1.5 text-gray-300 text-sm ">Genre</span>*/}
-          {/*    </h1>*/}
-
-          {/*    <select*/}
-          {/*      name="genres"*/}
-          {/*      value={filter.genres}*/}
-          {/*      placeholder="Select Genre"*/}
-          {/*      onChange={handleChangeOnFilter}*/}
-          {/*      className="bg-transparent border-primary w-full md:w-auto  text-gray-300 text-sm border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">*/}
-
-          {/*      <option className="bg-dark-700" defaultValue={true} value="">All Genre</option>*/}
-          {/*      {genres && genres.map(genre => (*/}
-          {/*        <option key={genre._id} className="bg-dark-700" value={genre._id} >{genre.name}</option>*/}
-          {/*      ))}*/}
-
-          {/*    </select>*/}
-
-          {/*  </div>*/}
-
-
-          {/*  /!********* Filter by language ***********!/*/}
-          {/*  <div className="col-span-6 xl:col-span-3 flex items-center">*/}
-          {/*    <h1 className="flex item-center max-w-[100px] w-full">*/}
-          {/*      <FaFilter className="mt-1 text-sm" />*/}
-          {/*      <span className="ml-1.5 text-gray-300 text-sm ">Language</span>*/}
-          {/*    </h1>*/}
-
-          {/*    <select*/}
-          {/*      name="language"*/}
-          {/*      value={filter.language}*/}
-          {/*      placeholder="Select Genre"*/}
-          {/*      onChange={handleChangeOnFilter}*/}
-          {/*      className="bg-transparent text-gray-300 w-full md:w-auto text-sm  border-primary border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">*/}
-
-          {/*      <option className="bg-dark-700" defaultValue={true} value="">All language</option>*/}
-          {/*      {languages && languages.map(language => (*/}
-          {/*        <option key={language._id} className="bg-dark-700" value={language._id} >{language.name}</option>*/}
-          {/*      ))}*/}
-
-          {/*    </select>*/}
-
-          {/*  </div>*/}
-
-
-
-          {/*  /!********* Filter by Quality ***********!/*/}
-          {/*  <div className="col-span-6 xl:col-span-3 flex items-center">*/}
-          {/*    <h1 className="flex item-center max-w-[100px] w-full">*/}
-          {/*      <FaFilter className="mt-1 text-sm" />*/}
-          {/*      <span className="ml-1.5 text-gray-300 text-sm ">Quality</span>*/}
-          {/*    </h1>*/}
-
-          {/*    <select*/}
-          {/*      name="quality"*/}
-          {/*      value={filter.quality}*/}
-          {/*      placeholder="Select Genre"*/}
-          {/*      onChange={handleChangeOnFilter}*/}
-          {/*      className="bg-transparent border-primary w-full md:w-auto text-gray-300 text-sm  border-[1.5px] outline-none rounded-md py-1 px-1.5 ml-2">*/}
-
-          {/*      <option className="bg-dark-700" defaultValue={true} value="">All Quality</option>*/}
-          {/*      {qualities && qualities.map(quality => (*/}
-          {/*        <option key={quality._id} className="bg-dark-700" value={quality._id} >{quality.name}</option>*/}
-          {/*      ))}*/}
-
-          {/*    </select>*/}
-
-          {/*  </div>*/}
-
-
-          {/*  <button onClick={handleClearSearch} */}
-          {/*  className="col-span-6 xl:col-span-3 w-max flex bg-red-500 hover:bg-red-800 px-2 py-1 ml-0 xl:ml-auto rounded items-center text-white text-sm ">*/}
-          {/*    <FaTimes />*/}
-          {/*    <span className="ml-1">Reset Filter </span>*/}
-          {/*  </button>*/}
-
-          {/*</div>*/}
         </div>
-
 
         <div className="movie_list gap-4">
           {(movies && movies[pagination.currentPage]) && movies[pagination.currentPage].map(movie => (

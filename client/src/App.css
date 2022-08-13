@@ -215,16 +215,11 @@
     box-shadow: 2px 3px 15px 0px #1e1e1e;
 }
 
-.open_drawer{}
-.open_drawer .drawer-overlay{
-  opacity: 1 !important;
-  visibility: visible!important;
-}
-.overlay--close{
-  width: 0%;
-  height: 0;
-}
+
+
+
 .my-drawer-overlay{
+  transition: opacity .3s ease-in;
   width: 100%;
   height: 100vh;
   background: rgba(35, 35, 35, 0.58);
@@ -233,9 +228,23 @@
   top: 0;
   left: 0
 }
-.open_sidebar{
+.my-drawer-overlay--close{
+   width: 0%;
+   height: 0;
+   opacity: 0;
+ }
+
+.my-drawer-overlay--open{
+  opacity: 1;
+}
+
+.my_sidebar{
   @apply fixed left-0 top-0 bg-neutral w-10/12 z-50 h-screen;
+  transition: transform .4s ease-in;
+}
+.open_sidebar{
+  transform: translateX(0);
 }
 .close_sidebar{
-  @apply hidden;
+  transform: translateX(-100vw);
 }

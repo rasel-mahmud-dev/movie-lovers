@@ -11,7 +11,7 @@ import Footer from "src/components/Footer"
 import {loginWithTokenAction} from "src/store/slices/authSlice"
 
 const AddMovie = lazy(()=>import( './pages/addMovie/AddMovie'))
-const MovieDetail = lazy(()=>import('./pages/movieDetail/MovieDetail'))
+
 const Series = lazy(()=>import('./pages/series/Series'))
 const Dashboard = lazy(()=>import("src/pages/dashboard/Dashboard"))
 const Contact  = lazy(()=>import('./pages/Contact'));
@@ -20,6 +20,7 @@ const JoinHome = lazy(()=>import("src/pages/auth/JoinHome"))
 import Loader from 'src/components/loader/Loader';
 import HomePageLite from "./pages/homepage/HomePageLite";
 import MoviesPageLite from "./pages/movies/MoviesLite";
+import MovieDetailLite from "./pages/movieDetail/MovieDetailLite";
 
 
 function App() {
@@ -54,7 +55,7 @@ function App() {
           <Route exact={true} path="/" element={<HomePageLite/>} />
           <Route exact={true} path="/movies" element={<MoviesPageLite/>} />
           <Route exact={true} path="/series" element={<Series/>} />
-          <Route exact={true} path="/movie/:id" element={<MovieDetail/>} />
+          <Route exact={true} path="/movie/:id" element={<MovieDetailLite/>} />
 
           {auth.auth ? (
             <>

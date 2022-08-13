@@ -6,8 +6,8 @@ const Drawer = (props) => {
 
     return (
         <div>
-            <div onClick={toggleSidebar} className={`${!isOpenBackdrop ? "my-drawer-overlay--close" : "my-drawer-overlay"}`}/>
-            <div className={` ${isOpenBackdrop ? "open_sidebar" : "close_sidebar"} ` }>
+            <div onClick={toggleSidebar} className={`my-drawer-overlay ${isOpenBackdrop ? " my-drawer-overlay--open" : " my-drawer-overlay--close"}`}/>
+            <div className={`my_sidebar  ${isOpenBackdrop ? "open_sidebar" : "close_sidebar"} ` }>
                 {children}
             </div>
         </div>
