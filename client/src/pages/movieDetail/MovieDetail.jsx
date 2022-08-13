@@ -4,7 +4,6 @@ import fullPath from "src/utils/fullPath"
 import {useParams, Link} from "react-router-dom"
 import {fetchMovieDetails} from 'src/store/actions/appActions';
 import {toggleFavoriteMovie} from 'src/store/actions/authActions';
-import {setMovie} from 'src/store/slices/appSlice';
 import {addToFavorite, removeFromFavorite} from 'src/store/slices/authSlice';
 import {FaCloudDownloadAlt, FaTimes} from "react-icons/fa"
 import {MdFavorite} from "react-icons/md"
@@ -12,18 +11,21 @@ import {MdFavorite} from "react-icons/md"
 import {setFavoritesMovies} from "src/store/slices/authSlice"
 import {fetchFavoriteMovies} from "src/store/actions/authActions"
 
-import ResponseAlert from './../../components/ResponseAlert';
-import DialogBox from './../../components/DialogBox';
+import ResponseAlert from 'src/components/ResponseAlert';
+import DialogBox from 'src/components/DialogBox';
 import {BiPlayCircle} from "react-icons/bi";
 import PageSkeleton from "./PageSkeleton";
-import {api, getApi} from "../../api";
+import {fetchSimilarMovies} from "src/store/actions/appActions";
+import {setMovieCache, setSimilarMovieCache} from "src/store/slices/appSlice";
+import Movie from "src/components/Movie";
+import SimilarMovieSkeleton from "./SimilarMovieSkeleton";
 
 
 const MovieDetail = () => {
 
     const {app, auth} = useSelector(state => state)
 
-    const {movie} = app
+    const {movieCache} = app
     const {favorites} = auth
 
     const params = useParams()
@@ -37,10 +39,34 @@ const MovieDetail = () => {
     })
 
     React.useEffect(() => {
-        fetchMovieDetails(params.id, (movie) => {
-            dispatch(setMovie(movie))
-        })
-    }, [])
+
+
+
+        if(!movieCache[params.id]) {
+
+            // store cache for individual movie
+            fetchMovieDetails(params.id, (movie) => {
+                dispatch(setMovieCache({_id: params.id, detail: movie}))
+
+                // store similarMovie cache for individual movie
+                fetchSimilarMovies(movie, (data) => {
+                    dispatch(setSimilarMovieCache({_id: movie._id, similarMovies: data.similarMovies}))
+                })
+            })
+        }
+
+        // if similar movie cache not found inside movie cache...
+        if(movieCache[params.id]){
+            if(!movieCache[params.id].similarMovies){
+                fetchSimilarMovies(params.id, (data) => {
+                    dispatch(setSimilarMovieCache({_id: params.id, similarMovies: data.similarMovies}))
+                })
+            }
+        }
+
+
+    }, [params.id])
+
 
     React.useEffect(() => {
         if (auth.auth && auth.auth._id) {
@@ -72,7 +98,6 @@ const MovieDetail = () => {
         let a = favorites && (favorites.findIndex(f => f._id === movieId) !== -1);
         return a
     }
-
 
     function renderValue(key, value) {
 
@@ -139,14 +164,12 @@ const MovieDetail = () => {
         })
     }
 
-
     function dismissPopup() {
         setState({
             ...state,
             popupMessage: ""
         })
     }
-
 
     function isYoutubeVideo(url) {
         if (url && url.startsWith("https://www.youtube.com")) {
@@ -171,23 +194,23 @@ const MovieDetail = () => {
         }
     }
 
-    function renderMoreMovies() {
 
-        getApi().post("/api/similar-movies", {
-            pageNumber: 1,
-            perPageView: 10,
-            or: {
-                genres: movie.genres._id,
-                language: movie.language._id,
-                title: movie.title,
-                tags: movie.tags
-            },
-        }).then(response=>{
-            console.log(response)
-        }).catch(ex=>{
-            console.log(ex)
-        })
+    function renderMoreMovies(movieCache) {
+        return movieCache.similarMovies ? (
+            <div className="mt-8">
+                <h2 className="text-xl md:text-2xl font-medium text-white my-4">Similar movies</h2>
+                <div className="movie_list gap-3">
+                    {movieCache.similarMovies.map(movie=>(
+                        <Movie movie={movie} key={movie._id} />
+                    )) }
+                </div>
+            </div>
+        ) : (
+            <SimilarMovieSkeleton count={12}/>
+        )
     }
+
+    const getMovie = movieCache[params.id]
 
     return (
         <div>
@@ -203,16 +226,16 @@ const MovieDetail = () => {
                         </>
                     </DialogBox>
 
-                    {movie ? (
+                    {getMovie && getMovie.detail ? (
                         <div className="px-3">
 
                             <div className="flex justify-center gap-x-2 text-xl font-medium text-gray-100 mt-2">
-                                <h4>{movie.title}</h4>
+                                <h4>{getMovie.detail.title}</h4>
                             </div>
 
 
                             {auth.auth && auth.auth.role === "admin" && <button className="btn block ml-auto ">
-                                <Link to={`/admin/update-movie/${movie._id}`}>Edit Movie</Link>
+                                <Link to={`/admin/update-movie/${getMovie.detail._id}`}>Edit Movie</Link>
                             </button>}
 
                             <ResponseAlert
@@ -229,12 +252,12 @@ const MovieDetail = () => {
                                 {/* https://www.youtube.com/embed/oqxAJKy0ii4 */}
                                 {state.isPlaying
                                     ? (
-                                        isYoutubeVideo(movie.videoUrl) ? (
+                                        isYoutubeVideo(getMovie.detail.videoUrl) ? (
                                             <div className="iframe-container">
                                                 <iframe
                                                     width="925"
                                                     height="520"
-                                                    src={updateYoutubeLink(movie.videoUrl)}
+                                                    src={updateYoutubeLink(getMovie.detail.videoUrl)}
                                                     frameBorder="0"
                                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                     allowFullScreen>
@@ -246,11 +269,11 @@ const MovieDetail = () => {
                                                 controls
                                                 // application/x-mpegURL
                                                 className="w-full"
-                                                src={movie.videoUrl}>
+                                                src={getMovie.detail.videoUrl}>
                                             </video>)
                                     ) : (
                                         <div>
-                                            <img src={fullPath(movie.cover)} alt=""/>
+                                            <img src={fullPath(getMovie.detail.cover)} alt=""/>
                                         </div>
                                     )
                                 }
@@ -259,14 +282,14 @@ const MovieDetail = () => {
 
 
                             <div className="mt-4 mb-6 flex gap-2 flex-wrap">
-                                <button onClick={() => handleAddToFavorite(movie._id)} className="btn ">
+                                <button onClick={() => handleAddToFavorite(getMovie.detail._id)} className="btn ">
                                     <MdFavorite className="text-lg"/>
                                     <span
-                                        className="ml-1">{isInFavorite(movie._id) ? "Remove to Favorite" : "Add to Favorite"}</span>
+                                        className="ml-1">{isInFavorite(getMovie.detail._id) ? "Remove to Favorite" : "Add to Favorite"}</span>
                                 </button>
 
                                 <button
-                                    onClick={() => handlePlay(movie)}
+                                    onClick={() => handlePlay(getMovie.detail)}
                                     className="btn btn-primary">
                                     <BiPlayCircle className="text-xl"/>
                                     <span className="ml-1">Watch Now</span>
@@ -277,16 +300,16 @@ const MovieDetail = () => {
 
                             {state.isPlaying && (
                                 <div>
-                                    <img src={fullPath(movie.cover)} alt=""/>
+                                    <img src={fullPath(getMovie.detail.cover)} alt=""/>
                                 </div>
                             )}
 
                             <table>
                                 <tbody>
-                                {Object.keys(movie).map(key => whiteList.indexOf(key) === -1 && (
+                                {Object.keys(getMovie.detail).map(key => whiteList.indexOf(key) === -1 && (
                                     <tr className="">
                                         <td className="py-2 w-[150px] capitalize  text-red-500 font-bold text-xl">{key}</td>
-                                        <td className="text-gray-300"> {renderValue(key, movie[key])}</td>
+                                        <td className="text-gray-300"> {renderValue(key, getMovie.detail[key])}</td>
                                     </tr>
                                 ))}
                                 </tbody>
@@ -296,7 +319,7 @@ const MovieDetail = () => {
                             <div className="mt-1 flex flex-col md:flex-row ">
                                 <span
                                     className="flex-shrink-0 py-2 w-[150px] capitalize  text-red-500 font-bold text-xl">Summary</span>
-                                <p className="text-gray-200 mt-4">{movie.summary}</p>
+                                <p className=" text-gray-200 mt-4">{getMovie.detail.summary}</p>
                             </div>
 
 
@@ -305,10 +328,15 @@ const MovieDetail = () => {
                                 <span className="ml-2">Download</span>
                             </button>
 
-                            {renderMoreMovies()}
+                            {renderMoreMovies(getMovie)}
 
                         </div>
-                    ) : <PageSkeleton/>}
+                    ) :
+                        <>
+                            <PageSkeleton/>
+                            <SimilarMovieSkeleton />
+                        </>
+                    }
                 </div>
             </div>
         </div>

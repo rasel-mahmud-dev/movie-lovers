@@ -1,4 +1,4 @@
-import { api } from "../../api"
+import {api, getApi} from "../../api"
 
 
 export function fetchMovies(payload, cb){
@@ -67,5 +67,24 @@ export function fetchMovieDetails(movieId, cb){
   })    
 }
 
+
+export function  fetchSimilarMovies(movie, cb){
+    getApi().post("/api/similar-movies", {
+        pageNumber: 1,
+        perPageView: 10,
+        or: {
+            genres: movie.genres._id,
+            language: movie.language._id,
+            title: movie.title,
+            tags: movie.tags
+        },
+    }).then(response=>{
+        if(response.status === 200) {
+            cb(response.data)
+        }
+    }).catch(ex=>{
+        // console.log(ex)
+    })
+}
 
 

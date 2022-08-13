@@ -13,7 +13,7 @@ const movies = [
 
 const initialState = {
   movies: null,  // {1: Movie[], 2: Movie[], 3: Movie[]} // // for caching
-  movie: null,
+  movieCache: {}, // { [id: string]: { detail: {}, similarMovies: [] } }
   allMovies: null, // []
   sectionMovies: null, // {}
   seriesMovies: [],
@@ -59,9 +59,30 @@ export const counterSlice = createSlice({
         }
     },
 
-    setMovie(state, action){
-        state.movie = action.payload;
+    setMovieCache(state, action){
+        // payload = {_id: string, detail: Movie}
+        const { _id,  detail} = action.payload
+        state.movieCache = {
+            ...state.movieCache,
+            [_id]: {
+                detail: detail,
+                similarMovies: null
+            }
+        }
     },
+
+    setSimilarMovieCache(state, action){
+        // payload = {_id: string, similarMovies: Movie[]}
+        const { _id,  similarMovies} = action.payload
+        state.movieCache = {
+            ...state.movieCache,
+            [_id]: {
+                ...state.movieCache[_id],
+                similarMovies: similarMovies.filter(item=>item._id !== _id)
+            }
+        }
+    },
+
 
     changePageAction(state, action){
 
@@ -104,12 +125,15 @@ export const counterSlice = createSlice({
     setLanguages(state, action){
         state.languages = action.payload;
     },
+
     setAddLanguage(state, action){
         state.languages = [...state.languages, action.payload];
     },
+
     setQualities(state, action){
         state.qualities = action.payload;
     },
+
     setAddQuality(state, action){
         state.qualities = [...state.qualities, ...action.payload]
     },
@@ -134,7 +158,6 @@ export const counterSlice = createSlice({
 
     setFilter(state, action){
         state.filter = payload.value
-        
     }
 
   },
@@ -144,7 +167,7 @@ export const counterSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { 
         setMovies, 
-        setMovie, 
+        setMovieCache,
         setGenres, 
         changePageAction, 
         setSeriesMovies, 
@@ -153,6 +176,7 @@ export const {
         setQualities,
         setTotalMovie,
         toggleModal,
+        setSimilarMovieCache,
         setPaginatedMovie,
         setSearchValue,
         setResetSearch,

@@ -11,7 +11,7 @@ module.exports = (router)=>{
 
     router.post('/api/movies',  movieController.getMovies)
 
-    router.post('/api/similar-movies',  movieController.getSimillarMovies)
+    router.post('/api/similar-movies',  movieController.getSimilarMovies)
     
     router.get('/api/movie/:id',  movieController.getMovie)
 

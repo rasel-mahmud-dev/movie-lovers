@@ -51,7 +51,7 @@ exports.getMovies = async (req, res) => {
         })
     }
 }
-exports.getSimillarMovies = async (req, res) => {
+exports.getSimilarMovies = async (req, res) => {
 
     const {  pageNumber, perPageView, or } = req.body
 
@@ -108,12 +108,11 @@ exports.getSimillarMovies = async (req, res) => {
         
 
         response(res, 200, {
-            movies: doc
+            similarMovies: doc
         })
 
 
     } catch (ex) {
-        console.log(ex.message);
         response(res, 500, {
             message: "Internal error. Please try again",
         })
