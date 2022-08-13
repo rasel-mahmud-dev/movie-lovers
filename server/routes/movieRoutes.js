@@ -10,6 +10,9 @@ function a(v, next){
 module.exports = (router)=>{
 
     router.post('/api/movies',  movieController.getMovies)
+
+    router.post('/api/similar-movies',  movieController.getSimillarMovies)
+    
     router.get('/api/movie/:id',  movieController.getMovie)
 
     router.get('/api/movie-details/:id',  movieController.getMovieDetails)

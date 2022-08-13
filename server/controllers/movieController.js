@@ -4,7 +4,8 @@ const fileUpload = require("../utilities/fileUpload")
 const uploadImage = require("../utilities/imageCloudinary")
 
 const homeMovieSection = require("../models/homeMovieSection.json")
-
+const mongoose = require("mongoose")
+const {ObjectId} = mongoose.Types
 const response = require("../utilities/response")
 
 // const redisConnect = require("../redis")
@@ -45,6 +46,74 @@ exports.getMovies = async (req, res) => {
 
 
     } catch (ex) {
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+exports.getSimillarMovies = async (req, res) => {
+
+    const {  pageNumber, perPageView, or } = req.body
+
+    try {
+
+
+        let { title, genres, language, tags } = or
+
+        
+        let queries = []
+
+        if (title) {
+            let titleArr  = title.split(" ")
+            titleArr.forEach(item=>{
+                queries.push({ title: new RegExp(item, "i") })
+            })
+        }
+        if(language){
+            queries.push({ language:  ObjectId(language) })
+        }
+        if(genres){
+            queries.push({ genres:  ObjectId(genres) })
+        }
+        if(tags && Array.isArray(tags) && tags.length){
+            queries.push({ tags:  { $in: tags } })
+        }
+        
+        
+        let doc = await Movie.aggregate([
+            { 
+                $match: {
+                    
+                    $or: [ 
+                        ...queries,
+                        // { genres: ObjectId("62ed430c9327186ffbfc868e") },
+                        // { language: ObjectId("62ee8bde6e01d746187400b1") },
+                        // { title: RegExp("300", "i")},
+                        // { title: RegExp("troy", "i") },
+                        // { tags: {
+                            // $in: ["300"]
+                        // }}
+                    ]
+                }
+            },
+            { $skip: (pageNumber - 1) * perPageView },
+            { $limit: perPageView },
+            { 
+                $project: {
+                    title:1,
+                    cover: 1
+                }
+            }
+        ])
+        
+
+        response(res, 200, {
+            movies: doc
+        })
+
+
+    } catch (ex) {
+        console.log(ex.message);
         response(res, 500, {
             message: "Internal error. Please try again",
         })
