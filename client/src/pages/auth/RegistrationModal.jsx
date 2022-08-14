@@ -73,9 +73,9 @@ function RegistrationModal(props) {
 
     return (
         <div>
-            <h1 className="font-bold text-3xl text-gray-200 text-center">Create a new Account</h1>
+            <h1 className="font-bold text-2xl md:text-3xl text-gray-200 text-center">Create a new Account</h1>
 
-            <form className="mt-8" onSubmit={handleRegistration}>
+            <form className="mt-4 md:mt-8" onSubmit={handleRegistration}>
 
 
             <ResponseAlert

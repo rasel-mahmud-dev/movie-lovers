@@ -5,7 +5,6 @@ import { lazy, useEffect } from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 
 
-import Navigation from './components/Navigation'
 
 import Footer from "src/components/Footer"
 import {loginWithTokenAction, setAuth} from "src/store/slices/authSlice"
@@ -21,6 +20,7 @@ import DashboardLite from "./pages/dashboard/dashboardRoot/DashboardLite.jsx";
 import AddMovieLite from "./pages/addMovie/AddMovieLite.jsx";
 import JoinHomeLite from "./pages/auth/JoinHomeLite.jsx";
 import scrollTo from "./utils/scrollTo.js";
+import NavigationLite from "./components/navigation/NavigationLite.jsx";
 
 
 function App() {
@@ -46,7 +46,7 @@ function App() {
 
   return (
     <div className="App">
-      <Navigation />
+      <NavigationLite />
 
 
       <Suspense fallback={<Spinner />}>

@@ -38,7 +38,7 @@ const HomePage = ()=> {
             { sectionMovies && Object.keys(sectionMovies).map((section, i)=>(
 
                 <div className="mt-10" key={i}>
-                    <h2 className="text-xl md:text-3xl text-gray-100 font-medium mt-5 md:mt-10 mb-4 pb-4 border-b
+                    <h2 className="text-xl md:text-3xl text-gray-100 font-medium mt-5 md:mt-10 mb-4 pb-1 md:pb-4 border-b
                     border-gray-100/20">{section}</h2>
 
                     <div className="movie_list gap-3">

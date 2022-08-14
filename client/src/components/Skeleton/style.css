@@ -20,6 +20,10 @@
     border-radius: 3px;
 }
 
+.white-bg .skeleton-line, .white-bg .skeleton-circle{
+    --skeleton-bg: rgb(31, 31, 31) !important;
+    animation: white-loader-animation 1s linear infinite alternate-reverse !important;
+}
 
 @keyframes loader-animation {
     0%{
@@ -27,5 +31,14 @@
     }
     100%{
         background: rgba(0, 0, 0, 1)
+    }
+}
+
+@keyframes white-loader-animation {
+    0%{
+        background: rgba(56, 56, 56, 0.4)
+    }
+    100%{
+        background: rgba(178, 178, 178, 0.8)
     }
 }

@@ -127,7 +127,7 @@ function GetOTPModal(props) {
 
     return (
         <div>
-            <h1 className="font-bold text-3xl text-gray-200 text-center">Get OTP Code</h1>
+            <h1 className="font-bold text-2xl md:text-3xl text-gray-200 text-center">Get OTP Code</h1>
             <p className="py-4 text-center text-gray-300 ">We will send you a mail with a otp code and link. This link or otp code make your account verifiyed.</p>
 
             <form onSubmit={handleGetOTPCode}>

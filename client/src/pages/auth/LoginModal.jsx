@@ -94,7 +94,7 @@ function LoginModal(props) {
 
     return (
         <div>
-            <h1 className="font-bold text-3xl text-gray-200 text-center">Login</h1>
+            <h1 className="font-bold text-2xl md:text-3xl text-gray-200 text-center">Login</h1>
 
 
             <form onSubmit={loginHandler}>

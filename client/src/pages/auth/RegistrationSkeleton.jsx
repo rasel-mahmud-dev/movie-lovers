@@ -37,8 +37,12 @@ const RegistrationSkeleton = () => {
                             <Skeleton.Line className="w-full h-2" />
                             <Skeleton.Line className="w-full h-2" />
                         </div>
-                        <div className="flex justify-center mt-8 gap-x-4">
-                            <Skeleton.Line className="w-32 h-8" />
+                        <div className="flex justify-between mt-8 gap-x-4">
+                            <div className="w-full">
+                                <Skeleton.Line className="w-full h-2.5" />
+                                <Skeleton.Line className="w-10/12 h-2.5" />
+                                <Skeleton.Line className="w-6/12 h-2.5" />
+                            </div>
                             <Skeleton.Line className="w-32 h-8" />
                         </div>
 

@@ -1,7 +1,7 @@
 import React from 'react'
-import {toggleModal, setSearchValue, setPaginatedMovie } from "src/store/slices/appSlice"
+import {toggleModal, setSearchValue, setPaginatedMovie } from "src/store/slices/appSlice.js"
 
-import {logOutAction} from "src/store/slices/authSlice"
+import {logOutAction} from "src/store/slices/authSlice.js"
 
 import { useDispatch, useSelector } from 'react-redux'
 import {Link, NavLink, useNavigate} from "react-router-dom"
@@ -11,10 +11,10 @@ import { AiOutlineLogout } from "react-icons/ai"
 import { MdFavorite } from "react-icons/md"
 import { BiSearchAlt } from "react-icons/bi"
 
-import Avatar from 'src/components/Avatar';
+import Avatar from 'src/components/Avatar.jsx';
 
 
-import { fetchMovies } from 'src/store/actions/appActions';
+import { fetchMovies } from 'src/store/actions/appActions.js';
 import {FaPlus, FaRegUser} from 'react-icons/fa';
 import {GoThreeBars} from "react-icons/all";
 

@@ -108,7 +108,7 @@ function ResetPassword(props) {
     return (
         <div>
 
-            <h1 className="font-bold text-3xl text-gray-200 text-center">Reset new Password</h1>
+            <h1 className="font-bold text-2xl md:text-3xl text-gray-200 text-center">Reset new Password</h1>
             <p className="py-4 text-center ">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
             <form onSubmit={newPasswordSetHandler}>
 

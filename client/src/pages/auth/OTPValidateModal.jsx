@@ -113,7 +113,7 @@ function OTPValidateModal(props) {
     return (
         <div>
 
-            <h1 className="font-bold text-3xl text-gray-200 text-center">Verify OTP Code</h1>
+            <h1 className="font-bold text-2xl md:text-3xl text-gray-200 text-center">Verify OTP Code</h1>
             <p className="py-4 text-center text-gray-300  ">
                 OTP send your
                 <span className="text-gray-100 font-medium"> {state.userData.email.value} </span>
