@@ -3,8 +3,8 @@ import axios from "axios"
 
 const isDev = import.meta.env.MODE === "development"
 
-export const apiServer = isDev ? "http://192.168.166.224:1000" : "https://movie-lovers-api.vercel.app"
-// export const apiServer = isDev ? "http://localhost:1000" : "https://movie-lovers-api.vercel.app"
+// export const apiServer = isDev ? "http://192.168.166.224:1000" : "https://movie-lovers-api.vercel.app"
+export const apiServer = isDev ? "http://localhost:1000" : "https://movie-lovers-api.vercel.app"
 
 export const api = axios.create({
     baseURL: apiServer

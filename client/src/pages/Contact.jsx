@@ -150,17 +150,12 @@ function Contact() {
                     <form onSubmit={handleSendMessage} className="w-full max-w-xl">
 
                         <div className="my-8 mt-4">
-
-
                             <ResponseAlert
                                 className="mt-2"
                                 message={state.httpResponse}
                                 statusCode={state.httpStatus}
                             />
-
-
                         </div>
-
 
                         {/*********** Name **************/}
                         <InputGroup
@@ -172,7 +167,6 @@ function Contact() {
                             value={userData.name.value}
                             errorMessage={userData.name.errorMessage}
                         />
-
 
                         {/*********** Email **************/}
                         <InputGroup
@@ -227,10 +221,8 @@ function Contact() {
 
                         </div>
 
-
                         {state.httpResponse !== "pending"
                             && <button type="submit" className="btn w-max flex justify-center mx-auto my-4">Send Mail</button>}
-
                     </form>
                 </div>
 

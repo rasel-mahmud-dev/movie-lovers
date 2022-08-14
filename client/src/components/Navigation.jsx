@@ -28,10 +28,24 @@ function Navigation() {
 
     const {auth, app} = useSelector(state=>state)
 
-
     const [state, setState] = React.useState({
-        openDropdown: "" /// "auth"
+        openDropdown: "", /// "auth"
+        isOpenNav: false,
     })
+
+    function handleWindowResize(){
+        if(window.innerWidth > 600){
+            setState({
+                ...state,
+                isOpenNav: false
+            })
+        }
+    }
+
+    React.useEffect(()=>{
+        window.addEventListener("resize", handleWindowResize)
+        return () => window.removeEventListener("resize", handleWindowResize)
+    }, [])
     
     function logOutHandler(){
         dispatch(logOutAction())
@@ -104,7 +118,6 @@ function Navigation() {
 
     }
 
-
     function handleSearchMovies(e){
         e.preventDefault && e.preventDefault()
         const {searchValue, pagination} = app
@@ -126,12 +139,18 @@ function Navigation() {
     return (
         <>
             <header className="bg-dark-700 fixed w-full z-40">
+             <div className=""></div>
+
+                {/**** backdrop ****/}
+                <div onClick={()=>setState({...state, isOpenNav: false})} className={`${state.isOpenNav ?
+                    '!block fixed left-0 top-[64px] z-20 w-full  bg-dark-700/80' : ''} 
+                     hidden  h-screen`}>
+                </div>
+
             <div className="my_container py-0 md:py-2">
                 <div className="navbar justify-between md:justify-start">
-
                     <div className="navbar-start">
-
-                        <GoThreeBars  className="block md:hidden  cursor-pointer text-white text-2xl mr-5" />
+                        <GoThreeBars onClick={()=>setState({...state, isOpenNav: !state.isOpenNav})} className="block md:hidden   cursor-pointer text-white text-2xl mr-5" />
 
                         <Link to="/" className="normal-case text-xl">
                             <div className="w-24 md:w-40">
@@ -140,14 +159,13 @@ function Navigation() {
                         </Link>
                     </div>
 
-                    <div className="w-full hidden lg:flex">
-                        <ul className="menu menu-horizontal p-0">
-                            <li><NavLink className="bg-transparent" to="/">Home</NavLink></li>
-                            <li><NavLink className="bg-transparent" to="/series">Series</NavLink></li>
-                            <li><NavLink className="bg-transparent" to="/movies">Movies</NavLink></li>
-                            {/* <li><NavLink className="bg-transparent" to="/price_and_planling">Pricing</NavLink></li> */}
-                            <li><NavLink className="bg-transparent" to="/about-us">About Us</NavLink></li>
-                            <li><NavLink className="bg-transparent" to="/contact">Contact</NavLink></li>
+                    <div style={{height: state.isOpenNav ? 300: '0'}} className={`w-full  mobile_nav`}>
+                        <ul className={`menu menu-horizontal p-0`}>
+                            <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/">Home</NavLink></li>
+                            <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/series">Series</NavLink></li>
+                            <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/movies">Movies</NavLink></li>
+                            <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/about-us">About Us</NavLink></li>
+                            <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/contact">Contact</NavLink></li>
                         </ul>
                     </div>
 

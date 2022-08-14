@@ -248,3 +248,21 @@
 .close_sidebar{
   transform: translateX(-100vw);
 }
+
+
+.mobile_nav{
+  transition: all .4s ease-out;
+  overflow: hidden;
+  position: absolute;
+  display: flex !important;
+  flex-direction: column !important;
+  top: 64px;
+  z-index: 21;
+  left: 0;
+  width: 100%;
+  @apply bg-neutral-focus;
+}
+.mobile_nav .menu{
+  flex-direction: column!important;
+}
+
