@@ -12,20 +12,37 @@ const HomePage = ()=> {
 
     const {sectionMovies} = useSelector(state=>state.app)
     const  dispatch = useDispatch()
-  
+
+    function fetchHomeSectionMovies(cb){
+        api.get("/api/home-section-movies").then(res=> {
+            if(res.status === 200) {
+                cb(res.data, null)
+            } else {
+                cb(null, "fetch error")
+            }
+        })
+            .catch(ex=>{
+                cb(null, ex.message)
+            })
+    }
+
     React.useEffect(()=>{
         if(!sectionMovies){
-            api.get("/api/home-section-movies").then(res=> {
-                dispatch(setSectionMovies(res.data.data))
-                scrollTo(0)
+            fetchHomeSectionMovies((data, err)=>{
+                if(!err){
+                    dispatch(setSectionMovies(data.data))
+                    scrollTo(0)
+                    return;
+                }
+
+                fetchHomeSectionMovies((data, err)=>{
+                    dispatch(setSectionMovies(data.data))
+                    scrollTo(0)
+                })
             })
-            .catch(ex=>{
-                console.log(ex);
-            })
+        } else {
+            scrollTo(0)
         }
-
-        scrollTo(0)
-
     }, [])
 
 

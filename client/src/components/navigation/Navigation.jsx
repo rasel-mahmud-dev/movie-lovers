@@ -39,8 +39,8 @@ function Navigation() {
         let updateState = {...state}
         if(window.innerWidth > 767){
             updateState.isOpenNav = false
+            updateState.isOpenSearchBar = false;
         }
-        updateState.isOpenSearchBar = false;
         setState(updateState)
     }
 
@@ -117,19 +117,19 @@ function Navigation() {
         const {pagination} = app
 
         dispatch(setSearchValue(e.target.value))
-   
+
         if(e.target.value === ""){
             fetchMovies({
-                currentPage: pagination.currentPage, 
-                perPageView:pagination.perPageView, 
-                searchValue: "", 
+                currentPage: pagination.currentPage,
+                perPageView:pagination.perPageView,
+                searchValue: "",
                 filter: null
               }, (paginatedMovie)=>{
                 dispatch(setPaginatedMovie(paginatedMovie))
                 if(paginatedMovie){
                     navigate("/movies")
                 }
-            }) 
+            })
         } else{
             id = setTimeout(()=>{
                 handleSearchMovies(e)
@@ -139,7 +139,7 @@ function Navigation() {
     }
 
     function handleSearchMovies(e){
-        e.preventDefault && e.preventDefault()
+        e.preventDefault && e.preventDefault();
         const { searchValue, pagination } = app
 
         fetchMovies({
@@ -257,7 +257,7 @@ function Navigation() {
                             placeholder="Search movie"
                             className="input rounded-md input-sm bg-white/10 text-gray-200  w-full placeholder:text-gray-400"
                         />
-                        <button onClick={handleSearchMovies} className="bg-neutral-focus py-1.5 px-4 rounded-md text-sm text-gray-300 cursor-pointer ml-2" >Search</button>
+                        <button type="submit" className="bg-neutral-focus py-1.5 px-4 rounded-md text-sm text-gray-300 cursor-pointer ml-2" >Search</button>
                     </form>
 
                 </div>
