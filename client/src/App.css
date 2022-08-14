@@ -204,16 +204,16 @@
 
 .tooltip-data{
   display: none;
-    position: absolute;
-    left: 0;
-    max-width: 343px;
-    word-break: break-all;
-    z-index: 1000;
-    white-space: pre-wrap;
-    background-color: rgb(37 43 54);
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 2px 3px 15px 0px #1e1e1e;
+  position: absolute;
+  left: 0;
+  max-width: 343px;
+  word-break: break-all;
+  z-index: 1000;
+  white-space: pre-wrap;
+  background-color: rgb(37 43 54);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 2px 3px 15px 0px #1e1e1e;
 }
 
 
@@ -240,7 +240,7 @@
 }
 
 .my_sidebar{
-  @apply fixed left-0 top-0 bg-neutral w-10/12 z-50 h-screen;
+  @apply fixed left-0 top-0 bg-neutral w-8/12 sm:w-8/12 z-50 h-screen;
   transition: transform .4s ease-in;
 }
 .open_sidebar{

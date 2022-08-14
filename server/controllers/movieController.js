@@ -20,30 +20,47 @@ exports.getMovies = async (req, res) => {
 
     try {
 
-
-        let query = {}
+        let query = []
 
         if (text) {
-            query["title"] = { $regex: new RegExp(text, "i") }
+            query.push({title: { $regex: new RegExp(text, "i")}})
         }
 
         if (filter) {
             for (let key in filter) {
-                if (filter[key]) {
-                    query[key] = filter[key]
+                if(filter[key] && filter[key].length){
+                    filter[key].map(item=>{
+                        query.push({[key]: item})
+                    })
                 }
             }
         }
 
 
-        let doc = await Movie.find(query).select("title cover")
+        let doc = await Movie.find({
+            $or: query && query.length ? query : [{}]
+            // $or: [ 
+            //     // {title: "300"}, 
+            //     // {title: "SAD"},
+            //     // {genres: "62ed3958e25223c70465f213" }
+            // ]
+        }).select("title cover")
             .skip((pageNumber - 1) * perPageView)
             .limit(perPageView)
 
-        response(res, 200, {
-            movies: doc
-        })
+        let counts = 0;
+        if(pageNumber === 1){
+            counts = await Movie.countDocuments({
+                $or: query && query.length ? query : [{}]
+            })
+        }
 
+        console.log(query);
+
+        response(res, 200, {
+            movies: doc,
+            totalMovies: counts 
+        })
 
     } catch (ex) {
         response(res, 500, {
@@ -51,6 +68,8 @@ exports.getMovies = async (req, res) => {
         })
     }
 }
+
+
 exports.getSimilarMovies = async (req, res) => {
 
     const {  pageNumber, perPageView, or } = req.body
@@ -195,25 +214,6 @@ exports.getMovieDetails = async (req, res) => {
 }
 
 
-exports.searchMovie = async (req, res) => {
-    const { text } = req.body;
-    try {
-
-        let doc = await Movie.findOne({
-            title: { $regex: new RegExp(text, "i") }
-        })
-
-        response(res, 200, {
-            movies: doc
-        })
-
-
-    } catch (ex) {
-        response(res, 500, {
-            message: "Internal error. Please try again",
-        })
-    }
-}
 
 function getFormMongodb(cb) {
     let data = {}

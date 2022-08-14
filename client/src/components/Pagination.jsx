@@ -1,7 +1,6 @@
 import React from 'react'
 
 function Pagination({ currentPage, total, perPageView, onPageChange }) {
-
     return (
         <div className="flex flex-wrap  ">
             {total ? new Array(Math.round(total / perPageView)).fill(1).map((item, index) => (

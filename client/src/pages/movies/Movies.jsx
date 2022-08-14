@@ -1,19 +1,27 @@
-
 import React from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import { setMovies, setGenres, setLanguages, setQualities, setResetSearch, setTotalMovie, changePageAction } from "src/store/slices/appSlice"
+import {
+  setMovies,
+  setGenres,
+  setLanguages,
+  setQualities,
+  setResetSearch,
+  setFilterMovies,
+  changePageAction,
+  setFilter
+} from "src/store/slices/appSlice"
 
 import { fetchMovies, fetchGenres, fetchQualities, fetchLanguages } from 'src/store/actions/appActions'
 
 import Movie from "src/components/Movie"
 import Pagination from "src/components/Pagination"
-import { api } from 'src/api';
 
-import {FaSort, FaTimes} from 'react-icons/fa'
+
+
 import { FaFilter } from 'react-icons/fa'
 import PageSkeleton from "./PageSkeleton";
-import {BiSort, FiFilter} from "react-icons/all";
+import {BiSort} from "react-icons/all";
 import Drawer from "../../components/Drawer";
 import Filter from "./Filter";
 import scrollTo from "../../utils/scrollTo.js";
@@ -21,33 +29,27 @@ import scrollTo from "../../utils/scrollTo.js";
 
 const Movies = (props) => {
 
-  const { movies, searchValue, genres, qualities, languages, filter, pagination, totalMovie } = useSelector(state => state.app)
+  const { movies, searchValue, genres, qualities, languages, filter, pagination, totalMovies } = useSelector(state => state.app)
 
   const dispatch = useDispatch();
 
   React.useEffect(() => {
 
-    
     !movies && (
       fetchMovies({
-        currentPage: pagination.currentPage, 
-        perPageView:pagination.perPageView, 
-        searchValue, 
+        currentPage: pagination.currentPage,
+        perPageView:pagination.perPageView,
+        searchValue,
         filter: null
-      }, (paginatedMovie) => {
-        dispatch(setMovies(paginatedMovie))
+      }, (paginatedMovie, totalMovies) => {
+        dispatch(setFilterMovies({
+          paginatedMovie: paginatedMovie,
+          currentPage: pagination.currentPage,
+          totalMovies: pagination.currentPage === 1 ? totalMovies : null
+        }))
         scrollTo(0)
       })
     )
-    
-
-    if (!totalMovie) {
-      api.get("/api/total-movie").then(response => {
-        if (response.status === 200) {
-          dispatch(setTotalMovie(response.data.total))
-        }
-      })
-    }
 
     if (typeof fetchLanguages === "function") {
       (!languages || languages.length === 0) && fetchLanguages((data) => {
@@ -77,9 +79,11 @@ const Movies = (props) => {
   })
 
   function handleChangePage(pageNumber) {
-    // use caching data if already this page are fetched.
+    // use caching data if already this page is fetched.
     if (movies[pageNumber] && movies[pageNumber].length !== 0) {
+      // change pagination
       dispatch(changePageAction({ pageNumber, paginatedMovie: null }))
+
     } else {
 
       // no cache. so send request into server 
@@ -87,9 +91,15 @@ const Movies = (props) => {
         currentPage: pageNumber, 
         perPageView: pagination.perPageView, 
         searchValue, 
-        filter: null
-      }, (paginatedMovie) => {
-        dispatch(changePageAction({ pageNumber, paginatedMovie }))
+        filter: filter
+      }, (paginatedMovie, totalMovies) => {
+        dispatch(setFilterMovies({
+          paginatedMovie: paginatedMovie,
+          currentPage: pageNumber,
+          filter: filter,
+          searchValue: searchValue,
+          totalMovies: pageNumber === 1 ? totalMovies : null
+        }))
       })
     }
   }
@@ -101,39 +111,15 @@ const Movies = (props) => {
       updateFilter[key] = ""
     }
 
-    fetchMovies({
-      currentPage: 1, 
-      perPageView: pagination.perPageView, 
-      searchValue: "", 
-      filter: updateFilter,
-    }, (paginatedMovie) => {
-      dispatch(setResetSearch({paginatedMovie, updateFilter}))
-    })
+    // fetchMovies({
+    //   currentPage: 1,
+    //   perPageView: pagination.perPageView,
+    //   searchValue: "",
+    //   filter: updateFilter,
+    // }, (paginatedMovie) => {
+    //   dispatch(setResetSearch({paginatedMovie, updateFilter}))
+    // })
   }
-
-
-  function handleChangeOnFilter(e) {
-    const { name, value } = e.target;
-    let updateFilter = {...filter}
-
-    updateFilter[name] = value
-  
-    // no cache. so send request into server 
-    fetchMovies({
-      currentPage: pagination.currentPage, 
-      perPageView:pagination.perPageView, 
-      searchValue, 
-      filter: updateFilter,
-    }, (paginatedMovie) => {
-      dispatch(changePageAction({
-        pageNumber: pagination.currentPage,
-        filter: updateFilter, 
-        paginatedMovie
-      }))
-    })
-
-  }
-
 
   function toggleSidebar(){
     if(!state.isOpenBackdrop){
@@ -146,6 +132,38 @@ const Movies = (props) => {
       isOpenBackdrop: !state.isOpenBackdrop
     })
   }
+
+  function handleFilterChange(data){
+
+    let updateFilter = data
+
+    // no cache. so send request into server
+    fetchMovies({
+      currentPage: 1,
+      perPageView:pagination.perPageView,
+      searchValue,
+      filter: updateFilter,
+    }, (paginatedMovie, totalMovie) => {
+      dispatch(setFilterMovies({
+        paginatedMovie: paginatedMovie,
+        currentPage: 1,
+        filter: updateFilter,
+        searchValue: searchValue,
+        totalMovies: totalMovies
+      }))
+    })
+
+    // dispatch(setFilter(data))
+  }
+
+
+  let isFiltered = false;
+  for(let key in filter){
+    if(filter[key] && filter[key].length){
+      isFiltered = true
+    }
+  }
+
 
   return (
     <div className={`${state.isOpenBackdrop ? "overflow-scroll-none": ""}`}>
@@ -161,26 +179,31 @@ const Movies = (props) => {
                     genres={genres}
                     languages={languages}
                     qualities={qualities}
-                    handleChangeOnFilter={handleChangeOnFilter}
+                    onChangeFilter={handleFilterChange}
+                    toggleSidebar={toggleSidebar}
                     handleClearSearch={handleClearSearch}
                 />
               </div>
         </Drawer>
 
         <div className="flex justify-between mt-2 ">
-          <div className="bg-neutral px-4 rounded-md flex items-center text-white py-2">
+          <div className="bg-neutral px-4 rounded-md flex items-center text-white py-2 cursor-pointer">
             <BiSort className="text-md " />
             <span className="ml-1.5 text-sm font-medium">Sort</span>
           </div>
 
-          <div onClick={toggleSidebar} className="bg-neutral px-4 rounded-md flex items-center text-white py-2">
+          <div onClick={toggleSidebar} className={`bg-neutral px-4 rounded-md flex items-center text-white py-2 cursor-pointer 
+          ${isFiltered ? "bg-primary " : ""} 
+          `}>
             <FaFilter className="text-md" />
             <span className="ml-1.5 text-sm font-medium">Filter</span>
           </div>
         </div>
 
         <div className="mb-4">
-          {searchValue && <h1 className="text-center text-gray-300 text-sm mr-5 my-4">Search Result for <span className="active">{searchValue}</span></h1>}
+          {searchValue && <h1 className="text-center text-gray-300 text-sm mr-5 my-4">Search Result for
+            <span className="active">{searchValue}</span>
+          </h1>}
         </div>
 
         <div className="movie_list gap-4">
@@ -194,7 +217,7 @@ const Movies = (props) => {
         {/* pagination  */}
         <div className="flex justify-center my-14">
           <Pagination
-            total={totalMovie ? totalMovie : 30}
+            total={totalMovies}
             perPageView={pagination.perPageView}
             currentPage={pagination.currentPage}
             onPageChange={handleChangePage}

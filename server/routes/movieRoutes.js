@@ -22,12 +22,10 @@ module.exports = (router)=>{
     router.get('/api/series-movies',  movieController.getSeriesMovies)
 
     router.post('/api/add-movie', admin, movieController.addMovie)
-    router.post('/api/update-movie', admin, movieController.updateMovie
-    )
-    router.get('/api/total-movie', movieController.calcTotalMovie)
+
+    router.post('/api/update-movie', admin, movieController.updateMovie)
 
 
-    router.post('/api/search-movie', movieController.searchMovie)
     router.get('/api/all-movies', auth, movieController.getAllMovies)
 
     router.delete('/api/movie/:id', admin, movieController.deleteMovie)

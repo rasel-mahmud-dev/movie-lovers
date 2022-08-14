@@ -4,17 +4,26 @@ import {api, getApi} from "../../api"
 export function fetchMovies(payload, cb){
 
     const { currentPage, perPageView, searchValue, filter } = payload
-    
-    /******* Fetch all genres ********/
+
+    let filterPayload = {};
+    if(filter){
+        for(let itemKey in filter){
+            if(filter[itemKey] && filter[itemKey].length){
+                filterPayload[itemKey] = filter[itemKey].map(item => item._id)
+            }
+        }
+    }
+
+    /******* Fetch all movies ********/
     api.post("/api/movies", {
         pageNumber: currentPage, 
         perPageView: perPageView, 
         text: searchValue,
-        filter: filter,
+        filter: filterPayload,
     })
     .then(response=>{
         if(response.status === 200){
-            cb({[currentPage]: response.data.movies});
+            cb({[currentPage]: response.data.movies}, response.data.totalMovies);
         }
     })    
 }
@@ -68,7 +77,7 @@ export function fetchMovieDetails(movieId, cb){
 }
 
 
-export function  fetchSimilarMovies(movie, cb){
+export function fetchSimilarMovies(movie, cb){
     getApi().post("/api/similar-movies", {
         pageNumber: 1,
         perPageView: 10,

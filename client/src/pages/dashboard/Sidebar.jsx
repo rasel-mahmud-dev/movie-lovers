@@ -5,7 +5,7 @@ import {FaBars} from "react-icons/fa"
 function Sidebar({handleToggleSidebar, isOpenSidebar, authProfile, changeSideBarContent, sideBarContent, sideBarData}) {
   return (
     <div className={`${isOpenSidebar ? 
-        '!block fixed left-0 z-20 top-[64px]   w-60' : ''} 
+        '!block fixed left-0 z-20 top-[64px] w-60' : ''} 
         hidden md:block col-span-1 bg-dark-700 h-screen`}>
 
         <div onClick={handleToggleSidebar} className='cursor-pointer fixed top-[78px] left-4 z-50 block md:hidden'>

@@ -25,13 +25,13 @@ const initialState = {
   searchValue: "",
   pagination: {
     currentPage: 1,
-    perPageView: 15,
+    perPageView: 10,
   },
-  totalMovie: 0,
+    totalMovies: 0,
   filter: {
-    genres: "",
-    language: "",
-    quality: "",
+    genres: [],     // {_id: string, name: string}[]
+    language: [],   // {_id: string, name: string}[]
+    quality: [],    // {_id: string, name: string}[]
   }
 }
 
@@ -39,10 +39,6 @@ export const counterSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-
-    setTotalMovie(state, action){
-        state.totalMovie = action.payload
-    },
 
     setMovies(state, action){
         state.movies = action.payload;
@@ -84,18 +80,43 @@ export const counterSlice = createSlice({
     },
 
 
+    //  change pagination...
     changePageAction(state, action){
+        const {pageNumber, paginatedMovie } = action.payload
 
-        const {pageNumber, paginatedMovie, filter} = action.payload
-
-        if(filter){
-            state.filter = filter
-        }
-        
         state.pagination = {
             ...state.pagination,
             currentPage: pageNumber
         };
+
+        // for caching
+        if(paginatedMovie){
+            state.movies = {
+                ...state.movies,
+                ...paginatedMovie
+            }
+        }
+    },
+
+    //  change filter...
+    setFilterMovies(state, action){
+
+        const {currentPage, paginatedMovie, filter, totalMovies} = action.payload
+
+        if(totalMovies !== null) {
+            state.totalMovies = totalMovies
+        }
+
+        if(filter){
+            state.filter = filter
+        }
+
+        if(currentPage !== null) {
+            state.pagination = {
+                ...state.pagination,
+                currentPage: currentPage
+            };
+        }
 
         // for caching
         if(paginatedMovie){
@@ -157,7 +178,7 @@ export const counterSlice = createSlice({
     },
 
     setFilter(state, action){
-        state.filter = payload.value
+        state.filter = action.payload
     }
 
   },
@@ -182,7 +203,7 @@ export const {
         setResetSearch,
         setFilter,
         setAllMovie,
-
+        setFilterMovies,
         setAddLanguage,
         setAddGenre,
         setAddQuality
