@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleModal } from "src/store/slices/appSlice"
 
-
 import { FaTimes } from "react-icons/fa"
 import OTPValidateModal from './OTPValidateModal';
 import GetOTPModal from './GetOTPModal';
@@ -11,9 +10,7 @@ import RegistrationModal from './RegistrationModal';
 import LoginModal from './LoginModal';
 
 
-
 function JoinHome() {
-
     const { app, auth } = useSelector(state => state)
 
     const { modal } = app

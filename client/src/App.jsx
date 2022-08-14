@@ -10,17 +10,17 @@ import Navigation from './components/Navigation'
 import Footer from "src/components/Footer"
 import {loginWithTokenAction, setAuth} from "src/store/slices/authSlice"
 
-const AddMovie = lazy(()=>import( './pages/addMovie/AddMovie'))
-
 const Series = lazy(()=>import('./pages/series/Series'))
 const Contact  = lazy(()=>import('./pages/Contact'));
 const AboutUs  = lazy(()=>import('./pages/AboutUs'));
-const JoinHome = lazy(()=>import("src/pages/auth/JoinHome"))
 import Loader from 'src/components/loader/Loader';
 import HomePageLite from "./pages/homepage/HomePageLite";
 import MoviesPageLite from "./pages/movies/MoviesLite";
 import MovieDetailLite from "./pages/movieDetail/MovieDetailLite";
 import DashboardLite from "./pages/dashboard/dashboardRoot/DashboardLite.jsx";
+import AddMovieLite from "./pages/addMovie/AddMovieLite.jsx";
+import JoinHomeLite from "./pages/auth/JoinHomeLite.jsx";
+import scrollTo from "./utils/scrollTo.js";
 
 
 function App() {
@@ -35,6 +35,14 @@ function App() {
       dispatch(loginWithTokenAction())
   }, [])
 
+    useEffect(()=>{
+        if(modal !== ""){
+            scrollTo(0)
+            document.body.style.overflow = "hidden"
+        } else {
+            document.body.style.overflow = "auto"
+        }
+    }, [modal])
 
   return (
     <div className="App">
@@ -43,7 +51,7 @@ function App() {
 
       <Suspense fallback={<Spinner />}>
 
-       { modal && <JoinHome /> }
+       { modal && <JoinHomeLite /> }
 
         <Routes>
           <Route exact={true} path="/" element={<HomePageLite/>} />
@@ -54,8 +62,8 @@ function App() {
           {(auth.auth || !auth.authFetched) ? (
             <>
               <Route exact={true} path="/auth/dashboard/:id" element={<DashboardLite/>} />
-              <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />
-              <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
+              <Route exact={true} path="/admin/add-movie" element={<AddMovieLite/>} />
+              <Route exact={true} path="/admin/update-movie/:id" element={<AddMovieLite/>} />
             </>
           ) : (
              <Route

@@ -21,6 +21,7 @@ import { useParams } from 'react-router-dom';
 import { api } from 'src/api';
 import ResponseAlert from './../../components/ResponseAlert';
 import errorMessage from './../../utils/errorResponse';
+import scrollTo from "../../utils/scrollTo.js";
 
 
 function AddMovie() {
@@ -297,8 +298,9 @@ function AddMovie() {
             return;
         } 
 
-        localStorage.setItem("userData", JSON.stringify(movieData))
+        scrollTo(0)
 
+        localStorage.setItem("userData", JSON.stringify(movieData))
 
         let formData = new FormData()
         for (let key in movieData) {
@@ -353,15 +355,16 @@ function AddMovie() {
                 })
             })
         }
-
     }
+
 
     return (
         <div className="my_container">
 
             {renderModal()}
 
-            <h1 className="text-center font-bold text-4xl text-gray-50 mt-4 mb-3">Add new Movie</h1>
+            <h1 className="text-center font-bold text-2xl md:text-4xl text-gray-50 mt-4 mb-3">
+                { params.id ?  "Update Movie" : "Add new Movie"}</h1>
 
             <div className="max-w-3xl w-full mx-auto">
                 <div className="flex flex-wrap gap-4 justify-center md:justify-end mt-10">
@@ -370,7 +373,6 @@ function AddMovie() {
                     <button onClick={() => handleToggleModal("addLanguage")} className="btn btn-primary ">Add Language</button>
 
                 </div>
-
 
                 <form className="my-8" onSubmit={handleAddMovie}>
 
@@ -553,13 +555,7 @@ function AddMovie() {
                     </div>
 
                 </form>
-
-
-
-
             </div>
-
-
         </div>
 
     )
