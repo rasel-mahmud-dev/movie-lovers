@@ -70,6 +70,7 @@
   background: #282d36;
   padding-bottom: 10px;
   box-shadow: 0px 2px 3px -1px #12121259;
+  overflow: hidden;
 }
 
 
@@ -115,7 +116,7 @@
     background: #282d36;
     padding-bottom: 10px;
     box-shadow: 0px 2px 3px -1px #12121259;
-    height: 220px
+    height: 230px;
   }
 
   .movie_card .movie_thumb{

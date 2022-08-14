@@ -8,12 +8,11 @@ import { Route, Routes, Navigate } from 'react-router-dom'
 import Navigation from './components/Navigation'
 
 import Footer from "src/components/Footer"
-import {loginWithTokenAction} from "src/store/slices/authSlice"
+import {loginWithTokenAction, setAuth} from "src/store/slices/authSlice"
 
 const AddMovie = lazy(()=>import( './pages/addMovie/AddMovie'))
 
 const Series = lazy(()=>import('./pages/series/Series'))
-const Dashboard = lazy(()=>import("src/pages/dashboard/Dashboard"))
 const Contact  = lazy(()=>import('./pages/Contact'));
 const AboutUs  = lazy(()=>import('./pages/AboutUs'));
 const JoinHome = lazy(()=>import("src/pages/auth/JoinHome"))
@@ -21,6 +20,7 @@ import Loader from 'src/components/loader/Loader';
 import HomePageLite from "./pages/homepage/HomePageLite";
 import MoviesPageLite from "./pages/movies/MoviesLite";
 import MovieDetailLite from "./pages/movieDetail/MovieDetailLite";
+import DashboardLite from "./pages/dashboard/dashboardRoot/DashboardLite.jsx";
 
 
 function App() {
@@ -31,12 +31,8 @@ function App() {
   const {app, auth} = useSelector(state => state)
   const {modal} = app
 
-
   useEffect(()=>{
-    let token = localStorage.getItem("token")
-    if(token){
-      dispatch(loginWithTokenAction(token))
-    }      
+      dispatch(loginWithTokenAction())
   }, [])
 
 
@@ -55,14 +51,14 @@ function App() {
           <Route exact={true} path="/series" element={<Series/>} />
           <Route exact={true} path="/movie/:id" element={<MovieDetailLite/>} />
 
-          {auth.auth ? (
+          {(auth.auth || !auth.authFetched) ? (
             <>
-              <Route exact={true} path="/auth/dashboard/:id" element={<Dashboard/>} /> 
+              <Route exact={true} path="/auth/dashboard/:id" element={<DashboardLite/>} />
               <Route exact={true} path="/admin/add-movie" element={<AddMovie/>} />
               <Route exact={true} path="/admin/update-movie/:id" element={<AddMovie/>} />
             </>
           ) : (
-            !auth.authFetched && <Route
+             <Route
                 path="*"
                 element={<Navigate to="/" replace />}
             />

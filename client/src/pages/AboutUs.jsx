@@ -1,7 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import scrollTo from "src/utils/scrollTo.js";
 
 function AboutUs() {
+
+    React.useEffect(()=>{
+        scrollTo(0)
+    }, [])
+
     return (
         <div className="">
             <div>

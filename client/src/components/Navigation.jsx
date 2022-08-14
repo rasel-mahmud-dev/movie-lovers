@@ -64,21 +64,21 @@ function Navigation() {
             <div onMouseLeave={()=>toggleExpandDropdown("auth")} className="border-slate-900 bg-neutral p-6 pt-4 absolute right-0 top-8 z-20 text-white w-[250px] text-start rounded-md">
                 <ul>
                     <li className="flex items-center link link-hover">
-                        <Link to={`/auth/dashboard/${auth.auth._id}`} state={"Profile"} className="flex items-center">
+                        <Link to={`/auth/dashboard/${auth.auth._id}`} onClick={()=>toggleExpandDropdown("")} state={"Profile"} className="flex items-center">
                             <CgProfile  className="text-xl"/> 
                             <span className="ml-2">Profile</span>
                         </Link>
                     </li>
                     <li className="flex items-center link link-hover mt-2">
-                        <div onClick={()=>navigate(`/auth/dashboard/${auth.auth._id}`, { replace: true, state: "Favorites"})} className="flex items-center">
+                        <Link to={`/auth/dashboard/${auth.auth._id}`} onClick={()=>toggleExpandDropdown("")}  state={"Favorites"} className="flex items-center">
                             <MdFavorite className="text-xl" /> 
                             <span className="ml-2">Favorite</span>
-                        </div>
+                        </Link>
                     </li>
                     <li className="flex items-center link link-hover mt-2">
                         <FaPlus className="text-lg" />
                         <span className="ml-2">
-                            <Link to="/admin/add-movie">Add Movie</Link>
+                            <Link to="/admin/add-movie" onClick={()=>toggleExpandDropdown("")}>Add Movie</Link>
                         </span>
                     </li>
                     <li onClick={logOutHandler} className="flex items-center mt-2 link link-hover">
@@ -194,7 +194,9 @@ function Navigation() {
                         { auth.auth ? (
                             <div>
                                 <div className="relative">
-                                    <div className='cursor-pointer flex items-center' onMouseEnter={()=>toggleExpandDropdown("auth")} onClick={()=>toggleExpandDropdown("auth")} >
+                                    <div className='cursor-pointer flex items-center'
+                                         onMouseEnter={()=>toggleExpandDropdown("auth")}
+                                         onClick={()=>toggleExpandDropdown("auth")} >
 
                                         <Avatar 
                                             className="w-6 h-6"

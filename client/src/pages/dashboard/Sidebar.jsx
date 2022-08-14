@@ -8,7 +8,6 @@ function Sidebar({handleToggleSidebar, isOpenSidebar, authProfile, changeSideBar
         '!block fixed left-0 z-20 top-[64px]   w-60' : ''} 
         hidden md:block col-span-1 bg-dark-700 h-screen`}>
 
-
         <div onClick={handleToggleSidebar} className='cursor-pointer fixed top-[78px] left-4 z-50 block md:hidden'>
             <FaBars className="text-2xl"/>
         </div>

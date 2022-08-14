@@ -6,7 +6,7 @@ const {auth} =  require("../middlewares")
 module.exports = (router)=>{
 
   
-    router.get('/api/user/:id', authController.getUser)
+    router.get('/api/user/:id', auth, authController.getUser)
 
     router.post('/api/registration', authController.registration)
 

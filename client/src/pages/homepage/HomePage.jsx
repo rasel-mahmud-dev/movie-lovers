@@ -5,7 +5,7 @@ import { api } from 'src/api';
 
 import Movie from "src/components/Movie"
 import PageSkeleton from "./PageSkeleton";
-
+import scrollTo from "../../utils/scrollTo.js";
 
 
 const HomePage = ()=> {
@@ -15,13 +15,17 @@ const HomePage = ()=> {
   
     React.useEffect(()=>{
         if(!sectionMovies){
-            api.get("/api/home-section-movies").then(res=>{
+            api.get("/api/home-section-movies").then(res=> {
                 dispatch(setSectionMovies(res.data.data))
+                scrollTo(0)
             })
             .catch(ex=>{
                 console.log(ex);
             })
         }
+
+        scrollTo(0)
+
     }, [])
 
 
@@ -34,7 +38,7 @@ const HomePage = ()=> {
             { sectionMovies && Object.keys(sectionMovies).map((section, i)=>(
 
                 <div className="mt-10" key={i}>
-                    <h2 className="text-3xl text-gray-100 font-medium mt-10 mb-4 pb-4 border-b 
+                    <h2 className="text-xl md:text-3xl text-gray-100 font-medium mt-5 md:mt-10 mb-4 pb-4 border-b
                     border-gray-100/20">{section}</h2>
 
                     <div className="movie_list gap-3">

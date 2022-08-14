@@ -16,6 +16,7 @@ import PageSkeleton from "./PageSkeleton";
 import {BiSort, FiFilter} from "react-icons/all";
 import Drawer from "../../components/Drawer";
 import Filter from "./Filter";
+import scrollTo from "../../utils/scrollTo.js";
 
 
 const Movies = (props) => {
@@ -35,6 +36,7 @@ const Movies = (props) => {
         filter: null
       }, (paginatedMovie) => {
         dispatch(setMovies(paginatedMovie))
+        scrollTo(0)
       })
     )
     
@@ -65,6 +67,8 @@ const Movies = (props) => {
         dispatch(setGenres(data.genres))
       })
     }
+
+    scrollTo(0)
 
   }, [])
 

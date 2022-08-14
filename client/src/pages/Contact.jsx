@@ -7,6 +7,7 @@ import errorMessage from 'src/utils/errorResponse';
 import generateNumber from 'src/utils/generateNumber';
 import sumOfArray from 'src/utils/sumOfArray';
 import ResponseAlert from 'src/components/ResponseAlert';
+import scrollTo from "../utils/scrollTo.js";
 
 
 function Contact() {
@@ -27,6 +28,9 @@ function Contact() {
 
     React.useEffect(() => {
         setState({ ...state, twoRandomNumber: generateNumber(2) })
+
+        scrollTo(0)
+
     }, [])
 
 

@@ -19,6 +19,8 @@ import {fetchSimilarMovies} from "src/store/actions/appActions";
 import {setMovieCache, setSimilarMovieCache} from "src/store/slices/appSlice";
 import Movie from "src/components/Movie";
 import SimilarMovieSkeleton from "./SimilarMovieSkeleton";
+import scrollTo from "../../utils/scrollTo.js";
+
 
 
 const MovieDetail = () => {
@@ -40,13 +42,13 @@ const MovieDetail = () => {
 
     React.useEffect(() => {
 
-
-
         if(!movieCache[params.id]) {
 
             // store cache for individual movie
             fetchMovieDetails(params.id, (movie) => {
                 dispatch(setMovieCache({_id: params.id, detail: movie}))
+
+                scrollTo(0)
 
                 // store similarMovie cache for individual movie
                 fetchSimilarMovies(movie, (data) => {
@@ -64,6 +66,7 @@ const MovieDetail = () => {
             }
         }
 
+        scrollTo(0)
 
     }, [params.id])
 
