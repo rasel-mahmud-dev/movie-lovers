@@ -4,7 +4,7 @@ import {toggleModal, setSearchValue, setPaginatedMovie } from "src/store/slices/
 import {logOutAction} from "src/store/slices/authSlice.js"
 
 import { useDispatch, useSelector } from 'react-redux'
-import {Link, NavLink, useNavigate} from "react-router-dom"
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom"
 
 import {CgProfile} from "react-icons/cg"
 import { AiOutlineLogout } from "react-icons/ai"
@@ -25,19 +25,30 @@ function Navigation() {
     const dispatch = useDispatch()
 
     const navigate = useNavigate()
+    const location = useLocation()
 
     const {auth, app} = useSelector(state=>state)
 
     const [state, setState] = React.useState({
         openDropdown: "", /// "auth"
         isOpenNav: false,
+        isOpenSearchBar: true,
     })
 
     function handleWindowResize(){
-        if(window.innerWidth > 600){
+        let updateState = {...state}
+        if(window.innerWidth > 767){
+            updateState.isOpenNav = false
+        }
+        updateState.isOpenSearchBar = false;
+        setState(updateState)
+    }
+
+    function toggleOpenMobileSearchbar(){
+        if(window.innerWidth < 768) {
             setState({
                 ...state,
-                isOpenNav: false
+                isOpenSearchBar: !state.isOpenSearchBar
             })
         }
     }
@@ -46,7 +57,16 @@ function Navigation() {
         window.addEventListener("resize", handleWindowResize)
         return () => window.removeEventListener("resize", handleWindowResize)
     }, [])
-    
+
+    React.useEffect(()=>{
+        if(location.pathname !== "/movies"){
+            setState({
+                ...state,
+                isOpenSearchBar: false
+            })
+        }
+    }, [location])
+
     function logOutHandler(){
         dispatch(logOutAction())
         navigate("/")
@@ -120,24 +140,25 @@ function Navigation() {
 
     function handleSearchMovies(e){
         e.preventDefault && e.preventDefault()
-        const {searchValue, pagination} = app
-      
+        const { searchValue, pagination } = app
+
         fetchMovies({
-            currentPage: pagination.currentPage, 
-            perPageView:pagination.perPageView, 
-            searchValue: searchValue ? searchValue : "", 
+            currentPage: pagination.currentPage,
+            perPageView: pagination.perPageView,
+            searchValue: searchValue ? searchValue : "",
             filter: null
-          }, (paginatedMovie)=>{
+        }, (paginatedMovie) => {
             dispatch(setPaginatedMovie(paginatedMovie))
-            if(paginatedMovie){
+            if (paginatedMovie) {
                 navigate("/movies")
             }
-        }) 
+        })
+
     }
 
 
     return (
-        <>
+        <div>
             <header className="bg-dark-700 fixed w-full z-40">
              <div className=""></div>
 
@@ -187,7 +208,7 @@ function Navigation() {
                     <div className="navbar-end w-auto md:w-4/12">
 
                         <BiSearchAlt
-                            onClick={handleSearchMovies}
+                            onClick={toggleOpenMobileSearchbar}
                             className="block md:hidden  cursor-pointer text-white text-2xl mr-5"
                         />
 
@@ -224,7 +245,24 @@ function Navigation() {
             </div>
             </header>
             <div className='pb-[64px] md:pb-[80px]'></div>
-        </>
+
+            {/***** search bar *****/}
+            <div className={`bg-dark-700/50 hidden md:hidden  ${state.isOpenSearchBar ? " !block" : ""}`} >
+                <div className="max-w-sm w-full mx-auto py-2">
+                    <form onSubmit={handleSearchMovies} className="flex justify-between items-center px-2">
+                        <input
+                            type="text"
+                            value={app.searchValue}
+                            onChange={handleChange}
+                            placeholder="Search movie"
+                            className="input rounded-md input-sm bg-white/10 text-gray-200  w-full placeholder:text-gray-400"
+                        />
+                        <button onClick={handleSearchMovies} className="bg-neutral-focus py-1.5 px-4 rounded-md text-sm text-gray-300 cursor-pointer ml-2" >Search</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
     )
 }
 
