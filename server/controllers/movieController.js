@@ -55,8 +55,6 @@ exports.getMovies = async (req, res) => {
             })
         }
 
-        console.log(query);
-
         response(res, 200, {
             movies: doc,
             totalMovies: counts 

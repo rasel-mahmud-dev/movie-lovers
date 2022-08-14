@@ -15,9 +15,10 @@ function transporter(){
 
 function sendMail(mailOptions){
 
-  // let {from, subject, html} = mailOptions
-
-  mailOptions.to = process.env.APP_EMAIL
+  mailOptions.from = process.env.APP_EMAIL
+  if(!mailOptions.to){
+    mailOptions.to = mailOptions.from
+  }
 
   return new Promise((s, e)=>{
     transporter().sendMail(mailOptions, function(error, info){

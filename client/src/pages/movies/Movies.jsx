@@ -83,6 +83,7 @@ const Movies = (props) => {
     if (movies[pageNumber] && movies[pageNumber].length !== 0) {
       // change pagination
       dispatch(changePageAction({ pageNumber, paginatedMovie: null }))
+      scrollTo(0)
 
     } else {
 
@@ -100,6 +101,7 @@ const Movies = (props) => {
           searchValue: searchValue,
           totalMovies: pageNumber === 1 ? totalMovies : null
         }))
+        scrollTo(0)
       })
     }
   }
@@ -151,6 +153,7 @@ const Movies = (props) => {
         searchValue: searchValue,
         totalMovies: totalMovies
       }))
+      scrollTo(0)
     })
 
     // dispatch(setFilter(data))

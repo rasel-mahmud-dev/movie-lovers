@@ -193,11 +193,10 @@ exports.loginWithToken = async (req, res) => {
 
 exports.getOtpCode = async (req, res) => {
     const { email } = req.body
-    let to = process.env.APP_EMAIL;
     try {
         let code = getOTP(6)
         let info = await sendMail({
-            from: email,
+            to: email,
             subject: "Verify your email to create your netflix2.0 account",
             html: `
             <div>
@@ -208,7 +207,7 @@ exports.getOtpCode = async (req, res) => {
             </div>
             `
         })
-        console.log(info);
+       
 
         if(info && info.messageId){
             let haftHour = (1000 * 60) * 30
