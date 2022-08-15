@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDispatch, useSelector } from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import AddGenre from './AddGenre'
 import AddLanguage from './AddLanguage'
 import AddQuality from './AddQuality'
@@ -8,17 +8,23 @@ import InputGroup from "src/components/inputs/InputGroup"
 import MultiInput from "src/components/inputs/MultiInput"
 import FileUpload from "src/components/inputs/FileUpload"
 
-import { setLanguages, setAddQuality, setAddLanguage, setAddGenre, setGenres, setQualities } from "src/store/slices/appSlice"
-import { fetchLanguages, fetchGenres, fetchQualities } from "src/store/actions/appActions"
+import {
+    setLanguages,
+    setAddQuality,
+    setAddLanguage,
+    setAddGenre,
+    setGenres,
+    setQualities
+} from "src/store/slices/appSlice"
+import {fetchLanguages, fetchGenres, fetchQualities} from "src/store/actions/appActions"
 
 
-
-import { FaTimes } from "react-icons/fa"
+import {FaTimes} from "react-icons/fa"
 import SelectGroup from 'src/components/inputs/SelectGroup'
 import TextArea from '../../components/inputs/TextArea'
-import { getApi } from '../../api'
-import { useParams } from 'react-router-dom';
-import { api } from 'src/api';
+import {getApi} from '../../api'
+import {useParams} from 'react-router-dom';
+import {api} from 'src/api';
 import ResponseAlert from './../../components/ResponseAlert';
 import errorMessage from './../../utils/errorResponse';
 import scrollTo from "../../utils/scrollTo.js";
@@ -26,30 +32,29 @@ import scrollTo from "../../utils/scrollTo.js";
 
 function AddMovie() {
     const dispatch = useDispatch()
-    const { app } = useSelector(state => state)
+    const {app, auth} = useSelector(state => state)
     const params = useParams()
 
-    const { genres, qualities, languages, } = useSelector(state => state.app)
-
+    const {genres, qualities, languages,} = useSelector(state => state.app)
 
 
     const [state, setState] = React.useState({
         movieData: {
-            title: { value: "", errorMessage: "", tauch: false },
+            title: {value: "", errorMessage: "", tauch: false},
             // author: {value: "", errorMessage: "", tauch: false}, // id 
-            genres: { value: "", errorMessage: "", tauch: false }, // id
-            runtime: { value: "", errorMessage: "", tauch: false },
+            genres: {value: "", errorMessage: "", tauch: false}, // id
+            runtime: {value: "", errorMessage: "", tauch: false},
             // isPublic: {value: "", errorMessage: "", tauch: false},
-            cover: { value: null, blob: null, errorMessage: "", tauch: false },
-            quality: { value: "", errorMessage: "", tauch: false }, // id
-            videoUrl: { value: "", errorMessage: "", tauch: false },
-            tags: { value: [], errorMessage: "", tauch: false },
+            cover: {value: null, blob: null, errorMessage: "", tauch: false},
+            quality: {value: "", errorMessage: "", tauch: false}, // id
+            videoUrl: {value: "", errorMessage: "", tauch: false},
+            tags: {value: [], errorMessage: "", tauch: false},
             // rating: {value: "", errorMessage: "", tauch: false},
-            price: { value: "", errorMessage: "", tauch: false },
-            releaseYear: { value: "", errorMessage: "", tauch: false },
-            director: { value: "", errorMessage: "", tauch: false },
-            summary: { value: "", errorMessage: "", tauch: false },
-            language: { value: "", errorMessage: "", tauch: false }, // id
+            price: {value: "", errorMessage: "", tauch: false},
+            releaseYear: {value: "", errorMessage: "", tauch: false},
+            director: {value: "", errorMessage: "", tauch: false},
+            summary: {value: "", errorMessage: "", tauch: false},
+            language: {value: "", errorMessage: "", tauch: false}, // id
         },
         addMovieModal: "", // addGenre | addLanguage |  addQuality
         httpResponse: "",
@@ -87,10 +92,9 @@ function AddMovie() {
         }
 
 
-       
         if (params.id) {
             fetchMovie(params.id, (movie) => {
-                let updateMovieData = { ...state.movieData }
+                let updateMovieData = {...state.movieData}
                 for (let key in updateMovieData) {
                     if (key === "releaseYear") {
                         let i = movie[key].indexOf("T")
@@ -125,29 +129,34 @@ function AddMovie() {
             })
 
         } else {
-            try {
-                let d = JSON.parse(localStorage.getItem("userData"))
-                if (d) {
-                    setState({
-                        ...state,
-                        movieData: d
-                    })
-                }
-            } catch (_) { }
-        }
+            if (auth.auth && auth.auth.role === "admin") {
+                try {
 
+                    let d = JSON.parse(localStorage.getItem("userData"))
+                    if (d) {
+                        setState({
+                            ...state,
+                            movieData: d
+                        })
+                    }
+                } catch(_) {}
+            } else {
+                if(localStorage.getItem("userData")){
+                    localStorage.removeItem("userData")
+                }
+            }
+
+        }
 
 
     }, [])
 
-   
 
-
-    const { addMovieModal, movieData } = state
+    const {addMovieModal, movieData} = state
 
     function handleChange(e) {
 
-        const { name, value, values } = e.target;
+        const {name, value, values} = e.target;
 
         let updateMovieData = {
             ...state.movieData,
@@ -186,15 +195,17 @@ function AddMovie() {
     function handleAddNewGenre(data) {
         dispatch(setAddGenre(data.genre))
     }
+
     function handleAddNewQuality(data) {
-        dispatch(setAddQuality(data.quality))    
+        dispatch(setAddQuality(data.quality))
     }
+
     function handleAddNewLanguage(data) {
         dispatch(setAddLanguage(data.language))
     }
 
     function handleToggleModal(value) {
-        setState({ ...state, addMovieModal: state.addMovieModal === value ? "" : value })
+        setState({...state, addMovieModal: state.addMovieModal === value ? "" : value})
     }
 
     function renderModal() {
@@ -203,8 +214,9 @@ function AddMovie() {
                 <div className={["modal", addMovieModal ? "visible opacity-100 pointer-events-auto" : ""].join(" ")}>
                     <div className="modal-box">
 
-                        <div onClick={() => handleToggleModal("")} className="bg-neutral text-white absolute right-3 top-3 p-2 rounded-full">
-                            <FaTimes />
+                        <div onClick={() => handleToggleModal("")}
+                             className="bg-neutral text-white absolute right-3 top-3 p-2 rounded-full">
+                            <FaTimes/>
                         </div>
 
                         {addMovieModal === "addGenre" &&
@@ -258,7 +270,7 @@ function AddMovie() {
         setState({...state, httpResponse: "", httpStatus: 0})
 
         let isCompleted = true;
-        let updatedState = { ...state.movieData }
+        let updatedState = {...state.movieData}
 
 
         for (let key in movieData) {
@@ -296,11 +308,9 @@ function AddMovie() {
                 movieData: updatedState
             })
             return;
-        } 
+        }
 
         scrollTo(0)
-
-        localStorage.setItem("userData", JSON.stringify(movieData))
 
         let formData = new FormData()
         for (let key in movieData) {
@@ -311,8 +321,11 @@ function AddMovie() {
             }
         }
 
+        if (auth.auth && auth.auth.role === "admin") {
+            localStorage.setItem("userData", JSON.stringify(movieData))
+        }
 
-        setState({ ...state, httpResponse: "pending" })
+        setState({...state, httpResponse: "pending"})
         // Update existing movie
         if (params.id) {
             formData.append("_id", params.id)
@@ -333,7 +346,7 @@ function AddMovie() {
 
         } else {
             getApi().post("/api/add-movie", formData).then(response => {
-                if(response.status === 201){
+                if (response.status === 201) {
                     setState({
                         ...state,
                         httpResponse: "movie added",
@@ -346,7 +359,6 @@ function AddMovie() {
                         httpStatus: 200
                     })
                 }
-
             }).catch(ex => {
                 setState({
                     ...state,
@@ -364,13 +376,16 @@ function AddMovie() {
             {renderModal()}
 
             <h1 className="text-center font-bold text-2xl md:text-4xl text-gray-50 mt-4 mb-3">
-                { params.id ?  "Update Movie" : "Add new Movie"}</h1>
+                {params.id ? "Update Movie" : "Add new Movie"}</h1>
 
             <div className="max-w-3xl w-full mx-auto">
                 <div className="flex flex-wrap gap-4 justify-center md:justify-end mt-10">
-                    <button onClick={() => handleToggleModal("addGenre")} className="btn btn-primary ">Add Genre</button>
-                    <button onClick={() => handleToggleModal("addQuality")} className="btn btn-primary ">Add Quality</button>
-                    <button onClick={() => handleToggleModal("addLanguage")} className="btn btn-primary ">Add Language</button>
+                    <button onClick={() => handleToggleModal("addGenre")} className="btn btn-primary ">Add Genre
+                    </button>
+                    <button onClick={() => handleToggleModal("addQuality")} className="btn btn-primary ">Add Quality
+                    </button>
+                    <button onClick={() => handleToggleModal("addLanguage")} className="btn btn-primary ">Add Language
+                    </button>
 
                 </div>
 
@@ -393,7 +408,6 @@ function AddMovie() {
                         value={movieData.title.value}
                         errorMessage={movieData.title.errorMessage}
                     />
-
 
 
                     {/*********** Cover **************/}
@@ -434,7 +448,7 @@ function AddMovie() {
                                 <>
                                     <option defaultValue={true} value="">Select Genre</option>
                                     {app.genres && app.genres.map(genre => (
-                                        <option key={genre._id} value={genre._id} >{genre.name}</option>
+                                        <option key={genre._id} value={genre._id}>{genre.name}</option>
                                     ))}
                                 </>
                             )
@@ -498,9 +512,9 @@ function AddMovie() {
                         options={() => {
                             return (
                                 <>
-                                    <option defaultValue={true} value="" >Select quality</option>
+                                    <option defaultValue={true} value="">Select quality</option>
                                     {app.qualities && app.qualities.map(quality => (
-                                        <option key={quality._id} value={quality._id} >{quality.name}</option>
+                                        <option key={quality._id} value={quality._id}>{quality.name}</option>
                                     ))}
                                 </>
                             )
@@ -520,7 +534,7 @@ function AddMovie() {
                                 <>
                                     <option defaultValue={true} value="">Select language</option>
                                     {app.languages && app.languages.map(language => (
-                                        <option key={language._id} value={language._id} >{language.name}</option>
+                                        <option key={language._id} value={language._id}>{language.name}</option>
                                     ))}
                                 </>
                             )
