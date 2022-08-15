@@ -215,7 +215,7 @@ const Movies = (props) => {
             </div>
           </Drawer>
 
-          <div>
+          <div className="w-full">
             <div className="flex justify-between mt-2 ">
               <div className="bg-neutral px-4 rounded-md flex items-center text-white py-2 cursor-pointer">
                 <BiSort className="text-md " />

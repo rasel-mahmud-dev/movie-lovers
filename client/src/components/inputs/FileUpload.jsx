@@ -1,9 +1,10 @@
 import React from 'react'
 import fullPath  from 'src/utils/fullPath';
 
-function FileUpload({name, label, value, defaultValue, errorMessage, placeholder, onChange, className}) {
+function FileUpload({name, label, preview=true, defaultValue, errorMessage, placeholder, onChange, className}) {
 
     const [base64, setBase64] = React.useState("")
+
 
     function handleChange(e){
         let file = e.target.files[0];
@@ -11,9 +12,13 @@ function FileUpload({name, label, value, defaultValue, errorMessage, placeholder
         let reader = new FileReader()
         reader.onload = function(event){
             setBase64(event.target.result);
+            onChange({target: { name, value: file, base64: event.target.result }});
         }
         reader.readAsDataURL(file)
-        onChange({target: { name, value: file }});
+    }
+
+    function handleCompress(e) {
+
     }
 
 
@@ -21,6 +26,7 @@ function FileUpload({name, label, value, defaultValue, errorMessage, placeholder
         <div>
             <div className={["mt-4 flex items-start flex-col md:flex-row", className].join(" ")} >
             <label htmlFor={name}  className="block w-40 font-medium text-gray-200 mb-2 md:mb-0" >{label}</label>
+
             <div className="w-full">
                 <input 
                     name={name}
@@ -34,8 +40,8 @@ function FileUpload({name, label, value, defaultValue, errorMessage, placeholder
                     {errorMessage && <span className="rounded-md text-error">{errorMessage}</span> }
                 </div>
 
-                { base64 && (
-                    <img src={base64} className="" />
+                { preview && base64 && (
+                    <img onLoad={handleCompress} src={base64} className=""  alt="" />
                 ) }
                 { defaultValue && typeof defaultValue === "string" && !base64 && (
                     <img src={fullPath(defaultValue)} className="" />

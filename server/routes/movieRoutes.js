@@ -30,4 +30,8 @@ module.exports = (router)=>{
 
     router.delete('/api/movie/:id', admin, movieController.deleteMovie)
 
+    router.post('/api/send-movie-request', auth, movieController.requestMovie)
+
+    router.get('/api/all-request-movie', admin, movieController.allRequestedMovie)
+
 }

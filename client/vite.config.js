@@ -16,5 +16,12 @@ export default defineConfig({
       "components": path.resolve(__dirname, "./components"),
       "@app": path.resolve(__dirname, "./app")
     }
-  }
+  },
+  vite: {
+    esbuild: {
+      loader: {
+        '.js': 'jsx',
+      },
+    },
+  },
 })

@@ -1,5 +1,6 @@
 
 const Movie = require("../models/Movie")
+const RequestMovie = require("../models/RequestMovie")
 const fileUpload = require("../utilities/fileUpload")
 const uploadImage = require("../utilities/imageCloudinary")
 
@@ -7,6 +8,7 @@ const homeMovieSection = require("../models/homeMovieSection.json")
 const mongoose = require("mongoose")
 const {ObjectId} = mongoose.Types
 const response = require("../utilities/response")
+
 
 // const redisConnect = require("../redis")
 
@@ -493,6 +495,65 @@ exports.deleteMovie = async (req, res) => {
         }
 
 
+    } catch (ex) {
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+}
+
+
+exports.requestMovie = async (req, res) => {
+    try {
+
+        const {movieName, message} = req.body;
+
+        let movie =  await RequestMovie.findOne({movieName: movieName})
+        if(movie){
+            response(res, 409, {
+                message: "This movie already requested",
+            })
+            return;
+        }
+
+     
+
+        let newReq = new RequestMovie({
+            movieName,
+            email: req.userEmail,
+            customerId: req.userId,
+            message,
+        })
+        newReq = await newReq.save()
+        if(newReq){
+            response(res, 201, {
+                message: "movie request has been send",
+            })
+        } else{
+            response(res, 500, {
+                message: "Internal error. Please try again",
+            })
+        }
+        
+
+    } catch (ex) {
+        console.log(ex);
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    }
+
+
+}
+exports.allRequestedMovie = async (req, res) => {
+    try {
+        let movies =  await RequestMovie.find({})
+        if(movies){
+            response(res, 200, {
+                allRequestedMovie: movies,
+            })
+            return;
+        }
     } catch (ex) {
         response(res, 500, {
             message: "Internal error. Please try again",

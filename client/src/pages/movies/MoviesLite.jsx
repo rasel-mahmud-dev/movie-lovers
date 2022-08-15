@@ -8,7 +8,7 @@ import PageSkeleton from "./PageSkeleton";
 const MoviesPageLite = () => {
     return (
         <div>
-            <Suspense fallback={<PageSkeleton />}>
+            <Suspense fallback={<div className="my_container"><PageSkeleton /></div>}>
                 <Movies />
             </Suspense>
 

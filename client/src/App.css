@@ -169,7 +169,7 @@
 }
 
 .my-drawer-overlay{
-  display: none;
+  /*display: none;*/
 }
 
 .open_sidebar {
@@ -223,6 +223,12 @@
   }
   .mobile_nav .menu{
     flex-direction: row!important;
+  }
+}
+/*** 1024 and down */
+@media screen and (min-width: 1024px){
+  .my-drawer-overlay{
+    display: none;
   }
 }
 @media screen and (min-width: 1024px){

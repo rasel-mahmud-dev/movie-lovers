@@ -20,6 +20,7 @@ import {GoThreeBars} from "react-icons/all";
 
 let id;
 
+let oldWidth = window.innerWidth;
 
 function Navigation() {   
     const dispatch = useDispatch()
@@ -35,15 +36,7 @@ function Navigation() {
         isOpenSearchBar: false,
     })
 
-    function handleWindowResize(){
-        let updateState = {...state}
-        if(window.innerWidth > 767){
-            updateState.isOpenNav = false
-            updateState.isOpenSearchBar = false;
 
-        }
-        setState(updateState)
-    }
 
     function toggleOpenMobileSearchbar(){
         if(window.innerWidth < 768) {
@@ -52,6 +45,27 @@ function Navigation() {
                 isOpenSearchBar: !state.isOpenSearchBar
             })
         }
+    }
+
+    function handleWindowResize() {
+        // don't copy state when you update like {...state}
+        if(oldWidth !== window.innerWidth){
+            if(window.innerWidth > 767){
+                if(!state.isOpenSearchBar) {
+                    setState({
+                        ...state,
+                        isOpenNav: false,
+                        isOpenSearchBar: false
+                    })
+                } else {
+                    setState({
+                        ...state,
+                        isOpenNav: false
+                    })
+                }
+            }
+        }
+        oldWidth = window.innerWidth
     }
 
     React.useEffect(()=>{

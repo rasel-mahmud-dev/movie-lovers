@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect,  useState} from 'react';
 import InputGroup from 'src/components/inputs/InputGroup';
 import FileUpload from 'src/components/inputs/FileUpload';
 import { getApi } from 'src/api';
@@ -7,6 +7,10 @@ import errorMessage from 'src/utils/errorResponse';
 import ResponseAlert from './../../components/ResponseAlert';
 import { useDispatch } from 'react-redux';
 import { setAuthProfile } from 'src/store/slices/authSlice';
+
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
+
 
 function EditProfile(props) {
 
@@ -25,7 +29,6 @@ function EditProfile(props) {
         httpStatus: 0
     })
     const { userData } = state
-
 
     useEffect(() => {
         const f = ["avatar", "firstName", "lastName", "gender"]
@@ -53,17 +56,31 @@ function EditProfile(props) {
 
     }, [])
 
-
-
     function handleChange(e) {
-        const { name, value } = e.target
+        const { name, value, base64 } = e.target
         let updateUserData = {
             ...userData,
-            [name]: {
-                ...state.userData[name],
-                value: value,
-                tauch: true,
-                errorMessage: state.userData[name] ? "" : state.userData[name].errorMessage
+        }
+        if(name === "avatar"){
+            updateUserData = {
+                ...updateUserData,
+                [name]: {
+                    ...state.userData[name],
+                    value: value,
+                    tauch: true,
+                    base64: base64,
+                    errorMessage: state.userData[name] ? "" : state.userData[name].errorMessage
+                }
+            }
+        } else {
+            updateUserData = {
+                ...updateUserData,
+                [name]: {
+                    ...state.userData[name],
+                    value: value,
+                    tauch: true,
+                    errorMessage: state.userData[name] ? "" : state.userData[name].errorMessage
+                }
             }
         }
 
@@ -72,6 +89,9 @@ function EditProfile(props) {
             userData: updateUserData
         })
     }
+
+
+
 
     function handleUpdate(e) {
         e.preventDefault();
@@ -89,10 +109,10 @@ function EditProfile(props) {
                 } else {
                     // only check when image is blob data;
                     if (typeof userData[key].value !== "string") {
-                        if (userData[key].value.size > "102400") { // 100kb
-                            updatedState[key].errorMessage = `${key} size should be under 100kb`
-                            isCompleted = false;
-                        }
+                        // if (userData[key].value.size > "102400") { // 100kb
+                        //     updatedState[key].errorMessage = `${key} size should be under 100kb`
+                        //     isCompleted = false;
+                        // }
                     }
                 }
 
@@ -104,6 +124,10 @@ function EditProfile(props) {
             }
         }
 
+
+        let formData = new FormData()
+
+        
         if (!isCompleted) {
             setState({
                 ...state,
@@ -112,9 +136,27 @@ function EditProfile(props) {
             return;
         }
 
-        let formData = new FormData()
+
+
+        if (typeof cropper !== "undefined") {
+            cropper.getCroppedCanvas().toBlob((blob)=>{
+                let name = Date.now().toString()
+                if(userData.avatar.value.name){
+                    name = userData.avatar.value.name
+                }
+                formData.append("avatar", blob, name)
+                sendRequest(userData, formData)
+            }, "image/jpeg", 0.5)
+        } else {
+            sendRequest(userData, formData)
+        }
+    }
+
+    function sendRequest(userData, formData){
         for (let key in userData) {
-            formData.append(key, userData[key].value)
+            if(key !== "avatar") {
+                formData.append(key, userData[key].value)
+            }
         }
 
         // Update
@@ -146,6 +188,9 @@ function EditProfile(props) {
         setEditProfile(false)
     }
 
+    
+    const [cropper, setCropper] = useState();
+    
 
     return (
         <div>
@@ -159,11 +204,14 @@ function EditProfile(props) {
                         statusCode={state.httpStatus}
                     />
 
+
                     <div className="div">
 
                         {/*********** Cover **************/}
                         <FileUpload
+                            preview={false}
                             name="avatar"
+                            compress={200}
                             type="text"
                             label="avatar"
                             placeholder="Choose Avatar"
@@ -172,6 +220,26 @@ function EditProfile(props) {
                             defaultValue={userData.avatar.value}
                             errorMessage={userData.avatar.errorMessage}
                         />
+                        { userData.avatar.base64 && (
+                            <Cropper
+                                style={{ height: 300, width: "100%" }}
+                                zoomTo={0.5}
+                                initialAspectRatio={1}
+                                src={userData.avatar.base64}
+                                viewMode={1}
+                                minCropBoxHeight={10}
+                                minCropBoxWidth={10}
+                                background={false}
+                                responsive={true}
+                                autoCropArea={1}
+                                checkOrientation={false}
+                                onInitialized={(instance) => {
+                                    setCropper(instance);
+                                }}
+                                guides={true}
+                            />
+                        ) }
+
 
                         <InputGroup
                             name="firstName"

@@ -1,5 +1,5 @@
 import React, {lazy, Suspense} from 'react'
-import { useParams, useLocation } from 'react-router-dom';
+import {useParams, useLocation, Route} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { setAuthProfile } from "src/store/slices/authSlice"
@@ -7,7 +7,7 @@ import { fetchAuthProfile } from "src/store/actions/authActions"
 
 import FavoriteMovies from 'src/pages/dashboard/FavoriteMovies';
 import {CgProfile} from 'react-icons/cg'
-import {BsFillBookmarkHeartFill} from 'react-icons/bs'
+import {BsFillBookmarkHeartFill, BsFillChatSquareQuoteFill} from 'react-icons/bs'
 import {IoIosSettings} from "react-icons/io"
 import {FaBars} from "react-icons/fa"
 import { MdFeaturedPlayList, MdVideoLibrary } from 'react-icons/md';
@@ -22,6 +22,9 @@ import UserSettings from "../UserSettings.jsx";
 import AllMovies from "../AllMovies.jsx";
 import PageSkeleton from "./PageSkeleton.jsx";
 import ProfilePageSkeleton from "../profileView/PageSkeleton.jsx";
+
+const AllRequestMovie = lazy(()=>import("src/pages/dashboard/AllRequestMovie.jsx"));
+
 
 function Dashboard(props) {
 
@@ -77,6 +80,7 @@ function Dashboard(props) {
         { icon:  <BsFillBookmarkHeartFill className="text-lg"/> , name: "Favorites" },
         { icon:  <MdFeaturedPlayList className="text-lg"/> , name: "Playlist" },
         { icon:  <MdVideoLibrary className="text-lg"/> , name: "AllMovies" },
+        { icon:  <BsFillChatSquareQuoteFill className="text-lg"/> , name: "AllRequest" },
         { icon:  <IoIosSettings className="text-lg"/> , name: "Settings" }
     ]
 
@@ -151,7 +155,11 @@ function Dashboard(props) {
                             {sideBarContent === "Playlist" && <Playlist />}
                             {sideBarContent === "Settings" && <UserSettings />}
                             {sideBarContent === "AllMovies" && <AllMovies />}
-
+                            {sideBarContent === "AllRequest" && (
+                                <Suspense fallback={ <h1>Loading</h1>} >
+                                    <AllRequestMovie/>
+                                </Suspense>
+                            )}
                         </div>
 
                     </div>

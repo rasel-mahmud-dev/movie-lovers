@@ -18,7 +18,7 @@ function AboutUs() {
                        
                     <div className="p-10 flex flex-col justify-center py-20">
                         <Link to="/" className="btn btn-ghost normal-case text-xl">
-                            <div className="w-60">
+                            <div className="w-60 ">
                                 <img src={"/logo-3.svg"} alt="" />
                             </div>
                         </Link>
@@ -31,7 +31,7 @@ function AboutUs() {
                 
 
                 <div className="my_container">
-                    <h1 className="text-3xl font-medium text-gray-200 text-center mb-8 mt-4">WHAT WE DO</h1>
+                    <h1 className="text-xl md:text-3xl font-medium text-gray-200 text-center mb-8 mt-4">WHAT WE DO</h1>
                     <p className="text-gray-400 text-center">
                     We show you where you can legally watch movies and TV shows that you love. You are kept up to date with what is new on Netflix, Amazon Prime, Apple TV and many other streaming platforms. Our simple filter system allows you to see only what is important to you.
                         We also allow users to track their favorite shows and movies, and can notify you when a title is available on one of your services.import Loader from './../components/Loader/Loader';
@@ -47,16 +47,16 @@ function AboutUs() {
                     <div className="flex flex-wrap gap-y-4 justify-center gap-x-20 my-10 ">
 
                         <div className="w-44 h-44 lg:w-52 lg:h-52 bg-orange-400 rounded-full flex flex-col items-center justify-center p-10">
-                            <h1 className="text-6xl text-white font-semibold">+100</h1>
-                            <h3 className="text-xl text-gray-300 mt-2 ">Staff</h3>
+                            <h1 className="text-xl md:text-6xl text-white font-semibold">+100</h1>
+                            <h3 className="text-lg md:text-xl text-gray-300 mt-2 ">Staff</h3>
                         </div>
                         <div className="w-44 h-44 lg:w-52 lg:h-52 bg-primary rounded-full flex flex-col items-center justify-center p-10">
-                            <h1 className="text-6xl text-white font-semibold">+10</h1>
-                            <h3 className="text-xl text-gray-300 mt-2 ">Countries</h3>
+                            <h1 className="text-xl md:text-6xl text-white font-semibold">+10</h1>
+                            <h3 className="text-lg md:text-xl text-gray-300 mt-2 ">Countries</h3>
                         </div>
                         <div className="w-44 h-44 lg:w-52 lg:h-52 bg-dark-700 rounded-full flex flex-col items-center justify-center p-10">
-                            <h1 className="text-6xl text-white font-semibold">+20</h1>
-                            <h3 className="text-xl text-gray-300 mt-2 ">Users</h3>
+                            <h1 className="text-xl md:text-6xl text-white font-semibold">+20</h1>
+                            <h3 className="text-lg md:text-xl text-gray-300 mt-2 ">Users</h3>
                         </div>
 
                     </div>

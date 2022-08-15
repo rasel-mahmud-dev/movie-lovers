@@ -8,16 +8,18 @@ import generateNumber from 'src/utils/generateNumber';
 import sumOfArray from 'src/utils/sumOfArray';
 import ResponseAlert from 'src/components/ResponseAlert';
 import scrollTo from "../utils/scrollTo.js";
+import {useSelector} from "react-redux";
 
 
-function Contact() {
+function RequestMovie() {
+
+    const auth = useSelector(state=>state.auth)
 
     const [state, setState] = React.useState({
         userData: {
-            name: { value: "", errorMessage: "" },
+            movieName: { value: "", errorMessage: "" },
             email: { value: "", errorMessage: "" },
             message: { value: "", errorMessage: "" },
-            subject: { value: "", errorMessage: "" },
             result: { value: "", errorMessage: "" },
         },
         httpResponse: "",
@@ -27,11 +29,32 @@ function Contact() {
 
 
     React.useEffect(() => {
-        setState({ ...state, twoRandomNumber: generateNumber(2) })
+
+
+        let updateUserData = {...state.userData}
+        if(auth.auth) {
+
+            updateUserData = {
+                ...updateUserData,
+                email: {
+                    ...state.userData.email,
+                    value: auth.auth.email,
+                    tauch: true,
+                }
+            }
+        }
 
         scrollTo(0)
+        setState({
+            ...state,
+            httpResponse: "",
+            httpStatus: 0,
+            twoRandomNumber: generateNumber(2),
+            userData: updateUserData
+        })
 
-    }, [])
+
+    }, [auth.auth])
 
 
     const { userData, twoRandomNumber } = state
@@ -110,9 +133,27 @@ function Contact() {
             httpStatus: 0,
         })
 
+        if(!auth.auth){
+            setState({
+                ...state,
+                httpResponse: "You have to Login for request movie",
+                httpStatus: 500,
+            })
+            return;
+        }
+
+        if(auth.auth.email !== payload.email){
+            setState({
+                ...state,
+                httpResponse: "Please put your login email",
+                httpStatus: 500,
+            })
+            return;
+        }
+
         let ranTwoDigit = generateNumber(2)
 
-        getApi().post("/api/send-mail", payload).then(response => {
+        getApi().post("/api/send-movie-request", payload).then(response => {
             if (response.status === 201) {
                 setState({
                     ...state,
@@ -133,21 +174,31 @@ function Contact() {
 
     return (
         <div className="">
-            <div className="my_container">
-                <h1 className="text-xl: md:text-5xl font-medium text-gray-200 text-center mb-8 mt-4"></h1>
+            <div className="my_container px-3 ">
+                <div className="bg-dark-700/90 p-4 my-5 rounded-lg">
+                    <h1 className="text-xl md:text-2xl font-medium text-gray-200 text-center">Movie Request form </h1>
 
-                <div className="flex flex-col justify-center items-center mx-2">
-                    <div className="w-32 h-32 md:w-52 md:h-52  overflow-hidden border-2 border-primary rounded-full">
-                        <div className="rounded-full ">
-                            <img className="" src="https://res.cloudinary.com/dbuvg9h1e/image/upload/v1660078654/netflix/images/1660078488473.jpg" alt="" srcset="" />
-                        </div>
-                    </div>
-                    <h2 className="text-xl font-medium text-gray-300 mt-4">Rasel Mahmud</h2>
+                    <p className="text-gray-300 max-w-2xl text-center mx-auto mt-4">
 
-                    <h1 className="text-xl md:text-2xl font-medium text-gray-200 text-center mt-10">Contact form </h1>
+                        Customers can request any kind of hollywood, bollywood, or any kind of Genre like
+                        Animation,
+                        Comedy,
+                        Crime,
+                        Drama,
+                        Experimental,
+                        Fantasy,
+                        Historical,
+                        Horror,
+                        Romance,
+                        Science Fiction,
+                        Thriller,
+                        Western,
+                        Series,
+                        movies. we will try to collect this.
 
-                    <form onSubmit={handleSendMessage} className="w-full max-w-xl">
+                    </p>
 
+                    <form onSubmit={handleSendMessage} className="w-full max-w-xl mx-auto mt-10">
                         <div className="my-4">
                             <ResponseAlert
                                 className="mt-2"
@@ -158,45 +209,33 @@ function Contact() {
 
                         {/*********** Name **************/}
                         <InputGroup
-                            name="name"
+                            name="movieName"
                             type="text"
-                            label="Name"
-                            placeholder="Enter name"
+                            inputClass="bg-transparent"
+                            placeholder="Enter Movie name"
                             onChange={handleChange}
-                            value={userData.name.value}
-                            errorMessage={userData.name.errorMessage}
+                            value={userData.movieName.value}
+                            errorMessage={userData.movieName.errorMessage}
                         />
 
                         {/*********** Email **************/}
                         <InputGroup
                             name="email"
+                            inputClass="bg-transparent"
                             type="email"
-                            label="Email"
-                            placeholder="Enter email"
+                            placeholder="Enter Your email"
                             onChange={handleChange}
                             value={userData.email.value}
                             errorMessage={userData.email.errorMessage}
                         />
 
 
-                        {/*********** subject **************/}
-                        <TextArea
-                            name="subject"
-                            label="Subject"
-                            inputClass="!h-14"
-                            placeholder="Write subject"
-                            onChange={handleChange}
-                            value={userData.subject.value}
-                            errorMessage={userData.subject.errorMessage}
-                        />
-
-
-                        {/*********** Message **************/}
+                        {/*********** Description **************/}
                         <TextArea
                             name="message"
-                            label="Message"
-                            placeholder="Write message"
+                            placeholder="Why you need this movie"
                             onChange={handleChange}
+                            inputClass="bg-transparent w-full"
                             value={userData.message.value}
                             errorMessage={userData.message.errorMessage}
                         />
@@ -211,8 +250,7 @@ function Contact() {
                             <InputGroup
                                 name="result"
                                 type="text"
-                                placeholder="result"
-                                className="mt-0"
+                                className="mt-0 ml-2 w-20"
                                 onChange={handleChange}
                                 value={userData.result.value}
                                 errorMessage={userData.result.errorMessage}
@@ -221,13 +259,14 @@ function Contact() {
                         </div>
 
                         {state.httpResponse !== "pending"
-                            && <button type="submit" className="btn w-max flex justify-center mx-auto my-4">Send Mail</button>}
+                            && <button type="submit" className="btn btn-primary w-max text-white flex justify-center mx-auto my-4">Request movie</button>}
                     </form>
                 </div>
 
             </div>
+
         </div>
     )
 }
 
-export default Contact
+export default RequestMovie

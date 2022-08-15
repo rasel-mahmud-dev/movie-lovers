@@ -22,17 +22,19 @@ function AllMovies() {
 
     React.useEffect(() => {
 
-       if(!allMovies){
-            getApi().get("/api/all-movies").then(response => {
-                if(response.status === 200){
-                    dispath(setAllMovie(response.data.movies));
-                }
-            }).catch(ex => {
+        if(auth.auth && auth.auth.role === "admin" ) {
+            if (!allMovies) {
+                getApi().get("/api/all-movies").then(response => {
+                    if (response.status === 200) {
+                        dispath(setAllMovie(response.data.movies));
+                    }
+                }).catch(ex => {
 
-            })
-       }
+                })
+            }
+        }
 
-    }, [])
+    }, [auth.auth])
 
     function handleEditMovie(movieId){
         if(auth && auth.auth && auth.auth.role === "admin"){
@@ -65,22 +67,21 @@ function AllMovies() {
  
             <DialogBox isOpen={dialogMessage != ""} className="bg-red-600">
                 <div className="flex justify-between">
-                    <h3 class="font-bold text-xl text-white">{dialogMessage}</h3>
+                    <h3 className="font-bold text-xl text-white">{dialogMessage}</h3>
                         <div onClick={()=>setDialogMessage("")} className="cursor-pointer bg-neutral text-white p-2  rounded-full">
                                 <FaTimes />
                             </div>
                 </div>
             </DialogBox>
 
-            <div class="overflow-x-auto custom_scrollbar">
-                <table class="table table-compact w-full">
+            { auth.auth && auth.auth.role === "admin" ? <div className="overflow-x-auto custom_scrollbar">
+                <table className="table table-compact w-full">
                     <thead>
                         <tr>
                             <th>Actions</th>
                             <th></th>
                             <th>Cover</th>
                             <th>Title</th>
-                            <th>trailerUrl</th>
                             <th>videoUrl</th>
                         </tr>
                     </thead>
@@ -100,16 +101,7 @@ function AllMovies() {
                             <td>{movie.title}</td>
                             <td>
                                 
-                               {movie.trailerUrl && <div class="my-tooltip">
-                                    <span className="tooltip-data">{movie.trailerUrl}</span>
-                                    <span className="">{movie.trailerUrl.substr(0, 50)}</span>
-                                </div> }
-                                    
-                            
-                            </td>
-                            <td>
-                                
-                            {movie.videoUrl && <div class="my-tooltip">
+                            {movie.videoUrl && <div className="my-tooltip">
                                     <span className="tooltip-data">{movie.videoUrl}</span>
                                     <span className="">{movie.videoUrl.substr(0, 50)}</span>
                                 </div>
@@ -121,7 +113,12 @@ function AllMovies() {
                         )) }
                     </tbody>
                 </table>
-            </div>
+            </div> : (
+                <div className="max-w-sm bg-dark-700 mx-auto max-h-48 p-5 rounded-md">
+                    <h1 className="text-center text-red-500 text-xl md:text-2xl">This page for Admin User</h1>
+
+                </div>
+            ) }
 
         </div>
     )

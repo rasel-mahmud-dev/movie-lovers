@@ -13,7 +13,7 @@ export default function Footer() {
                 <div className="flex flex-col sm:items-start items-center">
                     <span className="footer-title">Services</span>
                     <a href='https://rasel-portfolio.vercel.app/' className="link link-hover">Branding</a>
-                    <a href='https://rasel-portfolio.vercel.app/' className="link link-hover">Design</a>
+                    <Link to='/request-movie' className="link link-hover">Request for Movie</Link>
                 </div>
                 <div className="flex flex-col sm:items-start items-center">
                     <span className="footer-title">Company</span>

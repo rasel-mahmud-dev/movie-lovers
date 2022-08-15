@@ -12,6 +12,7 @@ import {loginWithTokenAction, setAuth} from "src/store/slices/authSlice"
 const Series = lazy(()=>import('./pages/series/Series'))
 const Contact  = lazy(()=>import('./pages/Contact'));
 const AboutUs  = lazy(()=>import('./pages/AboutUs'));
+const RequestMovie  = lazy(()=>import('./pages/RequestMovie'));
 import Loader from 'src/components/loader/Loader';
 import HomePageLite from "./pages/homepage/HomePageLite";
 import MoviesPageLite from "./pages/movies/MoviesLite";
@@ -23,10 +24,9 @@ import scrollTo from "./utils/scrollTo.js";
 import NavigationLite from "./components/navigation/NavigationLite.jsx";
 
 
+
 function App() {
-
   const dispatch = useDispatch()
-
   
   const {app, auth} = useSelector(state => state)
   const {modal} = app
@@ -74,6 +74,9 @@ function App() {
 
           <Route exact={true} path="/about-us" element={<AboutUs/>} />
           <Route exact={true} path="/contact" element={<Contact/>} />
+          <Route exact={true} path="/request-movie" element={<RequestMovie/>} />
+
+
         </Routes>
       </Suspense>
 
