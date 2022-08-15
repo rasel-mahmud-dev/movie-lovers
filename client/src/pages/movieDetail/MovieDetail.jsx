@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useRef} from "react"
 import {useSelector, useDispatch} from "react-redux"
 import fullPath from "src/utils/fullPath"
 import {useParams, Link} from "react-router-dom"
@@ -20,7 +20,6 @@ import {setMovieCache, setSimilarMovieCache} from "src/store/slices/appSlice";
 import Movie from "src/components/Movie";
 import SimilarMovieSkeleton from "./SimilarMovieSkeleton";
 import scrollTo from "../../utils/scrollTo.js";
-
 
 
 const MovieDetail = () => {
@@ -67,9 +66,12 @@ const MovieDetail = () => {
         }
 
         scrollTo(0)
+        setState({
+            ...state,
+            isPlaying: false
+        })
 
     }, [params.id])
-
 
     React.useEffect(() => {
         if (auth.auth && auth.auth._id) {
@@ -229,8 +231,59 @@ const MovieDetail = () => {
 
     const getMovie = movieCache[params.id]
 
+    const scriptTag = useRef()
+
+    function removeScriptTags(){
+        let cls = document.querySelectorAll(".player_script_tag")
+        if(cls && cls.length) {
+            for (let c of cls) {
+                if (c.parentNode) {
+                    c.parentNode.removeChild(c)
+                }
+            }
+        }
+    }
+
+    React.useEffect(()=>{
+
+        if(scriptTag.current && getMovie) {
+            let a = getMovie.detail.videoUrl;
+            if(a && !a.startsWith("https://www.youtube")) {
+                const s = document.createElement('script');
+                s.classList.add("player_script_tag")
+                s.type = 'text/javascript';
+                s.async = true;
+                s.innerHTML = `if (Hls.isSupported()) {var video = document.getElementById('video');var hls = new Hls();hls.loadSource('${a}');hls.attachMedia(video);hls.on(Hls.Events.MANIFEST_PARSED, function () {video.play();});}`
+
+                let s2 = document.createElement('script');
+                s2.classList.add("player_script_tag")
+                s2.async = true;
+                s2.src = "/hls.js@latest"
+                scriptTag.current.appendChild(s2);
+                scriptTag.current.appendChild(s);
+            } else {
+                removeScriptTags("player_script_tag")
+            }
+        }
+
+        return ()=>{
+            removeScriptTags("player_script_tag")
+        }
+
+    }, [state.isPlaying,  getMovie])
+
     return (
         <div>
+
+            <div ref={scriptTag}></div>
+
+            {/*<Helmet>*/}
+            {/*    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>*/}
+            {/*    <script async={true}>*/}
+            {/*        "document.write('This is output by document.write()!')";*/}
+            {/*    </script>*/}
+            {/*</Helmet>*/}
+
             <div className="max-w-screen-lg mx-auto ">
                 <div className="mb-10">
                     <DialogBox className="px-3" isOpen={state.popupMessage}>
@@ -242,6 +295,8 @@ const MovieDetail = () => {
                             </div>
                         </>
                     </DialogBox>
+
+                    {/*<video id="video" controls={true} muted={true}> </video>*/}
 
                     {getMovie && getMovie.detail ? (
                         <div className="px-3">
@@ -281,11 +336,13 @@ const MovieDetail = () => {
                                             </div>
                                         ) : (
                                             <video
+                                                id="video"
                                                 controlsList="nodownload"
                                                 controls
                                                 // application/x-mpegURL
                                                 className="w-full"
-                                                src={getMovie.detail.videoUrl}>
+                                            muted={true}>
+                                                {/*// src={getMovie.detail.videoUrl}>*/}
                                             </video>)
                                     ) : (
                                         <div>
