@@ -160,11 +160,25 @@ const MovieDetail = () => {
         })
     }
 
-    function handleDownload(e) {
+    function handleDownload(movie) {
+        if(movie.videoUrl && movie.videoUrl.trim()) {
+            if(movie.videoUrl.startsWith("https://www.youtube")){
+                setState({
+                    ...state,
+                    popupMessage: "Youtube embed video can not download for copyright issue"
+                })
+            } else {
+                let a = document.createElement("a")
+                a.href = movie.videoUrl
+                a.setAttribute("target", "_blank")
+                a.click();
+            }
+        } else{
         setState({
             ...state,
-            popupMessage: "Download feature not implement yet"
+            popupMessage: "Movie video link not found"
         })
+            }
     }
 
     function dismissPopup() {
@@ -221,7 +235,7 @@ const MovieDetail = () => {
                 <div className="mb-10">
                     <DialogBox className="px-3" isOpen={state.popupMessage}>
                         <>
-                            <h3 class="font-bold text-2xl text-center text-white">{state.popupMessage}</h3>
+                            <h3 className="font-bold text-xl md:text-2xl text-center text-white">{state.popupMessage}</h3>
                             <div onClick={dismissPopup}
                                  className="cursor-pointer bg-neutral text-white absolute right-3 top-3 p-2 rounded-full">
                                 <FaTimes/>
@@ -261,7 +275,6 @@ const MovieDetail = () => {
                                                     width="925"
                                                     height="520"
                                                     src={updateYoutubeLink(getMovie.detail.videoUrl)}
-                                                    frameBorder="0"
                                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                     allowFullScreen>
                                                 </iframe>
@@ -326,7 +339,7 @@ const MovieDetail = () => {
                             </div>
 
 
-                            <button className="mt-10 btn btn-primary" onClick={handleDownload}>
+                            <button className="mt-10 btn btn-primary" onClick={()=>handleDownload(getMovie.detail)}>
                                 <FaCloudDownloadAlt className="text-lg"/>
                                 <span className="ml-2">Download</span>
                             </button>

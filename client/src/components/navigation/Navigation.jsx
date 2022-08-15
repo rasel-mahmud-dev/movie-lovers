@@ -32,7 +32,7 @@ function Navigation() {
     const [state, setState] = React.useState({
         openDropdown: "", /// "auth"
         isOpenNav: false,
-        isOpenSearchBar: true,
+        isOpenSearchBar: false,
     })
 
     function handleWindowResize(){
@@ -40,6 +40,7 @@ function Navigation() {
         if(window.innerWidth > 767){
             updateState.isOpenNav = false
             updateState.isOpenSearchBar = false;
+
         }
         setState(updateState)
     }
@@ -180,13 +181,13 @@ function Navigation() {
                         </Link>
                     </div>
 
-                    <div style={{height: state.isOpenNav ? 300: '0'}} className={`w-full  mobile_nav`}>
+                    <div style={{height: state.isOpenNav ? 300: '0'}} className={`w-full mobile_nav `}>
                         <ul className={`menu menu-horizontal p-0`}>
                             <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/">Home</NavLink></li>
                             <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/series">Series</NavLink></li>
                             <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/movies">Movies</NavLink></li>
-                            <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/about-us">About Us</NavLink></li>
-                            <li><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/contact">Contact</NavLink></li>
+                            <li className="block md:hidden lg:block"><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/about-us">About Us</NavLink></li>
+                            <li className="block md:hidden lg:block"><NavLink onClick={()=>setState({...state, isOpenNav: false})} className="bg-transparent" to="/contact">Contact</NavLink></li>
                         </ul>
                     </div>
 

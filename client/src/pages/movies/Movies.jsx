@@ -72,7 +72,29 @@ const Movies = (props) => {
 
     scrollTo(0)
 
+
+    handleWindowResize()
+    window.addEventListener("resize", handleWindowResize)
+    return () => window.removeEventListener("resize", handleWindowResize)
+
+
   }, [])
+
+  function handleWindowResize(){
+    if(window.innerWidth >= 1024){
+      setState({
+        ...state,
+        isOpenBackdrop: true
+      })
+      document.body.style.overflow = "auto"
+    } else {
+      setState({
+        ...state,
+        isOpenBackdrop: false
+      })
+    }
+  }
+
 
   const [state, setState] = React.useState({
     isOpenBackdrop: false
@@ -124,15 +146,17 @@ const Movies = (props) => {
   }
 
   function toggleSidebar(){
-    if(!state.isOpenBackdrop){
-      document.body.style.overflow = "hidden"
-    } else  {
-      document.body.style.overflow = "auto"
+    if(window.innerWidth < 1024) {
+      if (!state.isOpenBackdrop) {
+        document.body.style.overflow = "hidden"
+      } else {
+        document.body.style.overflow = "auto"
+      }
+      setState({
+        ...state,
+        isOpenBackdrop: !state.isOpenBackdrop
+      })
     }
-    setState({
-      ...state,
-      isOpenBackdrop: !state.isOpenBackdrop
-    })
   }
 
   function handleFilterChange(data){
@@ -172,59 +196,64 @@ const Movies = (props) => {
     <div className={`${state.isOpenBackdrop ? "overflow-scroll-none": ""}`}>
       <div className="my_container">
 
-        <Drawer
-            toggleSidebar={toggleSidebar}
-            isOpenBackdrop={state.isOpenBackdrop}>
-              <div className="">
-                <Filter
-                    filter={filter}
-                    searchValue={searchValue}
-                    genres={genres}
-                    languages={languages}
-                    qualities={qualities}
-                    onChangeFilter={handleFilterChange}
-                    toggleSidebar={toggleSidebar}
-                    handleClearSearch={handleClearSearch}
-                />
+        <div className="wrapper_drawer block lg:flex">
+          <Drawer
+              className=""
+              toggleSidebar={toggleSidebar}
+              isOpenBackdrop={state.isOpenBackdrop}>
+            <div className="">
+              <Filter
+                  filter={filter}
+                  searchValue={searchValue}
+                  genres={genres}
+                  languages={languages}
+                  qualities={qualities}
+                  onChangeFilter={handleFilterChange}
+                  toggleSidebar={toggleSidebar}
+                  handleClearSearch={handleClearSearch}
+              />
+            </div>
+          </Drawer>
+
+          <div>
+            <div className="flex justify-between mt-2 ">
+              <div className="bg-neutral px-4 rounded-md flex items-center text-white py-2 cursor-pointer">
+                <BiSort className="text-md " />
+                <span className="ml-1.5 text-sm font-medium">Sort</span>
               </div>
-        </Drawer>
 
-        <div className="flex justify-between mt-2 ">
-          <div className="bg-neutral px-4 rounded-md flex items-center text-white py-2 cursor-pointer">
-            <BiSort className="text-md " />
-            <span className="ml-1.5 text-sm font-medium">Sort</span>
-          </div>
-
-          <div onClick={toggleSidebar} className={`bg-neutral px-4 rounded-md flex items-center text-white py-2 cursor-pointer 
+              <div onClick={toggleSidebar} className={`bg-neutral px-4 rounded-md flex items-center text-white py-2 cursor-pointer 
           ${isFiltered ? "bg-primary " : ""} 
           `}>
-            <FaFilter className="text-md" />
-            <span className="ml-1.5 text-sm font-medium">Filter</span>
+                <FaFilter className="text-md" />
+                <span className="ml-1.5 text-sm font-medium">Filter</span>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              {searchValue && <h1 className="text-center text-gray-300 text-sm mr-5 my-4">Search Result for
+                <span className="active">{searchValue}</span>
+              </h1>}
+            </div>
+
+            <div className="movie_list gap-4">
+              {(movies && movies[pagination.currentPage]) && movies[pagination.currentPage].map(movie => (
+                  <Movie movie={movie} key={movie._id} />
+              ))}
+            </div>
+
+            {!movies && <PageSkeleton count={20} /> }
+
+            {/* pagination  */}
+            <div className="flex justify-center my-14">
+              <Pagination
+                  total={totalMovies}
+                  perPageView={pagination.perPageView}
+                  currentPage={pagination.currentPage}
+                  onPageChange={handleChangePage}
+              />
+            </div>
           </div>
-        </div>
-
-        <div className="mb-4">
-          {searchValue && <h1 className="text-center text-gray-300 text-sm mr-5 my-4">Search Result for
-            <span className="active">{searchValue}</span>
-          </h1>}
-        </div>
-
-        <div className="movie_list gap-4">
-          {(movies && movies[pagination.currentPage]) && movies[pagination.currentPage].map(movie => (
-            <Movie movie={movie} key={movie._id} />
-          ))}
-        </div>
-
-        {!movies && <PageSkeleton count={20} /> }
-
-        {/* pagination  */}
-        <div className="flex justify-center my-14">
-          <Pagination
-            total={totalMovies}
-            perPageView={pagination.perPageView}
-            currentPage={pagination.currentPage}
-            onPageChange={handleChangePage}
-          />
         </div>
 
       </div>

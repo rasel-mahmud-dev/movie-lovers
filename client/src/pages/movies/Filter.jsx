@@ -105,7 +105,7 @@ const Filter = (props) => {
         <div className="py-4 ">
 
             <div ref={topSpaceRef}>
-                <button onClick={toggleSidebar} className="flex items-center fixed left-4 top-2 bg-neutral-focus px-3 py-2 rounded-md text-gray-200 text-sm">
+                <button onClick={toggleSidebar} className="flex lg:hidden items-center fixed left-4 top-2 bg-neutral-focus px-3 py-2 rounded-md text-gray-200 text-sm">
                     <FaAngleLeft className="mr-1" />
                     <span>Back</span>
                 </button>
@@ -118,7 +118,7 @@ const Filter = (props) => {
                 </div>
             </div>
 
-            <div className="overflow-auto h-screen">
+            <div className="overflow-auto h-screen custom_scrollbar">
                 <ul className="px-2 mt-6  mx-2" ref={accordionRef} >
                     <li className="my-2 bg-neutral-focus">
                         <div onClick={()=>handleCollapse(1)} className={`cursor-pointer ${state.openIds.includes(1) ? "bg-neutral-focus": "" } flex justify-between items-center hover:bg-neutral-focus py-2 px-2`}>
@@ -208,5 +208,6 @@ const Filter = (props) => {
         </div>
     );
 };
+
 
 export default Filter;
