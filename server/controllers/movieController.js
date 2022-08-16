@@ -1,4 +1,3 @@
-
 const Movie = require("../models/Movie")
 const RequestMovie = require("../models/RequestMovie")
 const fileUpload = require("../utilities/fileUpload")
@@ -6,7 +5,7 @@ const uploadImage = require("../utilities/imageCloudinary")
 
 const homeMovieSection = require("../models/homeMovieSection.json")
 const mongoose = require("mongoose")
-const {ObjectId} = mongoose.Types
+const { ObjectId } = mongoose.Types
 const response = require("../utilities/response")
 
 
@@ -25,14 +24,14 @@ exports.getMovies = async (req, res) => {
         let query = []
 
         if (text) {
-            query.push({title: { $regex: new RegExp(text, "i")}})
+            query.push({ title: { $regex: new RegExp(text, "i") } })
         }
 
         if (filter) {
             for (let key in filter) {
-                if(filter[key] && filter[key].length){
-                    filter[key].map(item=>{
-                        query.push({[key]: item})
+                if (filter[key] && filter[key].length) {
+                    filter[key].map(item => {
+                        query.push({ [key]: item })
                     })
                 }
             }
@@ -51,7 +50,7 @@ exports.getMovies = async (req, res) => {
             .limit(perPageView)
 
         let counts = 0;
-        if(pageNumber === 1){
+        if (pageNumber === 1) {
             counts = await Movie.countDocuments({
                 $or: query && query.length ? query : [{}]
             })
@@ -59,7 +58,7 @@ exports.getMovies = async (req, res) => {
 
         response(res, 200, {
             movies: doc,
-            totalMovies: counts 
+            totalMovies: counts
         })
 
     } catch (ex) {
@@ -70,61 +69,62 @@ exports.getMovies = async (req, res) => {
 }
 
 
+
 exports.getSimilarMovies = async (req, res) => {
 
-    const {  pageNumber, perPageView, or } = req.body
+    const { pageNumber, perPageView, or } = req.body
 
     try {
 
 
         let { title, genres, language, tags } = or
 
-        
+
         let queries = []
 
         if (title) {
-            let titleArr  = title.split(" ")
-            titleArr.forEach(item=>{
+            let titleArr = title.split(" ")
+            titleArr.forEach(item => {
                 queries.push({ title: new RegExp(item, "i") })
             })
         }
-        if(language){
-            queries.push({ language:  ObjectId(language) })
+        if (language) {
+            queries.push({ language: ObjectId(language) })
         }
-        if(genres){
-            queries.push({ genres:  ObjectId(genres) })
+        if (genres) {
+            queries.push({ genres: ObjectId(genres) })
         }
-        if(tags && Array.isArray(tags) && tags.length){
-            queries.push({ tags:  { $in: tags } })
+        if (tags && Array.isArray(tags) && tags.length) {
+            queries.push({ tags: { $in: tags } })
         }
-        
-        
+
+
         let doc = await Movie.aggregate([
-            { 
+            {
                 $match: {
-                    
-                    $or: [ 
+
+                    $or: [
                         ...queries,
                         // { genres: ObjectId("62ed430c9327186ffbfc868e") },
                         // { language: ObjectId("62ee8bde6e01d746187400b1") },
                         // { title: RegExp("300", "i")},
                         // { title: RegExp("troy", "i") },
                         // { tags: {
-                            // $in: ["300"]
+                        // $in: ["300"]
                         // }}
                     ]
                 }
             },
             { $skip: (pageNumber - 1) * perPageView },
             { $limit: perPageView },
-            { 
+            {
                 $project: {
-                    title:1,
+                    title: 1,
                     cover: 1
                 }
             }
         ])
-        
+
 
         response(res, 200, {
             similarMovies: doc
@@ -161,6 +161,7 @@ exports.getSeriesMovies = async (req, res) => {
 }
 
 
+
 exports.getMovie = async (req, res) => {
     try {
 
@@ -178,6 +179,8 @@ exports.getMovie = async (req, res) => {
     }
 }
 
+
+
 exports.calcTotalMovie = async (req, res) => {
     try {
         let total = await Movie.countDocuments()
@@ -190,6 +193,7 @@ exports.calcTotalMovie = async (req, res) => {
         })
     }
 }
+
 
 
 exports.getMovieDetails = async (req, res) => {
@@ -218,7 +222,7 @@ exports.getMovieDetails = async (req, res) => {
 function getFormMongodb(cb) {
     let data = {}
     homeMovieSection.forEach(async (section, i) => {
-        try{
+        try {
             let doc = await Movie.find({ genres: section._id }).select("title cover").limit(10)
             if (doc && doc.length > 0) {
                 data[section.name] = doc;
@@ -226,7 +230,7 @@ function getFormMongodb(cb) {
             if ((i + 1) === homeMovieSection.length) {
                 cb(data)
             }
-        } catch(ex){
+        } catch (ex) {
 
         }
     })
@@ -261,7 +265,7 @@ exports.getMoviesForHomeSection = async (req, res) => {
             })
         })
 
-    } 
+    }
 
 
     // let client = await redisConnect()
@@ -307,9 +311,8 @@ exports.getMoviesForHomeSection = async (req, res) => {
 
 }
 
+
 exports.addMovie = async (req, res) => {
-
-
     try {
 
         let { file, fields } = await fileUpload(req, "cover")
@@ -319,45 +322,53 @@ exports.addMovie = async (req, res) => {
             author,
             genres,
             runtime,
-            isPublic,
-            quality,
             videoUrl,
             tags,
+            language,
             rating,
             price,
+            casts,
+            quality,
             releaseYear,
             director,
-            summary,
-            language,
+            summary
 
         } = fields
 
         let newMovie = {
             title,
             author,
-            genres,
             runtime,
             isPublic: true,
-            quality,
             rating,
             price,
+            casts,
+            quality,
+            language,
             releaseYear,
             director,
-            summary,
-            language,
+            summary
         }
-        
-        try {
-            let t = JSON.parse(videoUrl)
-            newMovie.videoUrl = t
-        } catch (ex) { }
 
+        if (videoUrl) {
+            try {
+                let t = JSON.parse(videoUrl)
+                newMovie.videoUrl = t
+            } catch (ex) { }
+        }
+        if (genres) {
+            try {
+                let t = JSON.parse(genres)
+                newMovie.genres = t
+            } catch (ex) { }
+        }
 
-        try {
-            let t = JSON.parse(tags)
-            newMovie.tags = t
-        } catch (ex) { }
-
+        if (tags) {
+            try {
+                let t = JSON.parse(tags)
+                newMovie.tags = t
+            } catch (ex) { }
+        }
 
         if (file) {
             let meta = await uploadImage(file, "netflix/images")
@@ -368,7 +379,6 @@ exports.addMovie = async (req, res) => {
 
         newMovie.author = req.userId
 
-        console.log(newMovie);
 
         let doc = new Movie(newMovie)
         doc = await doc.save()
@@ -399,42 +409,52 @@ exports.updateMovie = async (req, res) => {
             title,
             genres,
             runtime,
-            quality,
             cover,
+            casts,
+            quality,
+            language,
             videoUrl,
             tags,
             rating,
             price,
             releaseYear,
             director,
-            summary,
-            language,
+            summary
 
         } = fields
 
         let updateMovie = {
             title,
-            genres,
             runtime,
-            quality,            
             rating,
             price,
+            casts,
+            quality,
+            language,
             releaseYear,
             director,
-            summary,
-            language,
+            summary
         }
 
-        try {
-            let t = JSON.parse(tags)
-            updateMovie.tags = t
-        } catch (ex) { }
+        if (genres) {
+            try {
+                let t = JSON.parse(genres)
+                updateMovie.genres = t
+            } catch (ex) { }
+        }
 
-        try {
-            let t = JSON.parse(videoUrl)
-            updateMovie.videoUrl = t
-        } catch (ex) { }
-
+        if (tags) {
+            try {
+                let t = JSON.parse(tags)
+                updateMovie.tags = t
+            } catch (ex) { }
+        }
+        if (videoUrl) {
+            try {
+                let t = JSON.parse(videoUrl)
+                updateMovie.videoUrl = t
+            } catch (ex) { }
+        }
 
         if (file) {
             let meta = await uploadImage(file, "netflix/images")
@@ -445,7 +465,7 @@ exports.updateMovie = async (req, res) => {
             updateMovie.cover = cover
         }
 
-  
+
         updateMovie.author = req.userId
 
 
@@ -515,17 +535,17 @@ exports.deleteMovie = async (req, res) => {
 exports.requestMovie = async (req, res) => {
     try {
 
-        const {movieName, message} = req.body;
+        const { movieName, message } = req.body;
 
-        let movie =  await RequestMovie.findOne({movieName: movieName})
-        if(movie){
+        let movie = await RequestMovie.findOne({ movieName: movieName })
+        if (movie) {
             response(res, 409, {
                 message: "This movie already requested",
             })
             return;
         }
 
-     
+
 
         let newReq = new RequestMovie({
             movieName,
@@ -534,16 +554,16 @@ exports.requestMovie = async (req, res) => {
             message,
         })
         newReq = await newReq.save()
-        if(newReq){
+        if (newReq) {
             response(res, 201, {
                 message: "movie request has been send",
             })
-        } else{
+        } else {
             response(res, 500, {
                 message: "Internal error. Please try again",
             })
         }
-        
+
 
     } catch (ex) {
         response(res, 500, {
@@ -553,10 +573,12 @@ exports.requestMovie = async (req, res) => {
 
 
 }
+
+
 exports.allRequestedMovie = async (req, res) => {
     try {
-        let movies =  await RequestMovie.find({})
-        if(movies){
+        let movies = await RequestMovie.find({})
+        if (movies) {
             response(res, 200, {
                 allRequestedMovie: movies,
             })

@@ -2,10 +2,6 @@
 const movieController = require("../controllers/movieController")
 const {admin, auth} = require("../middlewares")
 
-function a(v, next){
-    console.log(v);
-    next()
-}
 
 module.exports = (router)=>{
 

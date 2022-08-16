@@ -1,6 +1,7 @@
 import {api, getApi} from "../../api"
 
 
+
 export function fetchMovies(payload, cb){
 
     const { currentPage, perPageView, searchValue, filter } = payload
@@ -29,6 +30,7 @@ export function fetchMovies(payload, cb){
 }
 
 
+
 export function fetchGenres(cb){
     
     /******* Fetch all genres ********/
@@ -40,6 +42,31 @@ export function fetchGenres(cb){
 }
 
 
+
+export function fetchLanguages(cb){
+
+    /******* Fetch all languages ********/
+    api.get("/api/languages").then(response=>{
+        if(response.status === 200){
+            cb(response.data)
+        }
+    })
+}
+
+
+
+export function fetchQualities(cb){
+
+    /******* Fetch all qualities ********/
+    api.get("/api/qualities").then(response=>{
+        if(response.status === 200){
+            cb(response.data)
+        }
+    })
+}
+
+
+
 export function fetchMovieDetails(movieId, cb){
  /******* Fetch all qualities ********/
  api.get("/api/movie-details/" + movieId).then(response=>{
@@ -48,6 +75,7 @@ export function fetchMovieDetails(movieId, cb){
     }
   })    
 }
+
 
 
 export function fetchSimilarMovies(movie, cb){

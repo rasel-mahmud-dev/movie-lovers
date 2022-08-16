@@ -22,6 +22,8 @@ const AutoInput = (props) => {
         items: [{name: itemName + " 1", value: "", language: "English", id: 1, quality: "HD"}]
     })
 
+    // it should be own state
+
     // ********** store default value ********
     React.useEffect(()=>{
         if(value && Array.isArray(value)){
@@ -32,6 +34,7 @@ const AutoInput = (props) => {
                     items.push({
                         value: item.value,
                         id: id,
+                        language: item.language,
                         quality: item.quality,
                         name: itemName +" "+ id
                     })

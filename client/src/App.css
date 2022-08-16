@@ -164,7 +164,7 @@
 }
 
 .my_sidebar{
-  @apply fixed left-0 top-0 bg-neutral w-8/12 sm:w-8/12 z-50 h-screen;
+  @apply fixed left-0 top-0 bg-neutral w-8/12 sm:w-8/12 z-40 h-screen;
   transition: transform .4s ease-in;
 }
 

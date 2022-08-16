@@ -37,6 +37,7 @@ const MovieDetail = () => {
         httpStatus: 0,
         popupMessage: "",
         isPlaying: false,
+        server: null
     })
 
     React.useEffect(() => {
@@ -46,6 +47,11 @@ const MovieDetail = () => {
             // store cache for individual movie
             fetchMovieDetails(params.id, (movie) => {
                 dispatch(setMovieCache({_id: params.id, detail: movie}))
+
+                setState({
+                    ...state,
+                    server: movie.videoUrl[0] ? movie.videoUrl[0] : null
+                })
 
                 scrollTo(0)
 
@@ -153,14 +159,14 @@ const MovieDetail = () => {
 
     let whiteList = ["updatedAt", "createdAt", "__v", "summary", "videoUrl", "trailerUrl", "cover", "_id"]
 
-    function handlePlay(movie) {
-        let videLink = movie.videoUrl ? movie.videoUrl.trim() : ""
-        setState({
-            httpResponse: videLink ? "" : "Movie video not found",
-            httpStatus: videLink ? 0 : 500,
-            isPlaying: true
-        })
-    }
+    // function handlePlay(movie) {
+    //     let videLink = movie.videoUrl ? movie.videoUrl.trim() : ""
+    //     setState({
+    //         httpResponse: videLink ? "" : "Movie video not found",
+    //         httpStatus: videLink ? 0 : 500,
+    //         isPlaying: true
+    //     })
+    // }
 
     function handleDownload(movie) {
         if(movie.videoUrl && movie.videoUrl.trim()) {
@@ -244,10 +250,23 @@ const MovieDetail = () => {
         }
     }
 
+    function handleChooseServer(serverItem){
+        let videLink = serverItem.value ? serverItem.value.trim() : ""
+        setState({
+            ...state,
+            httpResponse: videLink ? "" : "Movie video not found",
+            httpStatus: videLink ? 0 : 500,
+            isPlaying: true,
+            server: serverItem
+        })
+    }
+
     React.useEffect(()=>{
 
         if(scriptTag.current && getMovie) {
-            let a = getMovie.detail.videoUrl;
+
+            let a = state.server.value;
+
             if(a && !a.startsWith("https://www.youtube")) {
                 const s = document.createElement('script');
                 s.classList.add("player_script_tag")
@@ -270,11 +289,11 @@ const MovieDetail = () => {
             removeScriptTags("player_script_tag")
         }
 
-    }, [state.isPlaying,  getMovie])
+    }, [state.isPlaying,  state.server])
+
 
     return (
         <div>
-
             <div ref={scriptTag}></div>
 
             {/*<Helmet>*/}
@@ -306,9 +325,24 @@ const MovieDetail = () => {
                             </div>
 
 
-                            {auth.auth && auth.auth.role === "admin" && <button className="btn block ml-auto ">
-                                <Link to={`/admin/update-movie/${getMovie.detail._id}`}>Edit Movie</Link>
-                            </button>}
+                            <div className="flex justify-between">
+                                {/******* Genres list ********/}
+                                <div className="flex items-center mt-6">
+                                    <h2 className="text-red-500 font-bold text-md md:text-lg">Genres:</h2>
+                                    <div className="flex flex-wrap gap-x-1 ml-2">
+                                        { getMovie.detail.genres && getMovie.detail.genres.map(genre=>(
+                                            <span className="text-sm md:text-base text-gray-200 ml-1">{genre.name}</span>
+                                        )) }
+                                    </div>
+                                </div>
+
+                                {auth.auth && auth.auth.role === "admin" && <button className="btn block ml-auto ">
+                                    <Link to={`/admin/update-movie/${getMovie.detail._id}`}>Edit Movie</Link>
+                                </button>}
+
+                            </div>
+
+
 
                             <ResponseAlert
                                 message={state.httpResponse} statusCode={state.httpStatus}
@@ -317,19 +351,17 @@ const MovieDetail = () => {
 
                             {/* video player  */}
                             <div className="mt-4">
-                                {state.isTrailerMode && (
-                                    <h2 className="text-white font-medium my-1">Trailer video</h2>
-                                )}
 
                                 {/* https://www.youtube.com/embed/oqxAJKy0ii4 */}
+
                                 {state.isPlaying
                                     ? (
-                                        isYoutubeVideo(getMovie.detail.videoUrl) ? (
+                                        isYoutubeVideo(state.server.value) ? (
                                             <div className="iframe-container">
                                                 <iframe
                                                     width="925"
                                                     height="520"
-                                                    src={updateYoutubeLink(getMovie.detail.videoUrl)}
+                                                    src={updateYoutubeLink(state.server.value)}
                                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                     allowFullScreen>
                                                 </iframe>
@@ -339,10 +371,10 @@ const MovieDetail = () => {
                                                 id="video"
                                                 controlsList="nodownload"
                                                 controls
-                                                // application/x-mpegURL
+
                                                 className="w-full"
                                             muted={true}>
-                                                {/*// src={getMovie.detail.videoUrl}>*/}
+
                                             </video>)
                                     ) : (
                                         <div>
@@ -354,20 +386,30 @@ const MovieDetail = () => {
                             </div>
 
 
+                            <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4">
+                                { getMovie.detail.videoUrl && getMovie.detail.videoUrl.map(video=>(
+                                    <button onClick={()=>handleChooseServer(video)}
+                                            className={`py-2 px-3 rounded-md ${state.server.id === video.id ? 'btn-primary' :  ''} flex items-center `}>
+                                        <BiPlayCircle className="text-xl"/>
+                                        <span className="ml-1">Watch on {video.name}</span>
+                                        <span className="ml-2">
+                                            <span className="ml-1">{video.quality} </span>
+                                            <span className="ml-1">({video.language})</span>
+                                        </span>
+                                    </button>
+                                )) }
+
+                            </div>
+
+
                             <div className="mt-4 mb-6 flex gap-2 flex-wrap">
                                 <button onClick={() => handleAddToFavorite(getMovie.detail._id)} className="btn ">
                                     <MdFavorite className="text-lg"/>
                                     <span
                                         className="ml-1">{isInFavorite(getMovie.detail._id) ? "Remove to Favorite" : "Add to Favorite"}</span>
                                 </button>
-
-                                <button
-                                    onClick={() => handlePlay(getMovie.detail)}
-                                    className="btn btn-primary">
-                                    <BiPlayCircle className="text-xl"/>
-                                    <span className="ml-1">Watch Now</span>
-                                </button>
                             </div>
+
 
                             {/* <iframe width="668" height="376" src="https://www.youtube.com/embed/oqxAJKy0ii4" title="Squid Game | Official Trailer | Netflix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> */}
 
@@ -377,7 +419,8 @@ const MovieDetail = () => {
                                 </div>
                             )}
 
-                            <table>
+
+                            <table className="mt-2">
                                 <tbody>
                                 {Object.keys(getMovie.detail).map(key => whiteList.indexOf(key) === -1 && (
                                     <tr className="">

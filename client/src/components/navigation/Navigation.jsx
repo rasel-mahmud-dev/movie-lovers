@@ -174,7 +174,7 @@ function Navigation() {
 
     return (
         <div>
-            <header className="bg-dark-700 fixed w-full z-40">
+            <header className="bg-dark-700 fixed w-full z-50">
              <div className=""></div>
 
                 {/**** backdrop ****/}
