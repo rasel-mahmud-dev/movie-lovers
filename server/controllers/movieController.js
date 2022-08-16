@@ -322,7 +322,6 @@ exports.addMovie = async (req, res) => {
             isPublic,
             quality,
             videoUrl,
-            
             tags,
             rating,
             price,
@@ -340,8 +339,6 @@ exports.addMovie = async (req, res) => {
             runtime,
             isPublic: true,
             quality,
-            videoUrl,
-            
             rating,
             price,
             releaseYear,
@@ -349,6 +346,12 @@ exports.addMovie = async (req, res) => {
             summary,
             language,
         }
+        
+        try {
+            let t = JSON.parse(videoUrl)
+            newMovie.videoUrl = t
+        } catch (ex) { }
+
 
         try {
             let t = JSON.parse(tags)
@@ -365,6 +368,8 @@ exports.addMovie = async (req, res) => {
 
         newMovie.author = req.userId
 
+        console.log(newMovie);
+
         let doc = new Movie(newMovie)
         doc = await doc.save()
 
@@ -374,7 +379,7 @@ exports.addMovie = async (req, res) => {
         })
 
     } catch (ex) {
-
+        console.log(ex);
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -397,7 +402,6 @@ exports.updateMovie = async (req, res) => {
             quality,
             cover,
             videoUrl,
-            
             tags,
             rating,
             price,
@@ -412,9 +416,7 @@ exports.updateMovie = async (req, res) => {
             title,
             genres,
             runtime,
-            quality,
-            videoUrl,
-            
+            quality,            
             rating,
             price,
             releaseYear,
@@ -426,6 +428,11 @@ exports.updateMovie = async (req, res) => {
         try {
             let t = JSON.parse(tags)
             updateMovie.tags = t
+        } catch (ex) { }
+
+        try {
+            let t = JSON.parse(videoUrl)
+            updateMovie.videoUrl = t
         } catch (ex) { }
 
 
@@ -441,6 +448,7 @@ exports.updateMovie = async (req, res) => {
   
         updateMovie.author = req.userId
 
+
         let doc = await Movie.findByIdAndUpdate({ _id }, { $set: updateMovie }, { new: true })
         homePageData = null
         return response(res, 201, {
@@ -448,6 +456,7 @@ exports.updateMovie = async (req, res) => {
         })
 
     } catch (ex) {
+        console.log(ex);
         response(res, 500, {
             message: "Internal error. Please try again",
         })
@@ -537,7 +546,6 @@ exports.requestMovie = async (req, res) => {
         
 
     } catch (ex) {
-        console.log(ex);
         response(res, 500, {
             message: "Internal error. Please try again",
         })
