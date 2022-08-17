@@ -21,7 +21,6 @@ const Series = ()=> {
                 console.log(ex);
             })
         }
-
     }, [])
 
 
@@ -30,7 +29,7 @@ const Series = ()=> {
           <div className="my_container">
 
 
-                    <h2 className="text-5xl text-center text-gray-100 font-medium mt-4 mb-4 pb-4 ">Series</h2>
+                    <h2 className="text-2xl md:text-5xl text-center text-gray-100 font-medium mt-4 mb-4 pb-4 ">Series</h2>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:md:grid-cols-6 gap-4">
                         {seriesMovies && seriesMovies.map(movie=><Movie key={movie._id} movie={movie} /> )}

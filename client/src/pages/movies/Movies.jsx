@@ -2,14 +2,11 @@ import React from "react"
 import { useSelector, useDispatch } from "react-redux"
 
 import {
-  setMovies,
   setGenres,
   setLanguages,
   setQualities,
-  setResetSearch,
   setFilterMovies,
   changePageAction,
-  setFilter
 } from "src/store/slices/appSlice"
 
 import { fetchMovies, fetchGenres, fetchQualities, fetchLanguages } from 'src/store/actions/appActions'
@@ -18,13 +15,13 @@ import Movie from "src/components/Movie"
 import Pagination from "src/components/Pagination"
 
 
-
 import { FaFilter } from 'react-icons/fa'
 import PageSkeleton from "./PageSkeleton";
 import {BiSort} from "react-icons/all";
 import Drawer from "../../components/Drawer";
 import Filter from "./Filter";
 import scrollTo from "../../utils/scrollTo.js";
+import {useSearchParams} from "react-router-dom";
 
 
 const Movies = (props) => {
@@ -33,9 +30,14 @@ const Movies = (props) => {
 
   const dispatch = useDispatch();
 
-  React.useEffect(() => {
+  const [searchParams] = useSearchParams()
 
-    !movies && (
+  const filterBy = searchParams.get("by")
+
+  const filterValues = searchParams.getAll("value")
+
+
+  function fetchInitialMovies(){
       fetchMovies({
         currentPage: pagination.currentPage,
         perPageView:pagination.perPageView,
@@ -49,14 +51,18 @@ const Movies = (props) => {
         }))
         scrollTo(0)
       })
-    )
+
+  }
+
+  React.useEffect(() => {
+
+    !movies && fetchInitialMovies()
 
     if (typeof fetchLanguages === "function") {
       (!languages || languages.length === 0) && fetchLanguages((data) => {
         dispatch(setLanguages(data.languages))
       })
     }
-
 
     if (typeof fetchQualities === "function") {
       (!qualities || qualities.length === 0) && fetchQualities((data) => {
@@ -72,13 +78,50 @@ const Movies = (props) => {
 
     scrollTo(0)
 
-
     handleWindowResize()
     window.addEventListener("resize", handleWindowResize)
+
     return () => window.removeEventListener("resize", handleWindowResize)
 
-
   }, [])
+
+
+  // filter fetch movie using genres with query params
+  React.useEffect(()=>{
+    if(filterBy === "genre" && filterValues && Array.isArray(filterValues) && filterValues.length) {
+      if (genres && genres.length) {
+        let filterWithParams =  getFilterValueFromQueryParams(genres)
+        handleFilterChange(filterWithParams)
+      }
+    }
+  }, [genres])
+
+
+  function getFilterValueFromQueryParams(genres){
+    // console.log(filterValues, filterBy)
+    // console.log(genres)
+    if(filterValues && Array.isArray(filterValues)){
+      let filterGenres = []
+      for (let genreName of filterValues) {
+        let matchIndex = genres.findIndex(genre=>genre.name === genreName);
+        if(matchIndex !== -1){
+          filterGenres.push({
+            name: genres[matchIndex].name,
+            _id: genres[matchIndex]._id
+          })
+        }
+      }
+
+      const updateFilter = {
+        ...filter,
+        genres: filterGenres,
+      }
+      return updateFilter
+      // dispatch(setFilter(updateFilter))
+      // handleFilterChange(updateFilter)
+    }
+  }
+
 
   function handleWindowResize(){
     if(window.innerWidth >= 1024){

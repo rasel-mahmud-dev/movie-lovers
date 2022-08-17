@@ -22,6 +22,7 @@ const AutoInput = (props) => {
         items: [{name: itemName + " 1", value: "", language: "English", id: 1, quality: "HD"}]
     })
 
+
     // it should be own state
 
     // ********** store default value ********
@@ -45,7 +46,7 @@ const AutoInput = (props) => {
                 setState({ ...state, items: items })
             }
         }
-    }, [])
+    }, [value])
 
 
     // ********** add new field ********

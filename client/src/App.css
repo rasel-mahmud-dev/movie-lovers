@@ -224,7 +224,18 @@
   .mobile_nav .menu{
     flex-direction: row!important;
   }
+
 }
+
+/**** 768 and down ********/
+@media screen and (max-width: 768px){
+  .my_sidebar{
+    margin-top: 64px;
+  }
+
+}
+
+
 /*** 1024 and down */
 @media screen and (min-width: 1024px){
   .my-drawer-overlay{

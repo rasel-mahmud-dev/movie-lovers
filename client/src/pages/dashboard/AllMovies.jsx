@@ -65,7 +65,7 @@ function AllMovies() {
         <div className="min-h-[50vh]">
             <h1 className="font-bold text-3xl text-gray-200 text-center mb-10">Movies</h1>
  
-            <DialogBox isOpen={dialogMessage != ""} className="bg-red-600">
+            <DialogBox isOpen={dialogMessage !== ""} className="bg-red-600">
                 <div className="flex justify-between">
                     <h3 className="font-bold text-xl text-white">{dialogMessage}</h3>
                         <div onClick={()=>setDialogMessage("")} className="cursor-pointer bg-neutral text-white p-2  rounded-full">
@@ -101,10 +101,16 @@ function AllMovies() {
                             <td>{movie.title}</td>
                             <td>
                                 
-                            {movie.videoUrl && <div className="my-tooltip">
-                                    <span className="tooltip-data">{movie.videoUrl}</span>
-                                    <span className="">{movie.videoUrl.substr(0, 50)}</span>
+                            {movie.videoUrl && (
+                                <div className='border border-pink-400 rounded-md p-2'>
+                                    { Array.isArray(movie.videoUrl)  && movie.videoUrl.map(video=>(
+                                        <div className="my-tooltip">
+                                            <span className="tooltip-data">{video.value}</span>
+                                            <span className="">{video.value.substr(0, 50)}</span>
+                                        </div>
+                                    )) }
                                 </div>
+                            )
                             }
                             
                             </td>

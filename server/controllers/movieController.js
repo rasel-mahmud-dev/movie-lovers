@@ -29,13 +29,20 @@ exports.getMovies = async (req, res) => {
 
         if (filter) {
             for (let key in filter) {
-                if (filter[key] && filter[key].length) {
-                    filter[key].map(item => {
-                        query.push({ [key]: item })
-                    })
-                }
+                    if (filter[key] && filter[key].length) {
+                        if(key === "genres"){
+                            query.push({ "genres": { $in: filter[key]} })
+                        } else{
+                            filter[key].map(item => {
+                                query.push({ [key]: item })
+                            })
+                        }
+                    }
+                
             }
         }
+
+        console.log(query);
 
 
         let doc = await Movie.find({
@@ -74,6 +81,8 @@ exports.getSimilarMovies = async (req, res) => {
 
     const { pageNumber, perPageView, or } = req.body
 
+    console.log(or);
+
     try {
 
 
@@ -91,8 +100,8 @@ exports.getSimilarMovies = async (req, res) => {
         if (language) {
             queries.push({ language: ObjectId(language) })
         }
-        if (genres) {
-            queries.push({ genres: ObjectId(genres) })
+        if (genres && Array.isArray(genres) && genres.length) {
+            queries.push({ genres: { $in: [ genres ]} })
         }
         if (tags && Array.isArray(tags) && tags.length) {
             queries.push({ tags: { $in: tags } })
@@ -148,7 +157,7 @@ exports.getSeriesMovies = async (req, res) => {
                 message: "Series not found",
             })
         }
-        let doc = await Movie.find({ genres: s._id })
+        let doc = await Movie.find({ genres: { $in: [s._id]} })
         response(res, 200, {
             movies: doc
         })
@@ -222,8 +231,9 @@ exports.getMovieDetails = async (req, res) => {
 function getFormMongodb(cb) {
     let data = {}
     homeMovieSection.forEach(async (section, i) => {
+        console.log(section._ids);
         try {
-            let doc = await Movie.find({ genres: section._id }).select("title cover").limit(10)
+            let doc = await Movie.find({ genres: { $in: section._ids }}).select("title cover").limit(10)
             if (doc && doc.length > 0) {
                 data[section.name] = doc;
             }

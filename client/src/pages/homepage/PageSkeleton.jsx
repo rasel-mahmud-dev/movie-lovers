@@ -1,12 +1,11 @@
 import React from 'react';
 import PostSkeleton from "../../components/skeletonModels/PostSkeleton";
 let data = [
+    { "name": "Action, Thriller & Adventure" },
+    { "name": "Series" },
     { "name": "Romance" },
-    { "name": "Action & Adventure" },
-    { "name": "Comedy" },
-    { "name": "Horror" },
+    { "name": "Crime & Drama" },
     { "name": "Science-Fiction" },
-    { "name": "Drama" },
     { "name": "War & Military" },
 
 ]

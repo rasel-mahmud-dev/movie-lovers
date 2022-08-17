@@ -1,7 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
-import {api, getApi} from '../../api';
+import {api, getApi} from 'src/api';
 
-import {toggleModal} from "../slices/appSlice"
+import {toggleModal} from "./appSlice.js"
 
 const initialState = {
     verify: false,

@@ -333,27 +333,28 @@ function AddMovie() {
         let isCompleted = true;
         let updatedState = {...state.movieData}
 
+        const {databaseGenre, ...movieDataPayload} = movieData
 
-        for (let key in movieData) {
+        for (let key in movieDataPayload) {
             if (key === "videoUrl") {
-                if (!movieData[key].tauch || !movieData[key].value || Array.isArray(movieData[key].value) && movieData[key].value.length === 0) {
+                if (!movieDataPayload[key].tauch || !movieDataPayload[key].value || Array.isArray(movieDataPayload[key].value) && movieDataPayload[key].value.length === 0) {
                     updatedState[key].errorMessage = `${key} is required`
                     isCompleted = false;
                 }
 
             } else if (key === "tags" || key === "genres") {
-                if (!movieData[key].tauch || !movieData[key].value || movieData[key].value.length === 0) {
+                if (!movieDataPayload[key].tauch || !movieDataPayload[key].value || movieDataPayload[key].value.length === 0) {
                     updatedState[key].errorMessage = `${key} is required`
                     isCompleted = false;
                 }
             } else if (key === "cover") {
-                if (!movieData[key].tauch || !movieData[key].value) {
+                if (!movieDataPayload[key].tauch || !movieDataPayload[key].value) {
                     updatedState[key].errorMessage = `${key} is required`
                     isCompleted = false;
                 } else {
                     // only check when image is blob data;
                     if (!params.id) {
-                        if (movieData[key].value.size > "102400") { // 100kb
+                        if (movieDataPayload[key].value.size > "102400") { // 100kb
                             updatedState[key].errorMessage = `${key} size should be under 100kb`
                             isCompleted = false;
                         }
@@ -361,7 +362,7 @@ function AddMovie() {
                 }
 
             } else {
-                if (!movieData[key].tauch || !movieData[key].value) {
+                if (!movieDataPayload[key].tauch || !movieDataPayload[key].value) {
                     updatedState[key].errorMessage = `${key} is required`
                     isCompleted = false;
                 }
@@ -381,19 +382,19 @@ function AddMovie() {
         scrollTo(0)
 
         let formData = new FormData()
-        for (let key in movieData) {
+        for (let key in movieDataPayload) {
             if (key === "tags" || key === "videoUrl") {
-                formData.append(key, JSON.stringify(movieData[key].value))
+                formData.append(key, JSON.stringify(movieDataPayload[key].value))
             } else if( key === "genres"){
-                let genresIds = movieData[key].value.map(v=>v._id)
+                let genresIds = movieDataPayload[key].value.map(v=>v._id)
                 formData.append(key, JSON.stringify(genresIds))
             } else {
-                formData.append(key, movieData[key].value)
+                formData.append(key, movieDataPayload[key].value)
             }
         }
 
         if (auth.auth && auth.auth.role === "admin") {
-            localStorage.setItem("userData", JSON.stringify(movieData))
+            localStorage.setItem("userData", JSON.stringify(movieDataPayload))
         }
 
 

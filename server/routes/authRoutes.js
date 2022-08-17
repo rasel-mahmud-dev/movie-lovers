@@ -1,6 +1,6 @@
 const authController = require("../controllers/authController")
 
-const {auth} =  require("../middlewares")
+const {auth, admin} =  require("../middlewares")
 
 
 module.exports = (router)=>{
@@ -28,4 +28,6 @@ module.exports = (router)=>{
     router.post("/api/user/toggle-favorite", auth, authController.toggleFavoriteMovie)
 
     router.post("/api/user/remove", auth, authController.removeUser)
+
+    router.get("/api/users", admin, authController.getAllCustomers)
 }

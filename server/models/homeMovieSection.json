@@ -1,16 +1,24 @@
 [
 
-    { "_id": "62ed393fe25223c70465f20c", "name": "Series" },
-    { "_id": "62ed3958e25223c70465f213", "name": "Romance" },
-    { "_id": "62ed394fe25223c70465f210", "name": "Action & Adventure" },
-    { "_id": "62ed3a159327186ffbfc8637", "name": "Comedy" },
-    { "_id": "62ed3a1f9327186ffbfc863c", "name": "Horror" },
-    { "_id": "62ed3a329327186ffbfc8641", "name": "Animation" },
-    { "_id": "62ed3a419327186ffbfc8644", "name": "Science-Fiction" },
-    { "_id": "62ed3a439327186ffbfc8647", "name": "Drama" },
-    { "_id": "62ed416e9327186ffbfc8682", "name": "Crime" },
-    { "_id": "62ed430c9327186ffbfc868e", "name": "War & Military" },
-    { "_id": "62ed4a136746974da7bf5c48", "name": "Documentary" },
-    { "_id": "62ee58f5dbe597980558669e", "name": "Kids & Family" }
+    { 
+        "_ids": [
+            "62fd13233933c88868c9c0b2", 
+            "62fd16d13933c88868c9c116", 
+            "62fd195a3933c88868c9c15f"
+    ], 
+    "name": "Action, Thriller & Adventure" },
+    { "_ids": ["62ed393fe25223c70465f20c"], "name": "Series" },
+    { "_ids": ["62ed3958e25223c70465f213", ""], "name": "Romance" },
+    { "_ids": ["62ed416e9327186ffbfc8682", "62ed3a439327186ffbfc8647"], "name": "Crime & Drama" },
+
+    { "_ids": ["62ed3a159327186ffbfc8637"], "name": "Comedy" },
+    { "_ids": ["62ed3a1f9327186ffbfc863c"], "name": "Horror" },
+    { "_ids": ["62fd26a03933c88868c9c1f4"], "name": "Fantasy" },
+    { "_ids": ["62ed3a419327186ffbfc8644"], "name": "Science-Fiction" },
+    { "_ids": ["62ed3a439327186ffbfc8647"], "name": "Drama" },
+    { "_ids": ["62ed416e9327186ffbfc8682"], "name": "Crime" },
+    { "_ids": ["62ed430c9327186ffbfc868e"], "name": "War & Military" },
+    { "_ids": ["62ed4a136746974da7bf5c48"], "name": "Documentary" },
+    { "_ids": ["62ee58f5dbe597980558669e"], "name": "Kids & Family" }
 
 ]

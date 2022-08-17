@@ -79,11 +79,15 @@ export function fetchMovieDetails(movieId, cb){
 
 
 export function fetchSimilarMovies(movie, cb){
+    let genres = []
+    if(movie.genres && Array.isArray(movie.genres) && movie.genres.length){
+        genres = movie.genres.map(gen=>gen._id)
+    }
     getApi().post("/api/similar-movies", {
         pageNumber: 1,
         perPageView: 10,
         or: {
-            genres: movie.genres._id,
+            genres: genres,
             language: movie.language._id,
             title: movie.title,
             tags: movie.tags

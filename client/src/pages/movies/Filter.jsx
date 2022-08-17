@@ -1,10 +1,13 @@
 import React from 'react';
 import {FaAngleDown, FaAngleLeft,  FaTimes} from "react-icons/fa";
+import {useNavigate} from "react-router-dom";
 
 
 const Filter = (props) => {
 
     const {filter, genres, languages, searchValue, qualities, onChangeFilter, toggleSidebar, handleClearSearch} = props
+
+    const navigate = useNavigate()
 
     const data = {
         genres: genres,
@@ -25,12 +28,9 @@ const Filter = (props) => {
         }
     }
 
-
     React.useEffect(()=>{
         calcSpace()
     }, [state])
-
-
 
     function handleChange(e){
         const {name, value} = e.target
@@ -58,6 +58,7 @@ const Filter = (props) => {
         let updateState = {...filter}
         updateState[name] = []
         onChangeFilter(updateState)
+        navigate("/movies")
     }
 
     function handleCollapse(id){

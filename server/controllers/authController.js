@@ -469,3 +469,25 @@ exports.removeUser = async(req, res)=>{
         })
     }
 }
+
+
+exports.getAllCustomers = async(req, res)=>{
+    try{
+        let users = await User.find({}).select("-password -OTPCode -expiredAt")
+        if(users){
+            return response(res, 200, {
+                users: users,
+            })
+        } else {
+            return response(res, 404, {
+                users: null,
+                message: "Users not found "
+            })
+        }
+    
+       } catch(ex){
+        response(res, 500, {
+            message: "Internal error. Please try again",
+        })
+    } 
+}

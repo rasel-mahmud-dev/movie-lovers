@@ -159,14 +159,6 @@ const MovieDetail = () => {
 
     let whiteList = ["updatedAt", "createdAt", "__v", "summary", "videoUrl", "trailerUrl", "cover", "_id"]
 
-    // function handlePlay(movie) {
-    //     let videLink = movie.videoUrl ? movie.videoUrl.trim() : ""
-    //     setState({
-    //         httpResponse: videLink ? "" : "Movie video not found",
-    //         httpStatus: videLink ? 0 : 500,
-    //         isPlaying: true
-    //     })
-    // }
 
     function handleDownload(movie) {
         if(movie.videoUrl && movie.videoUrl.trim()) {
@@ -265,24 +257,38 @@ const MovieDetail = () => {
 
         if(scriptTag.current && getMovie) {
 
-            let a = state.server.value;
+            if(state.server) {
+                let a = state.server.value;
+                if(state.isPlaying && a === "_"){
+                    setState({
+                        httpResponse: "Movie video not found",
+                        httpStatus:  500,
+                        isPlaying: false
+                    })
+                    return;
+                }
 
-            if(a && !a.startsWith("https://www.youtube")) {
-                const s = document.createElement('script');
-                s.classList.add("player_script_tag")
-                s.type = 'text/javascript';
-                s.async = true;
-                s.innerHTML = `if (Hls.isSupported()) {var video = document.getElementById('video');var hls = new Hls();hls.loadSource('${a}');hls.attachMedia(video);hls.on(Hls.Events.MANIFEST_PARSED, function () {video.play();});}`
+                if (a && !a.startsWith("https://www.youtube")) {
+                    const s = document.createElement('script');
+                    s.classList.add("player_script_tag")
+                    s.type = 'text/javascript';
+                    s.async = true;
+                    s.innerHTML = `if (Hls.isSupported()) {var video = document.getElementById('video');var hls = new Hls();hls.loadSource('${a}');hls.attachMedia(video);hls.on(Hls.Events.MANIFEST_PARSED, function () {video.play();});}`
 
-                let s2 = document.createElement('script');
-                s2.classList.add("player_script_tag")
-                s2.async = true;
-                s2.src = "/hls.js@latest"
-                scriptTag.current.appendChild(s2);
-                scriptTag.current.appendChild(s);
+                    let s2 = document.createElement('script');
+                    s2.classList.add("player_script_tag")
+                    s2.async = true;
+                    s2.src = "/hls.js@latest"
+                    scriptTag.current.appendChild(s2);
+                    scriptTag.current.appendChild(s);
+                } else {
+                    removeScriptTags("player_script_tag")
+                }
             } else {
                 removeScriptTags("player_script_tag")
             }
+        } else {
+            removeScriptTags("player_script_tag")
         }
 
         return ()=>{
@@ -326,15 +332,7 @@ const MovieDetail = () => {
 
 
                             <div className="flex justify-between">
-                                {/******* Genres list ********/}
-                                <div className="flex items-center mt-6">
-                                    <h2 className="text-red-500 font-bold text-md md:text-lg">Genres:</h2>
-                                    <div className="flex flex-wrap gap-x-1 ml-2">
-                                        { getMovie.detail.genres && getMovie.detail.genres.map(genre=>(
-                                            <span className="text-sm md:text-base text-gray-200 ml-1">{genre.name}</span>
-                                        )) }
-                                    </div>
-                                </div>
+
 
                                 {auth.auth && auth.auth.role === "admin" && <button className="btn block ml-auto ">
                                     <Link to={`/admin/update-movie/${getMovie.detail._id}`}>Edit Movie</Link>
@@ -385,11 +383,20 @@ const MovieDetail = () => {
 
                             </div>
 
+                            {/******* Genres list ********/}
+                            <div className="flex items-center mt-6">
+                                <h2 className="text-red-500 font-bold text-md md:text-lg">Genres:</h2>
+                                <div className="flex flex-wrap gap-x-1 ml-2">
+                                    { getMovie.detail.genres && getMovie.detail.genres.map(genre=>(
+                                        <Link to={`/movies/?by=genre&value=${genre.name}`} className="text-sm md:text-base link link-hover text-gray-200 ml-1">{genre.name}</Link>
+                                    )) }
+                                </div>
+                            </div>
 
                             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4">
                                 { getMovie.detail.videoUrl && getMovie.detail.videoUrl.map(video=>(
                                     <button onClick={()=>handleChooseServer(video)}
-                                            className={`py-2 px-3 rounded-md ${state.server.id === video.id ? 'btn-primary' :  ''} flex items-center `}>
+                                            className={`py-2 px-3 rounded-md ${state.server && state.server.id === video.id ? 'btn-primary' :  ''} flex items-center `}>
                                         <BiPlayCircle className="text-xl"/>
                                         <span className="ml-1">Watch on {video.name}</span>
                                         <span className="ml-2">
