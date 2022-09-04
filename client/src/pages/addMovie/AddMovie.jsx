@@ -307,7 +307,6 @@ function AddMovie() {
     }
 
     function resetForm() {
-        localStorage.removeItem("movieData")
 
         let updateMovieData = {}
         for (let key in movieData) {
