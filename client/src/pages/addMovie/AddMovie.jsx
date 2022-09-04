@@ -374,15 +374,16 @@ function AddMovie() {
                     updatedState[key].errorMessage = `${key} is required`
                     isCompleted = false;
                 } else{
-                    movieDataPayload[key].items.filter(item=> {
-                        if(item.value && item.value.trim() && item.quality && item.quality.trim() && item.language && item.language.trim()){
-                            return true
-                        } else {
-                            return false
-                        }
-                    })
+                    if(movieDataPayload[key].value){
+                        movieDataPayload[key].value.forEach(item=> {
+                            if(item.value && item.value.trim() && item.quality && item.quality.trim() && item.language && item.language.trim()){
+                           
+                            } else {
+                                isCompleted = false;
+                            }
+                        })
+                    }
                 }
-
             } else if (key === "tags" || key === "genres") {
                 if (!movieDataPayload[key].tauch || !movieDataPayload[key].value || movieDataPayload[key].value.length === 0) {
                     updatedState[key].errorMessage = `${key} is required`
