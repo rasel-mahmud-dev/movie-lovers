@@ -157,7 +157,7 @@ exports.getSeriesMovies = async (req, res) => {
                 message: "Series not found",
             })
         }
-        let doc = await Movie.find({ genres: { $in: [s._id]} })
+        let doc = await Movie.find({ genres: { $in: s._ids}})
         response(res, 200, {
             movies: doc
         })
@@ -231,7 +231,6 @@ exports.getMovieDetails = async (req, res) => {
 function getFormMongodb(cb) {
     let data = {}
     homeMovieSection.forEach(async (section, i) => {
-        console.log(section._ids);
         try {
             let doc = await Movie.find({ genres: { $in: section._ids }}).select("title cover").limit(10)
             if (doc && doc.length > 0) {
@@ -252,7 +251,7 @@ exports.getMoviesForHomeSection = async (req, res) => {
     if (homePageData && Object.keys(homePageData).length > 3) {
 
         try {
-            let data = JSON.parse(homePageData);
+            let data = homePageData;
             response(res, 200, {
                 data: data,
                 message: "from server cache"
@@ -260,7 +259,7 @@ exports.getMoviesForHomeSection = async (req, res) => {
 
         } catch (ex) {
             getFormMongodb((data) => {
-                homePageData = JSON.stringify(data)
+                homePageData = data
                 response(res, 200, {
                     data: data
                 })
@@ -269,7 +268,7 @@ exports.getMoviesForHomeSection = async (req, res) => {
 
     } else {
         getFormMongodb((data) => {
-            homePageData = JSON.stringify(data)
+            homePageData = data
             response(res, 200, {
                 data: data
             })

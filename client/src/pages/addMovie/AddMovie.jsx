@@ -109,7 +109,9 @@ function AddMovie() {
                         }
 
                     } else if(key === "genres"){
-                        updateMovieData["databaseGenre"] = movie[key]
+                        if(movie[key]){
+                            updateMovieData["databaseGenre"] = movie[key]
+                        }
                         // let items = []
                         // if(!genres || genres.length === 0){
                         //     updateMovieData["databaseGenre"] = movie[key]
@@ -145,7 +147,6 @@ function AddMovie() {
                     }
                 }
 
-
                 setState({
                     ...state,
                     movieData: updateMovieData
@@ -168,19 +169,18 @@ function AddMovie() {
                     }
                 } catch(_) {}
             } else {
-                if(localStorage.getItem("userData")){
-                    localStorage.removeItem("userData")
-                }
+                
             }
         }
     }, [])
 
+    // async task after genre fetched
     React.useEffect(()=>{
         let updateMovieData = {...state.movieData}
         let items = []
 
-        if(state.movieData.databaseGenre) {
-            let databaseGenre = state.movieData.databaseGenre
+        if(updateMovieData.databaseGenre && Array.isArray(updateMovieData.databaseGenre)) {
+            let databaseGenre = updateMovieData.databaseGenre
 
             for (let item of databaseGenre) {
                 let findItem = genres.find(genre => genre._id === item)
@@ -307,7 +307,7 @@ function AddMovie() {
     }
 
     function resetForm() {
-        localStorage.removeItem("userData")
+        localStorage.removeItem("movieData")
 
         let updateMovieData = {}
         for (let key in movieData) {
@@ -325,6 +325,39 @@ function AddMovie() {
         })
     }
 
+    function loadDataFromLocalStorage(){
+
+        let movieD = localStorage.getItem("movieData")
+        try{
+            let movieDataObj = JSON.parse(movieD)
+            let updateMovieData = {...state.movieData}
+
+            for (let key in movieData) {
+                updateMovieData[key] = {
+                    ...movieData[key]
+                }
+
+                if(movieDataObj[key] && movieDataObj[key].value){
+                    updateMovieData[key] = {
+                        ...updateMovieData,
+                        value: movieDataObj[key].value,
+                        tauch: true,
+                        errorMessage: ""
+                    }
+                }
+            }
+
+        setState({
+            ...state,
+            movieData: updateMovieData
+        })
+
+        } catch(ex){
+
+        }
+            
+    }
+
     function handleAddMovie(e) {
         e.preventDefault();
 
@@ -340,6 +373,14 @@ function AddMovie() {
                 if (!movieDataPayload[key].tauch || !movieDataPayload[key].value || Array.isArray(movieDataPayload[key].value) && movieDataPayload[key].value.length === 0) {
                     updatedState[key].errorMessage = `${key} is required`
                     isCompleted = false;
+                } else{
+                    movieDataPayload[key].items.filter(item=> {
+                        if(item.value && item.value.trim() && item.quality && item.quality.trim() && item.language && item.language.trim()){
+                            return true
+                        } else {
+                            return false
+                        }
+                    })
                 }
 
             } else if (key === "tags" || key === "genres") {
@@ -375,6 +416,11 @@ function AddMovie() {
                 ...state,
                 movieData: updatedState
             })
+
+            if (auth.auth && auth.auth.role === "admin") {
+                localStorage.setItem("movieData", JSON.stringify(movieDataPayload))
+            }
+    
             return;
         }
 
@@ -394,7 +440,7 @@ function AddMovie() {
         }
 
         if (auth.auth && auth.auth.role === "admin") {
-            localStorage.setItem("userData", JSON.stringify(movieDataPayload))
+            localStorage.setItem("movieData", JSON.stringify(movieDataPayload))
         }
 
 
@@ -659,7 +705,8 @@ function AddMovie() {
 
                     <div className="flex justify-center mt-10">
                         <button type="submit" className="btn btn-primary px-20">Save</button>
-                        <button type="button" onClick={resetForm} className="btn px-5 ml-4">clear</button>
+                        <button type="button" onClick={loadDataFromLocalStorage} className="btn px-5 ml-4">Load Cache</button>
+                        <button type="button" onClick={resetForm} className="btn px-5 ml-4">Clear Form</button>
                     </div>
 
                 </form>

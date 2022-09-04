@@ -5,7 +5,6 @@ import { lazy, useEffect } from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 
 
-
 import Footer from "src/components/Footer"
 import {loginWithTokenAction, setAuth} from "src/store/slices/authSlice"
 
@@ -47,7 +46,6 @@ function App() {
   return (
     <div className="App">
       <NavigationLite />
-
 
       <Suspense fallback={<Spinner />}>
 

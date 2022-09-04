@@ -19,7 +19,9 @@ const AutoInput = (props) => {
     } = props;
 
     const [state, setState] = React.useState({
-        items: [{name: itemName + " 1", value: "", language: "English", id: 1, quality: "HD"}]
+        items: [
+            {name: itemName + " 1", value: "", language: "English", id: 1, quality: "HD"}
+        ]
     })
 
 
@@ -66,33 +68,19 @@ const AutoInput = (props) => {
 
 
     // ********** handle store change value ********
-    function handleChangeQuality(e, ite, field){
+    function handleChangeField(e, ite, field){
+
         // field = value | quality | "language"
         let updateState = {...state}
         let inputIndex = updateState.items.findIndex(item=>item.name === ite.name);
 
+        ite[field] = e.target.value;
+        updateState.items[inputIndex] = ite;
+        
 
-        if(field) {
-            ite[field] = e.target.value;
-            updateState.items[inputIndex] = ite;
-            setState(updateState)
-        }
-
-
-        let filtered = updateState.items.filter(item=> {
-            if(item.value && item.value.trim() && item.quality && item.quality.trim() && item.language && item.language.trim()){
-                return true
-            } else {
-                return false
-            }
-        })
-
-        if(filtered && filtered.length) {
-            onChange && onChange({target: {value: filtered, name: name}})
-        } else {
-            onChange && onChange({target: {value: null, name: name}})
-        }
-
+   
+        onChange && onChange({target: {value: updateState.items, name: name}})
+       
     }
 
 
@@ -116,7 +104,7 @@ const AutoInput = (props) => {
                                 type={type}
                                 id={`${itemName}-${index + 1}`}
                                 placeholder={`${placeholder} ${index + 1}`}
-                                onChange={(e)=>handleChangeQuality(e, item, "value")}
+                                onChange={(e)=>handleChangeField(e, item, "value")}
                             />
                         </div>
                         <div className="ml-4">
@@ -127,7 +115,7 @@ const AutoInput = (props) => {
                                 type={type}
                                 id={`languange-${index + 1}`}
                                 placeholder={`Languange ${index + 1}`}
-                                onChange={(e)=>handleChangeQuality(e, item, "language")}
+                                onChange={(e)=>handleChangeField(e, item, "language")}
                             />
                         </div>
                         <div className="ml-4">
@@ -138,7 +126,7 @@ const AutoInput = (props) => {
                                 type={type}
                                 id={`Quality-${index + 1}`}
                                 placeholder={`Quality ${index + 1}`}
-                                onChange={(e)=>handleChangeQuality(e, item, "quality")}
+                                onChange={(e)=>handleChangeField(e, item, "quality")}
                             />
                         </div>
                     </div>
